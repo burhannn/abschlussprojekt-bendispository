@@ -16,7 +16,7 @@ public class Person {
 
     private String email;
 
-    private String konto;
+    private String account;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Item> lentItemFrom;

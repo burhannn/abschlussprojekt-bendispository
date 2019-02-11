@@ -14,13 +14,13 @@ public class Item {
 
     private String name;
 
-    private String beschreibung;
+    private String description;
 
-    private boolean verfuegbar;
+    private boolean free;
 
-    private int kaution;
+    private int deposit;
 
-    private int CostsPerDay;
+    private int CostPerDay;
 
     private Person lentFrom;
 }
