@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt;
+package Bendispository.Abschlussprojekt.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,5 +20,18 @@ public class ProjektController {
         return "AddItem";
     }
 
+    @GetMapping(path = "/overview")
+    public String Overview(Model model){
+        return "overview";
+    }
 
+    @GetMapping(path = "/overview/registration")
+    public String Registration(Model model){
+        return "registration";
+    }
+
+    @GetMapping(path = "/overview/login")
+    public String login(Model model){
+        return "login";
+    }
 }
