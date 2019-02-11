@@ -18,9 +18,7 @@ public class Person {
 
     private String account;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    private List<Item> lentItemFrom;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Item> Items;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    private List<Item> lentItemTo;
 }
