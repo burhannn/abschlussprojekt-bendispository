@@ -30,12 +30,12 @@ public class LeaseTransaction {
 
     private boolean depositReturned = false;
 
-    public LeaseTransaction addTransaction(Person leaser, Item item, int duration){
+    public LeaseTransaction addTransaction(Person leaser, Item item, Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
         lsTrans.setItem(item);
         lsTrans.setLeaser(leaser);
         lsTrans.setLender(item.owner);
-        lsTrans.setDuration(duration);
+        lsTrans.setDuration(request.duration);
         return lsTrans;
     }
 
