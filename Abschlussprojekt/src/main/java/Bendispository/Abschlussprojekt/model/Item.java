@@ -22,5 +22,6 @@ public class Item {
 
     private int CostsPerDay;
 
-    private Person lentFrom;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Person owner;
 }
