@@ -16,12 +16,12 @@
                 <td>Username:</td>
             </tr>
             <tr>
-                <td><Input name="nachname" type="text" th:text="${person.lastName}"></td>
-                <td><Input name="vorname" type="text" th:text="${person.firstName}"></td>
-                <td><Input name="email" type="text" th:text="${person.email}"></td>
-                <td><Input name="stadt" type="text" th:text="${person.city}"></td>
-                <td><Input name="account" type="text" th:text="${person.account}"></td>
-                <td><Input name="username" type="text" th:text="${person.username}"></td>
+                <td th:text="${person.lastName}"></td>
+                <td th:text="${person.firstName}"></td>
+                <td th:text="${person.email}"></td>
+                <td th:text="${person.city}"></td>
+                <td th:text="${person.account}"></td>
+                <td th:text="${person.username}"></td>
             </tr>
         </table>
         <button type="submit">Save & Create</button>

@@ -66,6 +66,6 @@ public class ProjektController {
     public String profilPage(Model model){
         List<Person> all = personRepo.findAll();
         model.addAttribute("personen", all);
-        return "profilUebersicht";
+        return "profileDetails";
     }
 }
