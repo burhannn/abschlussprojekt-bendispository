@@ -25,6 +25,6 @@ public class Person {
     private String city;
 
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private List<Item> Items;
+    private List<Item> items;
 
 }

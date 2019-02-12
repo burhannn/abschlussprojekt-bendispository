@@ -5,8 +5,7 @@
 <body>
 <div>My Profile</div>
 <div>
-    <form method="post">
-        <table>
+    <div>
             <tr>
                 <td>Last Name:</td>
                 <td>First Name:</td>
@@ -23,10 +22,16 @@
                 <td th:text="${person.account}"></td>
                 <td th:text="${person.username}"></td>
             </tr>
-        </table>
+        <div>My Items:
+            <table>
+                <tr th:each="item : ${person.items}">
+                    <li th:text="| - ${item.name}| "></li>
+                </tr>
+            </table>
+        </div>
+        </div>
         <button type="submit">Save & Create</button>
         <a href="/" >Back</a>
-    </form>
 </div>
 </body>
 </html>
