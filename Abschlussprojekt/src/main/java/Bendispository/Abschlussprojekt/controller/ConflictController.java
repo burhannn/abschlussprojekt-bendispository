@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.controller;
+package Bendispository.Abschlussprojekt.Controller;
 
 import Bendispository.Abschlussprojekt.Model.ConflictTransaction;
 import Bendispository.Abschlussprojekt.Repo.ConflictTransactionRepo;
