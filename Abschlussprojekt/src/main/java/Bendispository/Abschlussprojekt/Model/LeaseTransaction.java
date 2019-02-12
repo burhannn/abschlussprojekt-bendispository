@@ -16,7 +16,7 @@ public class LeaseTransaction {
                fetch = FetchType.EAGER)
     private Person leaser;
 
-    @OneToOne(cascade = CascadeType.PERSIST,
+    @ManyToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
     private Person lender;
 
