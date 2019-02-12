@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Neues Item:</h1>
+<form method = "post">
+    <UL>
+        <LI>Name:<input type ="text" name = "name" th:value="${newItem?.name}"></input>
+        <LI>Description:<input type ="text" name = "description" th:value="${newItem?.description}"></input>
+        <LI>Deposit:<input type ="text" name = "deposit" th:value="${newItem?.deposit}"></input>
+        <LI>CostPerDay:<input type ="text" name = "costPerDay" th:value="${newItem?.costPerDay}"></LI>
+        <button type="submit" class="button" >add Item</button>
+    </UL>
+</form>
+</body>
+</html>

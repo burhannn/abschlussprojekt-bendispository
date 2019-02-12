@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+    <div>Overview Items</div>
+    <a>My Profile</a>
+    <a href="/addItem">Add Item</a>
+<div th:each="item,iterStart : ${OverviewAllItems}">
+    <h1 th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
+    <div>
+        <div th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
+    </div>
+    <a th:href="@{'/item' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
+</div>
+</body>
+</html>
