@@ -25,7 +25,7 @@ public class RequestController {
     @GetMapping(path = "/profile/request")
     public String listAllRequests(Model model){
         List<Request> allRequests = requestRepo.findAll();
-        model.addAttribute("allRequests", allRequests.get());
+        model.addAttribute("allRequests", allRequests);
         return "request";
     }
 

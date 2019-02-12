@@ -21,8 +21,8 @@ public class LeaseController {
     @GetMapping(path = "/profile/leaseTransaction")
     public String listAllLeaseTransaction(Model model){
         List<LeaseTransaction> allLease = leaseTransactionRepo.findAll();
-        model.addAttribute("allLease", allLease.get());
-        return "leaseTransaction"
+        model.addAttribute("allLease", allLease);
+        return "leaseTransaction";
     }
 
     @GetMapping(path = "/profile/leaseTransaction+{id}")
