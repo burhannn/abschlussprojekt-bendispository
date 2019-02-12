@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.controller;
+package Bendispository.Abschlussprojekt.Controller;
 
 import Bendispository.Abschlussprojekt.Model.Request;
 import Bendispository.Abschlussprojekt.Repo.RequestRepo;
