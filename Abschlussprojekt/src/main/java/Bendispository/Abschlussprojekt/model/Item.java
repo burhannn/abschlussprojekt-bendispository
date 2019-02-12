@@ -22,6 +22,6 @@ public class Item {
 
     private int costPerDay;
 
-    /*@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private Person owner;*/
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private Person owner;
 }
