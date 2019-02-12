@@ -18,13 +18,13 @@ public class LeaseController {
     LeaseTransactionRepo leaseTransactionRepo;
 
     @GetMapping(path = "/profile/leaseTransaction+{id}")
-    public String leaseTransaction(Model model, @PathVariable Long id){
+    public String showTransactionById(Model model, @PathVariable Long id){
         Optional<LeaseTransaction> lease = leaseTransactionRepo.findById(id);
         model.addAttribute("lease", lease.get());
         return "leaseTransaction";
     }
 
-    @PostMapping(path = "profile/leaseTransaction")
+    @PostMapping(path = "/profile/leaseTransaction")
     public String addChangesLeaseTransaction(Model model, @PathVariable Long id, LeaseTransaction leaseTransaction){
         model.addAttribute("changeLease", leaseTransaction);
         leaseTransactionRepo.save(leaseTransaction);
