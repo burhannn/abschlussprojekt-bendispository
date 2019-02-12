@@ -1,0 +1,27 @@
+﻿version: "3.1"
+
+volumes:
+  databasevol:
+
+services:
+
+  # =========================================
+  # Application - build ./app - command wait-for-it.sh
+  # Datenbank - image - environment - volume
+  # =========================================
+
+  shareapp:
+    build: ./Abschlussprojekt
+    #command: wait-for-it
+  
+  database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: sharingdatabase
+      POSTGRES_PASSWORD: sharepw
+      POSTGRES_USER: shareadmin
+      
+   volumes:
+    - databasevol:/var/lib/postgresql/data
+  
