@@ -12,15 +12,15 @@ public class LeaseTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.PERSIST,
+    @ManyToOne(
                fetch = FetchType.EAGER)
     private Person leaser;
 
-    @ManyToOne(cascade = CascadeType.PERSIST,
+    @ManyToOne(
               fetch = FetchType.EAGER)
     private Person lender;
 
-    @ManyToOne(cascade = CascadeType.PERSIST,
+    @ManyToOne(
                fetch = FetchType.EAGER)
     private Item item;
 
