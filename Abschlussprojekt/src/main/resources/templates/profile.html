@@ -25,7 +25,8 @@
         <div>My Items:
             <table>
                 <tr th:each="item : ${person.items}">
-                    <li th:text="| - ${item.name}| "></li>
+                    <li th:text="| - ${item.name}|"></li>
+                    <a th:href="@{'/Item/' + ${item.id}}" th:text="|Show Details ${item.name}|"></a>
                 </tr>
             </table>
         </div>

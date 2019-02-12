@@ -58,6 +58,7 @@ public class ProjektController {
     }
     @GetMapping(path= "/profile/{id}")
     public String Overview(Model model, @PathVariable Long id){
+        Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profile";
     }
