@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -17,6 +18,13 @@ public class LeaseController {
     @Autowired
     LeaseTransactionRepo leaseTransactionRepo;
 
+    @GetMapping(path = "/profile/leaseTransaction")
+    public String listAllLeaseTransaction(Model model){
+        List<LeaseTransaction> allLease = leaseTransactionRepo.findAll();
+        model.addAttribute("allLease", allLease.get());
+        return "leaseTransaction"
+    }
+
     @GetMapping(path = "/profile/leaseTransaction+{id}")
     public String showTransactionById(Model model, @PathVariable Long id){
         Optional<LeaseTransaction> lease = leaseTransactionRepo.findById(id);
@@ -24,7 +32,7 @@ public class LeaseController {
         return "leaseTransaction";
     }
 
-    @PostMapping(path = "/profile/leaseTransaction")
+    @PostMapping(path = "/profile/leaseTransaction+{id}")
     public String addChangesLeaseTransaction(Model model, @PathVariable Long id, LeaseTransaction leaseTransaction){
         model.addAttribute("changeLease", leaseTransaction);
         leaseTransactionRepo.save(leaseTransaction);
