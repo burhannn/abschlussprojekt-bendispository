@@ -17,12 +17,12 @@ public class ProjektController {
     @Autowired
     ItemsList itemsList;
 
-    @GetMapping(path = "/{id}/addItem")
+    @GetMapping(path = "/addItem")
     public String addItemPage(){
         return "AddItem";
     }
 
-    @PostMapping(path = "/{id}/addItem")
+    @PostMapping(path = "/addItem")
     public String addItemsToDatabase(Model model,@PathVariable Long id, Item item){
         model.addAttribute("newItem", item);
         itemsList.save(item);

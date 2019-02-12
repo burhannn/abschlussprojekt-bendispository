@@ -57,13 +57,13 @@ public class Initializer implements ServletContextInitializer {
         item.setDescription(desc);
         item.setFree(true);
         item.setName(name);
-        item.setOwner(person);
+        //item.setOwner(person);
         return item;
     }
 
     private void addItem(Person person, Item... items){
         List<Item> item = new ArrayList<Item>();
         item.addAll(Arrays.asList(items));
-        person.setItems(item);
+        //person.setItems(item);
     }
 }
