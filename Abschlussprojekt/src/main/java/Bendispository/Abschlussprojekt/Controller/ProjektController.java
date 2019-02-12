@@ -61,4 +61,11 @@ public class ProjektController {
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profile";
     }
+
+    @GetMapping(path= "/profilub")
+    public String profilPage(Model model){
+        List<Person> all = personRepo.findAll();
+        model.addAttribute("personen", all);
+        return "profilUebersicht";
+    }
 }

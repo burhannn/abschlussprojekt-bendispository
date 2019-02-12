@@ -6,6 +6,7 @@
     <div>Overview Items</div>
     <a href="/profile/1">My Profile</a> <!-- /1 bis login als placeholder -->
     <a href="/addItem">Add Item</a>
+    <a href="/profilub">Overview Users</a>
 <div th:each="item,iterStart : ${OverviewAllItems}">
     <h1 th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
     <div>
