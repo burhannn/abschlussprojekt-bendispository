@@ -50,4 +50,10 @@ public class ProjektController {
         model.addAttribute("OverviewAllItems", itemRepo);
         return "OverviewAllItems";
     }
+
+    @GetMapping("/login")
+		public String login() {
+    	return "login.html";
+    }
+
 }
