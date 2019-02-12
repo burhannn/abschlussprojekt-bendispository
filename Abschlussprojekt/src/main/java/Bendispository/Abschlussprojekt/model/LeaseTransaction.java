@@ -16,12 +16,12 @@ public class LeaseTransaction {
                fetch = FetchType.LAZY)
     private Person leaser;
 
-    @ManyToOne(cascade = CascadeType.ALL,
+    @OneToOne(cascade = CascadeType.ALL,
               fetch = FetchType.LAZY)
     private Person lender;
 
     @OneToOne(cascade = CascadeType.ALL,
-               fetch = FetchType.LAZY)
+              fetch = FetchType.LAZY)
     private Item item;
 
     // number of days
