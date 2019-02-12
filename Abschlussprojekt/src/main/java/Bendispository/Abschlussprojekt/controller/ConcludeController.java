@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.controller;
+package Bendispository.Abschlussprojekt.Controller;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.ConcludeTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactionRepo;
