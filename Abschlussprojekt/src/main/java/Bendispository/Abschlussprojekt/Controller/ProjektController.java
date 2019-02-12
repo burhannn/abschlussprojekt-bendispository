@@ -1,7 +1,7 @@
 package Bendispository.Abschlussprojekt.Controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.Model.Item;
+import Bendispository.Abschlussprojekt.Model.Person;
 import Bendispository.Abschlussprojekt.repo.ItemRepo;
 import Bendispository.Abschlussprojekt.repo.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
