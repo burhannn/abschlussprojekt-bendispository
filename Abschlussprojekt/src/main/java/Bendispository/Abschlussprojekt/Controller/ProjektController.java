@@ -21,13 +21,13 @@ public class ProjektController {
     @Autowired
     PersonsList personRepo;
 
-    @GetMapping(path = "/{id}/addItem")
-    public String addItemPage() {
+    @GetMapping(path = "/addItem")
+    public String addItemPage(){
         return "AddItem";
     }
 
-    @PostMapping(path = "/{id}/addItem")
-    public String addItemsToDatabase(Model model, @PathVariable Long id, Item item) {
+    @PostMapping(path = "/addItem")
+    public String addItemsToDatabase(Model model,@PathVariable Long id, Item item){
         model.addAttribute("newItem", item);
         itemRepo.save(item);
         return "AddItem";

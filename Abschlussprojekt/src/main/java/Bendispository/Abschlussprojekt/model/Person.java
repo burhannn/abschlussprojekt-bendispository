@@ -18,11 +18,11 @@ public class Person {
 
     private String email;
 
+    private int account;
+    
     private String city;
 
-    private Long account;
-
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private List<Item> Items;
+    /*@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<Item> Items;*/
 
 }
