@@ -16,7 +16,7 @@ public class Person {
 
     private String email;
 
-    private String account;
+    private int account;
 
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Item> Items;
