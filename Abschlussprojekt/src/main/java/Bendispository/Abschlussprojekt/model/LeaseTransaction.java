@@ -3,7 +3,6 @@ package Bendispository.Abschlussprojekt.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.rmi.dgc.Lease;
 
 @Data
 @Entity
@@ -30,12 +29,12 @@ public class LeaseTransaction {
 
     private boolean depositReturned = false;
 
-    public LeaseTransaction addTransaction(Person leaser, Item item, Request request){
+    public LeaseTransaction addTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
-        lsTrans.setItem(item);
-        lsTrans.setLeaser(leaser);
-        lsTrans.setLender(item.owner);
-        lsTrans.setDuration(request.duration);
+        lsTrans.setItem(request.getRequestedItem());
+        lsTrans.setLeaser(request.getRequester());
+        lsTrans.setLender(request.getRequestedItem().getOwner());
+        lsTrans.setDuration(request.getDuration());
         return lsTrans;
     }
 
