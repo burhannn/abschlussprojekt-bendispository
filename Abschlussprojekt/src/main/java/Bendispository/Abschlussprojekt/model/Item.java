@@ -8,6 +8,7 @@ import java.util.List;
 @Entity
 @Data
 public class Item {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -22,6 +23,7 @@ public class Item {
 
     private int costPerDay;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST,
+               fetch = FetchType.EAGER)
     private Person owner;
 }

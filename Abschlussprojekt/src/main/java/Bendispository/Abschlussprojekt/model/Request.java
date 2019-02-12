@@ -12,8 +12,8 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL,
-              fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL,
+               fetch = FetchType.LAZY)
     private Person requester;
 
     private Item requestedItem;

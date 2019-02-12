@@ -18,7 +18,8 @@ public class Person {
 
     private int account;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.PERSIST,
+               fetch = FetchType.EAGER)
     private List<Item> Items;
 
 }

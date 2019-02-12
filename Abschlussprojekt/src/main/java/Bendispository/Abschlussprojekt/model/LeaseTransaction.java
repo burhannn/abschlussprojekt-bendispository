@@ -12,22 +12,26 @@ public class LeaseTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL,
+    @ManyToOne(cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
     private Person leaser;
 
-    @OneToOne(cascade = CascadeType.ALL,
+    @ManyToOne(cascade = CascadeType.ALL,
               fetch = FetchType.LAZY)
     private Person lender;
 
     @OneToOne(cascade = CascadeType.ALL,
-              fetch = FetchType.LAZY)
+               fetch = FetchType.LAZY)
     private Item item;
 
     // number of days
     private int duration;
 
-    private StateOfItem stateOfItem;
+    private boolean itemIsReturned = false;
+
+    private boolean itemIsReturnedOnTime = false;
+
+    private boolean itemIsIntact = false;
 
     public LeaseTransaction addTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
