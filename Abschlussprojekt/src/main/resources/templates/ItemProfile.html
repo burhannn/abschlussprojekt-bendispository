@@ -12,8 +12,10 @@
     <LI th:text = "| Deposit: ${itemProfile?.deposit}|" ></LI>
     <LI th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></LI>
 </dl>
+<!-- Hier kommt Anfrage Rubrik mit Zeitraum etc. (Marc und Kim)-->
 <form action="http://localhost:8080/">
-    <button type="submit" class="button" >Zurück zur Übersicht</button>
+    <a href="/overview" >Zur&uumlck zur  &Uumlbersicht</a>
+    <button type="submit">Gegenstand Anfragen</button>
 </form>
 </body>
 </html>

@@ -1,7 +1,9 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.repo.ItemsList;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.repo.ItemRepo;
+import Bendispository.Abschlussprojekt.repo.PersonsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,39 +17,38 @@ import java.util.Optional;
 @Controller
 public class ProjektController {
     @Autowired
-    ItemsList itemsList;
+    ItemRepo itemRepo;
+    @Autowired
+    PersonsList personRepo;
 
     @GetMapping(path = "/{id}/addItem")
-    public String addItemPage(){
+    public String addItemPage() {
         return "AddItem";
     }
 
     @PostMapping(path = "/{id}/addItem")
-    public String addItemsToDatabase(Model model,@PathVariable Long id, Item item){
+    public String addItemsToDatabase(Model model, @PathVariable Long id, Item item) {
         model.addAttribute("newItem", item);
-        itemsList.save(item);
+        itemRepo.save(item);
         return "AddItem";
     }
 
     @GetMapping(path = "/Item/{id}")
-    public String ItemProfile(Model model, @PathVariable Long id){
-        Optional<Item> item = itemsList.findById(id);
+    public String ItemProfile(Model model, @PathVariable Long id) {
+        Optional <Item> item = itemRepo.findById(id);
         model.addAttribute("itemProfile", item.get());
         return "ItemProfile";
     }
 
-    @GetMapping(path = "/overview")
-    public String Overview(Model model){
-        return "overview";
-    }
-
-    @GetMapping(path = "/overview/registration")
-    public String Registration(Model model){
-        return "registration";
-    }
-
-    @GetMapping(path = "/overview/login")
-    public String login(Model model){
+    @GetMapping(path = "/login")
+    public String Overview(Model model) {
         return "login";
+    }
+
+    @GetMapping(path = "/registration")
+    public String Registration(Model model, Person person) {
+        model.addAttribute("newPerson", person);
+        personRepo.save(person);
+        return "registration";
     }
 }

@@ -16,7 +16,7 @@ public class Item {
 
     private String description;
 
-    private boolean free;
+    private boolean available;
 
     private int deposit;
 

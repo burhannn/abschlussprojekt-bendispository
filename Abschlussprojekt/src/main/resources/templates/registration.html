@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
 </head>
 <body>
@@ -8,16 +8,18 @@
     <form method="post">
         <table>
             <tr>
-                <td>Nachname:</td>
-                <td>Vorname:</td>
+                <td>Last Name:</td>
+                <td>First Name:</td>
                 <td>Email:</td>
-                <td>Stadt:</td>
+                <td>City:</td>
+                <td>Account:</td>
             </tr>
             <tr>
-                <td><Input name="nachname" type="text" placeholder="e.g.Mustermann"></td>
-                <td><Input name="vorname" type="text" placeholder="e.g.Max"></td>
-                <td><Input name="email" type="text" placeholder="e.g.max@gmx.de"></td>
-                <td><Input name="stadt" type="text" placeholder="e.g.Duesseldorf"></td>
+                <td><Input name="nachname" type="text" placeholder="e.g.Mustermann" th:value="${newPerson?.LastName}"></td>
+                <td><Input name="vorname" type="text" placeholder="e.g.Max" th:value="${newPerson?.firstName}"></td>
+                <td><Input name="email" type="text" placeholder="e.g.max@gmx.de" th:value="${newPerson?.email}"></td>
+                <td><Input name="stadt" type="text" placeholder="e.g.Duesseldorf" th:value="${newPerson?.city}"></td>
+                <td><Input name="account" type="text" placeholder="e.g.56 77 234" th:value="${newPerson?.account}"></td>
             </tr>
         </table>
         <button type="submit">Erstellen & speichern</button>
