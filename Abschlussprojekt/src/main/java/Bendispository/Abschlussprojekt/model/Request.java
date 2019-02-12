@@ -1,0 +1,26 @@
+package Bendispository.Abschlussprojekt.model;
+
+import lombok.Data;
+
+import javax.persistence.*;
+
+@Data
+@Entity
+public class Request {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL,
+              fetch = FetchType.LAZY)
+    private Person requester;
+
+
+    private Item requestedItem;
+
+
+    // value = "denied", "accepted", "pending"
+    private RequestStatus status = RequestStatus.PENDING;
+
+}
