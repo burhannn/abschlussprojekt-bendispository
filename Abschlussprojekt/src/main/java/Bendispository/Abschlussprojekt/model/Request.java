@@ -16,8 +16,9 @@ public class Request {
               fetch = FetchType.LAZY)
     private Person requester;
 
-
     private Item requestedItem;
+
+    private int duration;
 
 
     // value = "denied", "accepted", "pending"
