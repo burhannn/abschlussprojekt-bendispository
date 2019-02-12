@@ -1,6 +1,6 @@
-package Bendispository.Abschlussprojekt.repo;
+package Bendispository.Abschlussprojekt.Repo;
 
-import Bendispository.Abschlussprojekt.model.ConcludeTransaction;
+import Bendispository.Abschlussprojekt.Model.ConcludeTransaction;
 import org.springframework.data.repository.CrudRepository;
 
 public interface ConcludeTransactionRepo extends CrudRepository<ConcludeTransaction, Long> {

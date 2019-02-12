@@ -1,9 +1,8 @@
-package Bendispository.Abschlussprojekt.model;
+package Bendispository.Abschlussprojekt.Model;
 
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data

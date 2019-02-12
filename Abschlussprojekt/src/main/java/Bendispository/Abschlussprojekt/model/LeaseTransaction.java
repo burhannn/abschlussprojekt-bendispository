@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.model;
+package Bendispository.Abschlussprojekt.Model;
 
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class LeaseTransaction {
     private Person lender;
 
     @ManyToOne(cascade = CascadeType.PERSIST,
-              fetch = FetchType.EAGER)
+               fetch = FetchType.EAGER)
     private Item item;
 
     // number of days

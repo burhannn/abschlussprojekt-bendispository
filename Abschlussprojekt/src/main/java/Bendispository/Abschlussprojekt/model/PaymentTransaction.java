@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.model;
+package Bendispository.Abschlussprojekt.Model;
 
 import lombok.Data;
 
@@ -18,6 +18,6 @@ public class PaymentTransaction {
 
     private boolean isPayed;
 
-    private boolean depositIsPayed;
+    private boolean depositIsBlocked;
 
 }

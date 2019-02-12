@@ -1,7 +1,7 @@
 package Bendispository.Abschlussprojekt.Controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.repo.ItemsList;
+import Bendispository.Abschlussprojekt.Model.Item;
+import Bendispository.Abschlussprojekt.Repo.ItemsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
