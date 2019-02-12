@@ -38,3 +38,28 @@ Erreichte Ziele:
 - Templates, Models & Controller angefangen
 - Dockerfile angefangen
 - Login-Planung
+
+---
+
+#### Dienstag, 12.02.2019:
+
+Marc & Kim & Nina - Transactions:
+
+- Klassenplanung und Aufbau
+
+- Controller
+
+Mandy & Clara - Templates, Repos, Entities, Controller:
+
+- Aufbau der Seiten, Klassenerstellung
+
+Burhan & Jannik - Login mit Springsecurity:
+
+- Logincontroller & Logintemplate
+
+Lorena - Docker & Travis CI:
+
+- Fertigstellung der Docker-Files
+- Kennenlernen mit Travis CI
+
+---
