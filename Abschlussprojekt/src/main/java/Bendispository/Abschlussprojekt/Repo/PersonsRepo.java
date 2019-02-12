@@ -1,6 +1,6 @@
-package Bendispository.Abschlussprojekt.repo;
+package Bendispository.Abschlussprojekt.Repo;
 
-import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.Model.Person;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

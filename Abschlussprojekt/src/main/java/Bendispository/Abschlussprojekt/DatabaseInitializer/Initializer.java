@@ -1,9 +1,9 @@
 package Bendispository.Abschlussprojekt.DatabaseInitializer;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.repo.ItemsList;
-import Bendispository.Abschlussprojekt.repo.PersonsList;
+import Bendispository.Abschlussprojekt.Model.Item;
+import Bendispository.Abschlussprojekt.Model.Person;
+import Bendispository.Abschlussprojekt.Repo.ItemRepo;
+import Bendispository.Abschlussprojekt.Repo.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;
