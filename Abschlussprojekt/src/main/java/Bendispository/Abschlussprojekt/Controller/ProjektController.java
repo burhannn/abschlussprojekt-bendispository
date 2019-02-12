@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt;
+package Bendispository.Abschlussprojekt.Controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.repo.ItemsList;
@@ -36,5 +36,18 @@ public class ProjektController {
         return "ItemProfile";
     }
 
+    @GetMapping(path = "/overview")
+    public String Overview(Model model){
+        return "overview";
+    }
 
+    @GetMapping(path = "/overview/registration")
+    public String Registration(Model model){
+        return "registration";
+    }
+
+    @GetMapping(path = "/overview/login")
+    public String login(Model model){
+        return "login";
+    }
 }
