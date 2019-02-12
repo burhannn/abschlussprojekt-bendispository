@@ -20,7 +20,7 @@ public class Item {
 
     private int deposit;
 
-    private int CostPerDay;
+    private int costPerDay;
 
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Person owner;
