@@ -40,7 +40,11 @@ public class ProjektController {
         model.addAttribute("itemProfile", item.get());
         return "ItemProfile";
     }
-    @GetMapping(path = "/registration")
+    @GetMapping(path="/registration")
+    public String SaveRegistration(Model model){
+        return "registration";
+    }
+    @PostMapping(path = "/registration")
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
@@ -51,5 +55,10 @@ public class ProjektController {
         List<Item> all = itemRepo.findAll();
         model.addAttribute("OverviewAllItems", all);
         return "OverviewAllItems";
+    }
+    @GetMapping(path= "/profile/{id}")
+    public String Overview(Model model, @PathVariable Long id){
+        personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
+        return "profile";
     }
 }

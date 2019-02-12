@@ -35,8 +35,8 @@ public class Initializer implements ServletContextInitializer {
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
-        addItem(dummy_1, dummyItem1, dummyItem2);
-        addItem(dummy_2, dummyItem3);
+        PersonAddItem(dummy_1, dummyItem1, dummyItem2);
+        PersonAddItem(dummy_2, dummyItem3);
 
         personRepo.saveAll(Arrays.asList(dummy_1, dummy_2));
 
@@ -63,7 +63,7 @@ public class Initializer implements ServletContextInitializer {
         return item;
     }
 
-    private void addItem(Person person, Item... items){
+    private void PersonAddItem(Person person, Item... items){
         List<Item> item = new ArrayList<Item>();
         item.addAll(Arrays.asList(items));
         person.setItems(item);
