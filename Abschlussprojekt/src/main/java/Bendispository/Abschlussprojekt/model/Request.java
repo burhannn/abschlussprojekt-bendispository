@@ -12,10 +12,12 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL,
-               fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST,
+               fetch = FetchType.EAGER)
     private Person requester;
 
+    @ManyToOne(cascade = CascadeType.PERSIST,
+               fetch = FetchType.EAGER)
     private Item requestedItem;
 
     private int duration;

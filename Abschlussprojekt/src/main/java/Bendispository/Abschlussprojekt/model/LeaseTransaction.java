@@ -12,16 +12,16 @@ public class LeaseTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL,
-               fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST,
+               fetch = FetchType.EAGER)
     private Person leaser;
 
-    @OneToOne(cascade = CascadeType.ALL,
-              fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.PERSIST,
+              fetch = FetchType.EAGER)
     private Person lender;
 
-    @OneToOne(cascade = CascadeType.ALL,
-              fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST,
+              fetch = FetchType.EAGER)
     private Item item;
 
     // number of days
