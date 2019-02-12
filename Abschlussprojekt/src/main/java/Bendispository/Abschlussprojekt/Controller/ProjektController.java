@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -33,7 +34,7 @@ public class ProjektController {
         return "AddItem";
     }
 
-    @GetMapping(path = "/Item/{id}")
+    @GetMapping(path = "/Item/{id}" )
     public String ItemProfile(Model model, @PathVariable Long id) {
         Optional <Item> item = itemRepo.findById(id);
         model.addAttribute("itemProfile", item.get());
@@ -47,7 +48,8 @@ public class ProjektController {
     }
     @GetMapping(path= "/")
     public String Overview(Model model){
-        model.addAttribute("OverviewAllItems", itemRepo);
+        List<Item> all = itemRepo.findAll();
+        model.addAttribute("OverviewAllItems", all);
         return "OverviewAllItems";
     }
 }

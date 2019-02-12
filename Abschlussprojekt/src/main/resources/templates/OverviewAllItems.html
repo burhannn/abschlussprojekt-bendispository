@@ -11,7 +11,7 @@
     <div>
         <div th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
     </div>
-    <a th:href="@{'/item' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
+    <a th:href="@{'/Item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
 </div>
 </body>
 </html>

@@ -66,6 +66,6 @@ public class Initializer implements ServletContextInitializer {
     private void addItem(Person person, Item... items){
         List<Item> item = new ArrayList<Item>();
         item.addAll(Arrays.asList(items));
-        //person.setItems(item);
+        person.setItems(item);
     }
 }
