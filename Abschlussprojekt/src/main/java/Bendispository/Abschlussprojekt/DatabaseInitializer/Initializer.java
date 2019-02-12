@@ -2,8 +2,8 @@ package Bendispository.Abschlussprojekt.DatabaseInitializer;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.repo.ItemsList;
-import Bendispository.Abschlussprojekt.repo.PersonsList;
+import Bendispository.Abschlussprojekt.repo.ItemRepo;
+import Bendispository.Abschlussprojekt.repo.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;
@@ -18,16 +18,16 @@ import java.util.List;
 public class Initializer implements ServletContextInitializer {
 
     @Autowired
-    ItemsList itemRepo;
+    ItemRepo itemRepo;
 
     @Autowired
-    PersonsList personRepo;
+    PersonsRepo personRepo;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
-        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy");
-        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy");
+        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy");
+        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy");
 
         Item dummyItem1 = mkItem(12, 300, "Ich bin ein stuhl", "stuhl", dummy_1);
         Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1);
@@ -42,11 +42,13 @@ public class Initializer implements ServletContextInitializer {
 
     }
 
-    private Person mkPerson(int account, String email, String username){
+    private Person mkPerson(int account, String email, String username, String fname, String lname){
         Person p = new Person();
         p.setAccount(account);
         p.setEmail(email);
         p.setUsername(username);
+        p.setFirstName(fname);
+        p.setLastName(lname);
         return p;
     }
 
@@ -55,9 +57,9 @@ public class Initializer implements ServletContextInitializer {
         item.setCostPerDay(cost);
         item.setDeposit(deposit);
         item.setDescription(desc);
-        item.setFree(true);
+        item.setAvailable(true);
         item.setName(name);
-        //item.setOwner(person);
+        item.setOwner(person);
         return item;
     }
 

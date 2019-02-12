@@ -16,13 +16,15 @@ public class Person {
 
     private String firstName;
 
+    private String username;
+
     private String email;
 
     private int account;
     
     private String city;
 
-    /*@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private List<Item> Items;*/
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<Item> Items;
 
 }
