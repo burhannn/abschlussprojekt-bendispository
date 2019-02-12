@@ -7,11 +7,12 @@ import javax.persistence.*;
 @Data
 @Entity
 public class LeaseTransaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @@OneToOne(cascade = CascadeType.ALL,
+    @OneToOne(cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
     private Person leaser;
 
@@ -23,11 +24,10 @@ public class LeaseTransaction {
               fetch = FetchType.LAZY)
     private Item item;
 
+    // number of days
     private int duration;
 
-    private boolean itemReturned = false;
-
-    private boolean depositReturned = false;
+    private StateOfItem stateOfItem;
 
     public LeaseTransaction addTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
