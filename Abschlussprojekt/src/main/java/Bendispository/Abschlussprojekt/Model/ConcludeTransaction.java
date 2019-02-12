@@ -15,6 +15,10 @@ public class ConcludeTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
+    private int lengthOfTimeframeViolation;
+
+    private boolean timeframeViolation;
+
     private boolean depositIsReturned;
 
     private boolean lenderAccepted;
