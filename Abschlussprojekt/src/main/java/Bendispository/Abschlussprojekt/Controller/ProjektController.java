@@ -28,7 +28,7 @@ public class ProjektController {
     }
 
     @PostMapping(path = "/addItem")
-    public String addItemsToDatabase(Model model,@PathVariable Long id, Item item){
+    public String addItemsToDatabase(Model model, Item item){
         model.addAttribute("newItem", item);
         itemRepo.save(item);
         return "AddItem";
