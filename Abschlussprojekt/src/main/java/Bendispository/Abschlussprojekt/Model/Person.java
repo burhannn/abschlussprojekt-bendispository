@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.model;
+package Bendispository.Abschlussprojekt.Model;
 
 import lombok.Data;
 
@@ -21,10 +21,9 @@ public class Person {
     private String email;
 
     private int account;
-    
-    private String city;
 
+    private String city;
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private List<Item> items;
+    private List<Item> Items;
 
 }

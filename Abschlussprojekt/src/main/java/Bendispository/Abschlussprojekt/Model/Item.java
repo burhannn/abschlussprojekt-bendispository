@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.model;
+package Bendispository.Abschlussprojekt.Model;
 
 import lombok.Data;
 
@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 @Data
 public class Item {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,6 +22,6 @@ public class Item {
 
     private int costPerDay;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Person owner;
 }
