@@ -2,9 +2,12 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.Model.Item;
 import Bendispository.Abschlussprojekt.Model.Person;
+import Bendispository.Abschlussprojekt.Model.Request;
 import Bendispository.Abschlussprojekt.Repo.ItemRepo;
 import Bendispository.Abschlussprojekt.Repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.Repo.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +25,8 @@ public class ProjektController {
     ItemRepo itemRepo;
     @Autowired
     PersonsRepo personRepo;
+    @Autowired
+    RequestRepo requestRepo;
 
     @GetMapping(path = "/addItem")
     public String addItemPage(){
@@ -62,6 +67,18 @@ public class ProjektController {
         Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profile";
+    }
+    @GetMapping(path="/profile/{id}/requests")
+    public String Requests(Model model, @PathVariable Long id){
+        Person requester = personRepo.findById(id).orElse(null);
+        List<Request> listMyRequests = requestRepo.findByRequester(requester);
+        model.addAttribute("myRequests", listMyRequests);
+        Person provider = personRepo.findById(id).orElse(null);
+        return "requests";
+    }
+    @GetMapping(path="/profile/{id}/rentedItems")
+    public String rentedItems(Model model, @PathVariable Long id){
+        return "rentedItems";
     }
 
     @GetMapping(path= "/profilub")

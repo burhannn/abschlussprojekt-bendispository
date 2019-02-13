@@ -22,21 +22,21 @@ public class LeaseController {
     public String listAllLeaseTransaction(Model model){
         List<LeaseTransaction> allLease = leaseTransactionRepo.findAll();
         model.addAttribute("allLease", allLease);
-        return "leaseTransaction";
+        return "requests";
     }
 
     @GetMapping(path = "/profile/leaseTransaction{id}")
     public String showTransactionById(Model model, @PathVariable Long id){
         Optional<LeaseTransaction> lease = leaseTransactionRepo.findById(id);
         model.addAttribute("lease", lease.get());
-        return "leaseTransaction";
+        return "requests";
     }
 
     @PostMapping(path = "/profile/leaseTransaction{id}")
     public String addChangesLeaseTransaction(Model model, @PathVariable Long id, LeaseTransaction leaseTransaction){
         model.addAttribute("changeLease", leaseTransaction);
         leaseTransactionRepo.save(leaseTransaction);
-        return "leaseTransaction";
+        return "requests";
     }
 
 }
