@@ -51,9 +51,9 @@ public class ProjektController {
         return "OverviewAllItems";
     }
 
-    @GetMapping("/login")
+    /*@GetMapping("/login")
 		public String login() {
     	return "login.html";
-    }
+    }*/
 
 }
