@@ -1,5 +1,7 @@
 package Bendispository.Abschlussprojekt.Service;
 
+import lombok.Data;
+
 @Data
 public class ProPayAccount {
 
