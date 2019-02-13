@@ -7,18 +7,15 @@
 <body>
     <h1>Anfrage</h1>
     <form method = "post">
-        <UL>
-            <!--<LI>Blabla: <input type ="text" name = "" th:value="${newRequest?.}"></input>
-            <LI>Blabla: <input type ="text" name = "" th:value="${newRequest?.}"></input>
-            <LI>Blabla: <input type ="text" name = "" th:value="${newRequest?.}"></input>-->
-            <LI>Blabla: <input type ="text" name = "duration" th:value="${Request?.duration}"></LI>
-
-            <button type="submit" class="button">Anfrage verschicken</button>
+        <UL th:if="${thisItem.available} == true" >
+            <LI>Duration:<input type ="text" name = "duration" placeholder="in days">
+                <button type="submit">Send request</button>
+            </LI>
         </UL>
+        <p th:if="${thisItem.available} == false">Item currently not available</p>
     </form>
-
     <form action="http://localhost:8080/">
-        <button type="submit">zurück zur übersicht</button>
+        <button type="submit">Back</button>
     </form>
 </body>
 </html>
