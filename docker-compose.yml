@@ -4,11 +4,11 @@ volumes:
   databasevol:
 
 services:
-  shareapp:
-    build: ./Abschlussprojekt
-    depends_on:
-      database:
-        condition: service_healthy
+  #shareapp:
+    #build: ./Abschlussprojekt
+    #depends_on:
+      #database:
+        #condition: service_healthy
 
   database:
     image: postgres
