@@ -9,6 +9,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -23,8 +24,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
@@ -53,6 +59,9 @@ public class ControllerTests {
 
     @MockBean
     RequestRepo requestRepo;
+
+    @Before
+
 
     @Test
     public void retrieve() throws Exception {
@@ -107,6 +116,22 @@ public class ControllerTests {
         dummyitem.setCostPerDay(10);
         dummyitem.setId(2L);
 
+        mvc.perform(get("/")).andExpect(model().attributeExists("OverviewAllItems"))
+                .andExpect(view().name("overviewAllItems"))
+                .andExpect(model().attribute("OverviewAllItems", hasItems(
+                        allOf(
+                                hasProperty("id", equalTo(dummyitem.getId())),
+                                hasProperty("vorname", equalTo("peter")),
+                                hasProperty("nachname", equalTo("Lauch")),
+                                hasProperty("kontaktdaten", equalTo("lauchi@gmx.de")),
+                                hasProperty("skills", arrayContainingInAnyOrder("PHP", "JAVA"))),
+                                hasProperty("jahreslohn", notNullValue()))));
+
+    }
+
+    @Test
+    public void checkRegistration() throws Exception {
+
     }
 
     @Test
@@ -120,11 +145,6 @@ public class ControllerTests {
     }
 
     @Test
-    public void checkRegistration() throws Exception {
-
-    }
-
-    @Test
     public void addItem() throws Exception {
 
     }
@@ -133,6 +153,22 @@ public class ControllerTests {
     public void ItemProfile() throws Exception {
 
     }
+
+    @Test
+    public void requestsFromUser() throws Exception{
+
+    }
+
+    @Test
+    public void rentedItemsFromUser() throws Exception{
+
+    }
+
+    @Test
+    public void makeRequestForItem() throws Exception {
+
+    }
+
 }
 
 
