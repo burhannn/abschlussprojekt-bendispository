@@ -16,6 +16,7 @@ public class Person {
 
     private String firstName;
 
+    @Column(nullable = false, unique = true)
     private String username;
 
     private String email;
