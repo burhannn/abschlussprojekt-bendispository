@@ -6,13 +6,22 @@
 <body>
 <title>Requests</title>
 <div>My Requests
-  <div th:each="request : ${listMyRequests}">
+  <div th:each="request : ${myRequests}">
     <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
     <div>
         <div th:text="|Status: ${request.status}|"></div>
     </div>
   </div>
 </div>
-<div>Requests to me</div>
+<div>Requests concerning my items
+    <div th:each="request : ${requestsMyItems}">
+    <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
+    <div>
+        <div th:text="|Status: ${request.status}|"></div>
+        <button type = "submit">reject</button>
+        <button type = "submit">accept</button>
+    </div>
+</div>
+</div>
 </body>
 </html>

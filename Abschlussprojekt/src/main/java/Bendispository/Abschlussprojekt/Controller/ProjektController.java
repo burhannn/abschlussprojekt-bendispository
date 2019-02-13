@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 import java.util.Optional;
 
+import static Bendispository.Abschlussprojekt.Model.RequestStatus.APPROVED;
+
 
 @Controller
 public class ProjektController {
@@ -69,14 +71,18 @@ public class ProjektController {
     }
     @GetMapping(path="/profile/{id}/requests")
     public String Requests(Model model, @PathVariable Long id){
-        Person requester = personRepo.findById(id).orElse(null);
-        List<Request> listMyRequests = requestRepo.findByRequester(requester);
+        Person me = personRepo.findById(id).orElse(null);
+        List<Request> listMyRequests = requestRepo.findByRequester(me);
         model.addAttribute("myRequests", listMyRequests);
-        Person provider = personRepo.findById(id).orElse(null);
+        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
+        model.addAttribute("requestsMyItems", RequestsMyItems);
         return "requests";
     }
     @GetMapping(path="/profile/{id}/rentedItems")
     public String rentedItems(Model model, @PathVariable Long id){
+        Person me = personRepo.findById(id).orElse(null);
+        List<Request> myRentedItems = requestRepo.findByRequesterAndStatus(me, APPROVED);
+        model.addAttribute("myRentedItems", myRentedItems);
         return "rentedItems";
     }
 

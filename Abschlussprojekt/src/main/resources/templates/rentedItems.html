@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
 </head>
 <body>
-<title>Rented Items</title>
-<div>List rented items</div>
-<button>return</button>
+<div>Rented Items by myself
+    <div th:each="request : ${myRentedItems}">
+        <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
+        <div>
+            <div th:text="|To be returned on: ${request.requestedItem.duration}|"></div>
+            <button type = "submit">return</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
