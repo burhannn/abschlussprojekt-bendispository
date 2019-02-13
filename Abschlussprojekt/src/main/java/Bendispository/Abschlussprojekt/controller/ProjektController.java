@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.Model.Item;
 import Bendispository.Abschlussprojekt.Model.Person;
@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Controller
 public class ProjektController {
+
     @Autowired
     ItemRepo itemRepo;
     @Autowired

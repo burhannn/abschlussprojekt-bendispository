@@ -17,9 +17,9 @@ public class RequestController {
     @Autowired
     RequestRepo requestRepo;
 
-    @GetMapping(path = "/item+{id}/request")
+    @GetMapping(path = "/item{id}/requestItem")
     public String request(Model model){
-        return "request";
+        return "formRequest";
     }
 
     @GetMapping(path = "/profile/request")
@@ -29,11 +29,12 @@ public class RequestController {
         return "request";
     }
 
-    @PostMapping(path = "/item+{id}/request")
+    @PostMapping(path = "/item{id}/requestItem")
     public String addRequestToLender(Model model, @PathVariable Long id, Request request){
-        model.addAttribute("newRequest", request);
+        model.addAttribute("Request", request);
+        model.addAttribute("requestedItem", request.getRequestedItem());
         requestRepo.save(request);
-        return "request";
+        return "formRequest";
     }
 }
 

@@ -13,9 +13,12 @@
     <LI th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></LI>
 </dl>
 <!-- Hier kommt Anfrage Rubrik mit Zeitraum etc. (Marc und Kim)-->
+
+<a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
+
 <form action="http://localhost:8080/">
-    <a href="/" >Zur&uumlck zur  &Uumlbersicht</a>
-    <button type="submit">Gegenstand Anfragen</button>
+    <button type="submit">Zurück zur Übersicht</button>
 </form>
+
 </body>
 </html>
