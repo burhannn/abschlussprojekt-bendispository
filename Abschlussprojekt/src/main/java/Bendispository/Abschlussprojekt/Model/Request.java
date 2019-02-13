@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.Model;
 
 import Bendispository.Abschlussprojekt.Repo.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.Repo.RequestRepo;
+import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,10 +42,16 @@ public class Request {
             Request request = requestList.get();
             lsTrans.addLeaseTransaction(request);
             setRequestOnApproved();
+            requestedItem.setAvailable(false);
+        }
+        else{
+            // Requester bekommt angezeigt, dass er nicht genügend Geld auf dem Konto hat
         }
     }
 
     public boolean checkConclude(){
+        ProPaySubscriber pps = new ProPaySubscriber();
+        if( pps.checkDeposit(requestedItem.getDeposit(), requester.getUsername())) return true;
         return false;
     }
     public void setRequestOnApproved(){
