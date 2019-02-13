@@ -72,12 +72,11 @@ public class ProjektController {
         Person requester = personRepo.findById(id).orElse(null);
         List<Request> listMyRequests = requestRepo.findByRequester(requester);
         model.addAttribute("myRequests", listMyRequests);
+        Person provider = personRepo.findById(id).orElse(null);
         return "requests";
     }
     @GetMapping(path="/profile/{id}/rentedItems")
     public String rentedItems(Model model, @PathVariable Long id){
-        Person provider = personRepo.findById(id).orElse(null);
-
         return "rentedItems";
     }
 

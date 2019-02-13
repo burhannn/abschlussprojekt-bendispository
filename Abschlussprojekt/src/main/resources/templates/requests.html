@@ -5,15 +5,14 @@
 </head>
 <body>
 <title>Requests</title>
-<div>Requests to me
-  <div th:each="item,iterStart : ${OverviewAllItems}">
-    <h1 th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
+<div>My Requests
+  <div th:each="request : ${listMyRequests}">
+    <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
     <div>
-        <div th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
+        <div th:text="|Status: ${request.status}|"></div>
     </div>
-    <a th:href="@{'/Item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
   </div>
 </div>
-<div>My Requests</div>
+<div>Requests to me</div>
 </body>
 </html>
