@@ -45,6 +45,7 @@ public class ProjektController {
     public String ItemProfile(Model model, @PathVariable Long id) {
         Optional <Item> item = itemRepo.findById(id);
         model.addAttribute("itemProfile", item.get());
+        model.addAttribute("itemOwner", item.get().getOwner());
         return "itemProfile";
     }
     @GetMapping(path="/registration")

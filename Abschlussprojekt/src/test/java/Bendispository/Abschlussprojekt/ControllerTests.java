@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,19 +83,29 @@ public class ControllerTests {
 
         Mockito.when(personsRepo.findById(1L))
                 .thenReturn(Optional.ofNullable(dummy1));
+        Mockito.when(itemRepo.findAll())
+                .thenReturn(Arrays.asList(dummyitem));
         Mockito.when(itemRepo.findById(2L))
                 .thenReturn(Optional.ofNullable(dummyitem));
 
         mvc.perform(get("/")).andExpect(status().isOk());
         mvc.perform(get("/profilub")).andExpect(status().isOk());
         mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
+        mvc.perform(get("/Item/{id}", 2L)).andExpect(status().isOk());
         mvc.perform(get("/addItem")).andExpect(status().isOk());
-        //mvc.perform(get("/Item/{id}", 2L)).andExpect(status().isOk());
         mvc.perform(get("/registration")).andExpect(status().isOk());
     }
 
     @Test
     public void Overview() throws Exception {
+
+        Item dummyitem = new Item();
+        dummyitem.setName("stuhl");
+        dummyitem.setAvailable(true);
+        dummyitem.setDeposit(20);
+        dummyitem.setDescription("item");
+        dummyitem.setCostPerDay(10);
+        dummyitem.setId(2L);
 
     }
 
