@@ -17,9 +17,14 @@
     <div th:each="request : ${requestsMyItems}">
     <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
     <div>
-        <div th:text="|Status: ${request.status} Requested by: ${request.requester.username}|"></div>
-        <button type = "submit">reject</button>
-        <button type = "submit">accept</button>
+        <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
+        <div th:text="|Status: ${request.status}|"></div>
+        <form method="post">
+            <input type="Radio" name="requestMyItems" value="-1">reject
+            <input type="Radio" name="requestMyItems" th:value="${request.id}">accept
+            <input type="Radio" name="requestMyItems" value="-2">
+            <button type = "submit">submit</button>
+        </form>
     </div>
 </div>
 </div>

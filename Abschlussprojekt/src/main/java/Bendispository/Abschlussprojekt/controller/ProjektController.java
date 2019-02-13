@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.controller;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -12,11 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
 
 
 @Controller
@@ -71,11 +74,26 @@ public class ProjektController {
     }
     @GetMapping(path="/profile/{id}/requests")
     public String Requests(Model model, @PathVariable Long id){
-        Person me = personRepo.findById(id).orElse(null);
-        List<Request> listMyRequests = requestRepo.findByRequester(me);
-        model.addAttribute("myRequests", listMyRequests);
-        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
-        model.addAttribute("requestsMyItems", RequestsMyItems);
+        setRequests(model,id);
+        return "requests";
+    }
+    @PostMapping(path="/profile/{id}/requests")
+    public String AcceptDeclineRequests(Model model,
+                                        @PathVariable Long id,
+                                        @RequestParam("requestMyItems") String[] requestMyItems){
+        if(requestMyItems != null){
+            for(String val : requestMyItems){
+                Request request = requestRepo.findById(Long.valueOf(id)).orElse(null);
+                if(request != null) {
+                    if (Integer.parseInt(val) >= 0) {
+                        request.setStatus(RequestStatus.APPROVED);
+                    } else if (val == "-1") {
+                        request.setStatus(RequestStatus.DENIED);
+                    }
+                }
+            }
+        }
+        setRequests(model,id);
         return "requests";
     }
     @GetMapping(path="/profile/{id}/rentedItems")
@@ -91,5 +109,12 @@ public class ProjektController {
         List<Person> all = personRepo.findAll();
         model.addAttribute("personen", all);
         return "profileDetails";
+    }
+    private void setRequests(Model model, Long id) {
+        Person me = personRepo.findById(id).orElse(null);
+        List<Request> listMyRequests = requestRepo.findByRequester(me);
+        model.addAttribute("myRequests", listMyRequests);
+        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
+        model.addAttribute("requestsMyItems", RequestsMyItems);
     }
 }
