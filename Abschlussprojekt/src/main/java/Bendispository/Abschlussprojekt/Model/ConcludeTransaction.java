@@ -19,7 +19,26 @@ public class ConcludeTransaction {
 
     private boolean timeframeViolation;
 
+    private boolean depositIsBlocked;
+
     private boolean depositIsReturned;
 
     private boolean lenderAccepted;
+
+    private ConflictTransaction cfTransaction;
+
+    public void addConcludeTransaction(){
+        ConcludeTransaction ccTrans = new ConcludeTransaction();
+        checkDepositIsBlocked();
+    }
+
+    public void checkDepositIsBlocked(){
+
+    }
+
+    public void checkTransactionIsOk(){
+        if(lenderAccepted == false){
+            cfTransaction.addConflictTransaction();
+        }
+    }
 }
