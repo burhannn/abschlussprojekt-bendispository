@@ -4,6 +4,7 @@
 </head>
 <body>
 <div>My Profile</div>
+
 <a th:href = "@{'/profile/' + ${person.id} + '/requests'}">Requests</a>
 <a th:href = "@{'/profile/' + ${person.id} + '/rentedItems'}">Rented Items</a>
 <div>
