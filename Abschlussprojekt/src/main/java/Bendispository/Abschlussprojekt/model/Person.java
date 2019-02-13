@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
 import lombok.Data;
 

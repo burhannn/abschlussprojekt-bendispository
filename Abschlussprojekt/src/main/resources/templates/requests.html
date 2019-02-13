@@ -17,7 +17,7 @@
     <div th:each="request : ${requestsMyItems}">
     <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
     <div>
-        <div th:text="|Status: ${request.status}|"></div>
+        <div th:text="|Status: ${request.status} Requested by: ${request.requester.username}|"></div>
         <button type = "submit">reject</button>
         <button type = "submit">accept</button>
     </div>

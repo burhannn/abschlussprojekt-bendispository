@@ -1,39 +1,48 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.Model.Request;
-import Bendispository.Abschlussprojekt.Repo.RequestRepo;
+import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RequestController {
     
     @Autowired
     RequestRepo requestRepo;
+    @Autowired
+    ItemRepo itemRepo;
 
     @GetMapping(path = "/item{id}/requestItem")
-    public String request(Model model){
+    public String request(Model model, @PathVariable Long id){
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         return "formRequest";
     }
 
-    @GetMapping(path = "/profile/request")
-    public String listAllRequests(Model model){
-        List<Request> allRequests = requestRepo.findAll();
-        model.addAttribute("allRequests", allRequests);
-        return "request";
-    }
-
     @PostMapping(path = "/item{id}/requestItem")
-    public String addRequestToLender(Model model, @PathVariable Long id, Request request){
-        model.addAttribute("Request", request);
-        model.addAttribute("requestedItem", request.getRequestedItem());
+    public String addRequestToLender(@ModelAttribute("request") Request request,
+                                     Model model,
+                                     @PathVariable Long id,
+                                     int duration
+                                     ){
+        Item item = itemRepo.findById(id).orElse(null);
+        /*Person me = personRepo.findById(MEINE_ID).orELse(null);
+        request.setRequester(me);*/
+        request.setRequestedItem(item);
+        request.setDuration(duration);
+        item.setAvailable(false);
         requestRepo.save(request);
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         return "formRequest";
     }
 }

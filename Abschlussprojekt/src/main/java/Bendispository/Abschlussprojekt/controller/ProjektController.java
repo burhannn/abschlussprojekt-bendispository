@@ -1,13 +1,12 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.Model.Item;
-import Bendispository.Abschlussprojekt.Model.Person;
-import Bendispository.Abschlussprojekt.Model.Request;
-import Bendispository.Abschlussprojekt.Repo.ItemRepo;
-import Bendispository.Abschlussprojekt.Repo.PersonsRepo;
-import Bendispository.Abschlussprojekt.Repo.RequestRepo;
+import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 import java.util.Optional;
 
-import static Bendispository.Abschlussprojekt.Model.RequestStatus.APPROVED;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 
 
 @Controller
@@ -32,21 +31,21 @@ public class ProjektController {
 
     @GetMapping(path = "/addItem")
     public String addItemPage(){
-        return "AddItem";
+        return "addItem";
     }
 
     @PostMapping(path = "/addItem")
     public String addItemsToDatabase(Model model, Item item){
         model.addAttribute("newItem", item);
         itemRepo.save(item);
-        return "AddItem";
+        return "addItem";
     }
 
     @GetMapping(path = "/Item/{id}" )
     public String ItemProfile(Model model, @PathVariable Long id) {
         Optional <Item> item = itemRepo.findById(id);
         model.addAttribute("itemProfile", item.get());
-        return "ItemProfile";
+        return "itemProfile";
     }
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
@@ -62,7 +61,7 @@ public class ProjektController {
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
         model.addAttribute("OverviewAllItems", all);
-        return "OverviewAllItems";
+        return "overviewAllItems";
     }
     @GetMapping(path= "/profile/{id}")
     public String Overview(Model model, @PathVariable Long id){

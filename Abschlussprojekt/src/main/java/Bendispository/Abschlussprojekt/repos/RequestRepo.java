@@ -1,10 +1,8 @@
-package Bendispository.Abschlussprojekt.Repo;
+package Bendispository.Abschlussprojekt.repos;
 
-import Bendispository.Abschlussprojekt.Model.Person;
-import Bendispository.Abschlussprojekt.Model.Request;
-import Bendispository.Abschlussprojekt.Model.RequestStatus;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.Query;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

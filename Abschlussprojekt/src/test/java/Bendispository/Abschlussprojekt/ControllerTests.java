@@ -1,8 +1,14 @@
 package Bendispository.Abschlussprojekt;
 
-import Bendispository.Abschlussprojekt.Model.Item;
-import Bendispository.Abschlussprojekt.Model.Person;
-import Bendispository.Abschlussprojekt.Repo.*;
+import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -13,7 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
