@@ -32,6 +32,8 @@ public class LeaseTransaction {
     // number of days
     private int duration;
 
+    private int depositId;
+
     private boolean itemIsReturned = false;
 
     private boolean itemIsReturnedOnTime = false;
