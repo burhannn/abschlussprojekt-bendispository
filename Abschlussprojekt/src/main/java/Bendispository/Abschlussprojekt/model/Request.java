@@ -51,7 +51,10 @@ public class Request {
 
     public boolean checkConclude(){
         ProPaySubscriber pps = new ProPaySubscriber();
-        if( pps.checkDeposit(requestedItem.getDeposit(), requester.getUsername())) return true;
+        if( pps.checkDeposit(requestedItem.getDeposit(), requester.getUsername())) {
+            //deposit blocken
+            return true;
+        }
         return false;
     }
     public void setRequestOnApproved(){
