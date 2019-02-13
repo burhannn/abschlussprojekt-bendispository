@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.Model.LeaseTransaction;
 import Bendispository.Abschlussprojekt.Repo.LeaseTransactionRepo;
@@ -25,14 +25,14 @@ public class LeaseController {
         return "requests";
     }
 
-    @GetMapping(path = "/profile/leaseTransaction+{id}")
+    @GetMapping(path = "/profile/leaseTransaction{id}")
     public String showTransactionById(Model model, @PathVariable Long id){
         Optional<LeaseTransaction> lease = leaseTransactionRepo.findById(id);
         model.addAttribute("lease", lease.get());
         return "requests";
     }
 
-    @PostMapping(path = "/profile/leaseTransaction+{id}")
+    @PostMapping(path = "/profile/leaseTransaction{id}")
     public String addChangesLeaseTransaction(Model model, @PathVariable Long id, LeaseTransaction leaseTransaction){
         model.addAttribute("changeLease", leaseTransaction);
         leaseTransactionRepo.save(leaseTransaction);
