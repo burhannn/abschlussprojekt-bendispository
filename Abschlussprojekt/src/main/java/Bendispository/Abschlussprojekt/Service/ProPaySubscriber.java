@@ -70,4 +70,23 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
+    public String transferMoney(String leaserName, String lenderName, int amount){
+        executeTransfer(leaserName, lenderName, amount);
+        return "";
+    }
+
+    private void executeTransfer(String leaserName, String lenderName, int amount) {
+        URI uri = UriComponentsBuilder
+                .newInstance()
+                .scheme("https")
+                .host("propra-propay.herokuapp.com")
+                .pathSegment("account", leaserName, "transfer", lenderName)
+                .query("amount={amount}")
+                .build()
+                .toUri();
+
+        // Wie response code checken?????
+        // abhängig davon weitermachen...
+    }
+
 }
