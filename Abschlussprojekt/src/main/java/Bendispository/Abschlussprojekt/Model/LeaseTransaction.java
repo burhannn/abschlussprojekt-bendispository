@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.Model;
 
 import Bendispository.Abschlussprojekt.Repo.RequestRepo;
+import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -35,8 +36,6 @@ public class LeaseTransaction {
 
     private boolean itemIsReturnedOnTime = false;
 
-    private boolean itemIsIntact = false;
-
     private ConcludeTransaction ccTrans;
 
     public void addLeaseTransaction(Request request){
@@ -48,4 +47,20 @@ public class LeaseTransaction {
         ccTrans.addConcludeTransaction();
     }
 
+    public void itemReturnedToLender(){
+        itemIsReturned = true;
+        isReturnedOnTime();
+        //zurückbuchung deposit
+        payRent();
+    }
+
+    public void isReturnedOnTime(){
+        // Berechnung Zeitspanne
+    }
+
+    public void payRent(){
+        ProPaySubscriber pps = new ProPaySubscriber();
+        int amount = duration * item.getCostPerDay();
+        pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+    }
 }
