@@ -27,6 +27,8 @@ public class LeaseTransaction {
                fetch = FetchType.EAGER)
     private Item item;
 
+    private Long requestId;
+
     // number of days
     private int duration;
 

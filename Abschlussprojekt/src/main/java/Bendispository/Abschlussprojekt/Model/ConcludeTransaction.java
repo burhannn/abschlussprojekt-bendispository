@@ -26,6 +26,12 @@ public class ConcludeTransaction {
 
     private boolean lenderAccepted;
 
+
+
+    public void conclude (LeaseTransaction leaseTransaction){
+        this.timeframeViolation = checkTimeFrameViolation(leaseTransaction);
+    }
+
     private ConflictTransaction cfTransaction;
 
     public void addConcludeTransaction(){
@@ -38,8 +44,7 @@ public class ConcludeTransaction {
     }
 
     public void checkTransactionIsOk(){
-        if(lenderAccepted == false){
+        if(lenderAccepted == false)
             cfTransaction.addConflictTransaction();
-        }
     }
 }

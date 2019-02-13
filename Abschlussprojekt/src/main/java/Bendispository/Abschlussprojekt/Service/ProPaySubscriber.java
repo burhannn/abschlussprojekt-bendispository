@@ -89,4 +89,19 @@ public class ProPaySubscriber {
         // abhängig davon weitermachen...
     }
 
+    public void chargeAccount(String username, int amount){
+        final Mono<ProPayAccount> mono = WebClient
+                .create()
+                .get()
+                .uri(builder ->
+                        builder.scheme("https")
+                                .host("propra-propay.herokuapp.com")
+                                .pathSegment("account", username)
+                                .query("amount={amount}")
+                                .build())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .retrieve()
+                .bodyToMono(ProPayAccount.class);
+        mono.block();
+    }
 }
