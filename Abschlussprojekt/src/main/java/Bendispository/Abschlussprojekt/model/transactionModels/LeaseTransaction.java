@@ -3,9 +3,11 @@ package Bendispository.Abschlussprojekt.model.transactionModels;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @Entity
@@ -36,13 +38,15 @@ public class LeaseTransaction {
 
     private boolean itemIsIntact = false;
 
-    public LeaseTransaction addTransaction(Request request){
+    private ConcludeTransaction ccTrans;
+
+    public void addLeaseTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
         lsTrans.setItem(request.getRequestedItem());
         lsTrans.setLeaser(request.getRequester());
         lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
-        return lsTrans;
+        ccTrans.addConcludeTransaction();
     }
 
 }
