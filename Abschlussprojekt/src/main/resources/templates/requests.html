@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<title>Requests</title>
+<div>Requests to me
+  <div th:each="item,iterStart : ${OverviewAllItems}">
+    <h1 th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
+    <div>
+        <div th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
+    </div>
+    <a th:href="@{'/Item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
+  </div>
+</div>
+<div>My Requests</div>
+</body>
+</html>
