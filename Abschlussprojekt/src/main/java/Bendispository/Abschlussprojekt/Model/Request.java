@@ -1,9 +1,8 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Calendar;
 
 @Data
 @Entity

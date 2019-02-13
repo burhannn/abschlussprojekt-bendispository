@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model.transactionModels;
 
 import lombok.Data;
 
@@ -9,15 +9,17 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class PaymentTransaction {
+public class ConcludeTransaction {
 
-    // relies on ProPay
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    private boolean isPayed;
+    private int lengthOfTimeframeViolation;
 
-    private boolean depositIsBlocked;
+    private boolean timeframeViolation;
 
+    private boolean depositIsReturned;
+
+    private boolean lenderAccepted;
 }

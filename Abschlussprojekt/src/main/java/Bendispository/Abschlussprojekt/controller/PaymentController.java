@@ -1,6 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.Repo.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

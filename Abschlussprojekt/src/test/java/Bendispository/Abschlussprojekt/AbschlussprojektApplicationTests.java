@@ -1,7 +1,7 @@
 package Bendispository.Abschlussprojekt;
 
-import Bendispository.Abschlussprojekt.Repo.ItemRepo;
-import Bendispository.Abschlussprojekt.Repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
