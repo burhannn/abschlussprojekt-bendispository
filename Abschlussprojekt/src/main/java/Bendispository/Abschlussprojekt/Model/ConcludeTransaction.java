@@ -22,4 +22,14 @@ public class ConcludeTransaction {
     private boolean depositIsReturned;
 
     private boolean lenderAccepted;
+
+
+    public void conclude (LeaseTransaction leaseTransaction){
+        this.timeframeViolation = checkTimeFrameViolation(leaseTransaction);
+    }
+
+    private boolean checkTimeFrameViolation(LeaseTransaction leaseTransaction) {
+
+        return false;
+    }
 }
