@@ -31,6 +31,10 @@ public class ConcludeTransaction {
         this.timeframeViolation = checkTimeFrameViolation(leaseTransaction);
     }
 
+    private boolean checkTimeFrameViolation(LeaseTransaction leaseTransaction) {
+        return false;
+    }
+
     private ConflictTransaction cfTransaction;
 
     public void addConcludeTransaction(){
