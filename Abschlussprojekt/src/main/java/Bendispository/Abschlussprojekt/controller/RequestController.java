@@ -22,13 +22,6 @@ public class RequestController {
         return "formRequest";
     }
 
-    @GetMapping(path = "/profile/request")
-    public String listAllRequests(Model model){
-        List<Request> allRequests = requestRepo.findAll();
-        model.addAttribute("allRequests", allRequests);
-        return "request";
-    }
-
     @PostMapping(path = "/item{id}/requestItem")
     public String addRequestToLender(Model model, @PathVariable Long id, Request request){
         model.addAttribute("Request", request);
