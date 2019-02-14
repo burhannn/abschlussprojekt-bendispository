@@ -57,6 +57,22 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
+    private <T> T releaseReservationAndPunishUser(String username, int reservationId, Class<T> type) {
+        final Mono<T> mono = WebClient
+                .create()
+                .get()
+                .uri(builder ->
+                        builder.scheme("https")
+                                .host("propra-propay.herokuapp.com")
+                                .pathSegment("reservation", "punish", username)
+                                .query("reservationId={reservationId}")
+                                .build())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .retrieve()
+                .bodyToMono(type);
+        return mono.block();
+    }
+
     public boolean checkDeposit(int requiredDeposit, String username){
         ProPayAccount account = getAccount(username, ProPayAccount.class);
         if(account.getAmount() >= requiredDeposit)
