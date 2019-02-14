@@ -7,7 +7,7 @@
     <h3 th:text= ${loggedInPerson.id}></h3>
     </div>
     <div class="my_actions_profile">
-        <a href="@{'/profile/' + ${person.id}}">My Profile</a> <!-- /1 bis login als placeholder -->
+        <a href="@{'/profile/' + ${loggedInPerson.id}}">My Profile</a> <!-- /1 bis login als placeholder -->
         <a href="/addItem">Add Item</a>
         <a href="/profilub">Overview Users</a>
     </div>
