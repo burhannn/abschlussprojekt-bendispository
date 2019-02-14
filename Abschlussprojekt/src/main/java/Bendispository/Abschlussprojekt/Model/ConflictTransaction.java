@@ -1,6 +1,5 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
-import Bendispository.Abschlussprojekt.Repo.ConflictTransactionRepo;
 import lombok.Data;
 
 import javax.persistence.Entity;

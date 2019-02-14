@@ -1,8 +1,7 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
-import Bendispository.Abschlussprojekt.Repo.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.Repo.RequestRepo;
-import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.repo.RequestRepo;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 

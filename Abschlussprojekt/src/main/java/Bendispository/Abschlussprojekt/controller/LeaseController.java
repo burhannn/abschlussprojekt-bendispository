@@ -1,7 +1,7 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.Model.LeaseTransaction;
-import Bendispository.Abschlussprojekt.Repo.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.model.LeaseTransaction;
+import Bendispository.Abschlussprojekt.repo.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

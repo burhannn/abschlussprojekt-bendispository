@@ -1,8 +1,6 @@
-package Bendispository.Abschlussprojekt.Repo;
+package Bendispository.Abschlussprojekt.repo;
 
-import Bendispository.Abschlussprojekt.Model.Item;
-import Bendispository.Abschlussprojekt.Model.LeaseTransaction;
-import Bendispository.Abschlussprojekt.Model.Person;
+import Bendispository.Abschlussprojekt.model.LeaseTransaction;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

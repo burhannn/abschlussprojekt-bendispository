@@ -1,6 +1,6 @@
-package Bendispository.Abschlussprojekt.Repo;
+package Bendispository.Abschlussprojekt.repo;
 
-import Bendispository.Abschlussprojekt.Model.ConflictTransaction;
+import Bendispository.Abschlussprojekt.model.ConflictTransaction;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

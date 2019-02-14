@@ -1,6 +1,5 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
-import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
 import lombok.Data;
 
 import javax.persistence.Entity;
