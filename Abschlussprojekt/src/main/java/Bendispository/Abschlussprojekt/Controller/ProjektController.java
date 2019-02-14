@@ -39,12 +39,18 @@ public class ProjektController {
         model.addAttribute("itemProfile", item.get());
         return "ItemProfile";
     }
-    @GetMapping(path = "/registration")
+    /*@GetMapping(path = "/registration")
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
         return "registration";
+    }*/
+    @GetMapping("/registration")
+    public String registration() {
+
+        return "registration.html";
     }
+
     @GetMapping(path= "/")
     public String Overview(Model model){
         model.addAttribute("OverviewAllItems", itemRepo);
@@ -53,6 +59,7 @@ public class ProjektController {
 
     @GetMapping("/login")
 		public String login() {
+
     	return "login.html";
     }
 
