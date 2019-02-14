@@ -41,7 +41,8 @@ public class LeaseTransaction {
 
     //private boolean itemIsReturnedOnTime = false;
 
-    private LocalDate dayOfRent;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
@@ -53,7 +54,7 @@ public class LeaseTransaction {
         lsTrans.setLeaser(request.getRequester());
         lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
-        lsTrans.dayOfRent = LocalDate.now();
+        lsTrans.startDate = request.getStartDate();
         concludeTransaction.addConcludeTransaction();
     }
 
@@ -69,8 +70,8 @@ public class LeaseTransaction {
     }
 
     public void isReturnedOnTime(){
-        if(LocalDate.now().isAfter(dayOfRent.plusDays(duration))){
-            Period period = Period.between(LocalDate.now(), dayOfRent.plusDays(duration));
+        if(LocalDate.now().isAfter(endDate)){
+            Period period = Period.between(LocalDate.now(), endDate);
             int timeViolation = period.getDays();
             concludeTransaction.setTimeframeViolation(true);
             concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
