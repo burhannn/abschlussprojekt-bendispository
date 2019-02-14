@@ -1,7 +1,7 @@
 package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.repo.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -34,6 +34,22 @@ public class ProPaySubscriber {
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("reservation", "reserve", lenderName, leaserName)
                                 .query("amount={deposit}")
+                                .build())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .retrieve()
+                .bodyToMono(type);
+        return mono.block();
+    }
+
+    private <T> T releaseReservation(String username, int reservationId, Class<T> type) {
+        final Mono<T> mono = WebClient
+                .create()
+                .get()
+                .uri(builder ->
+                        builder.scheme("https")
+                                .host("propra-propay.herokuapp.com")
+                                .pathSegment("reservation", "release", username)
+                                .query("reservationId={reservationId}")
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()

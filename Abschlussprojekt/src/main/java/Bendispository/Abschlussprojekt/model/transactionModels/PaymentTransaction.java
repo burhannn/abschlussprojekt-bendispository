@@ -38,7 +38,6 @@ public class PaymentTransaction {
         }
         cfTrans.addConflictTransaction();
     }
-
     public void isTransferIsOk(){
 
     }

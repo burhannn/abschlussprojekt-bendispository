@@ -43,7 +43,9 @@ public class LeaseTransaction {
 
     private LocalDate dayOfRent;
 
-    private ConcludeTransaction ccTrans;
+    @OneToOne(cascade = CascadeType.PERSIST,
+              fetch = FetchType.EAGER)
+    private ConcludeTransaction concludeTransaction;
 
     public void addLeaseTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
@@ -52,7 +54,7 @@ public class LeaseTransaction {
         lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
         lsTrans.dayOfRent = LocalDate.now();
-        ccTrans.addConcludeTransaction();
+        concludeTransaction.addConcludeTransaction();
     }
 
     public void itemReturnedToLender(){
@@ -70,8 +72,8 @@ public class LeaseTransaction {
         if(LocalDate.now().isAfter(dayOfRent.plusDays(duration))){
             Period period = Period.between(LocalDate.now(), dayOfRent.plusDays(duration));
             int timeViolation = period.getDays();
-            ccTrans.setTimeframeViolation(true);
-            ccTrans.setLengthOfTimeframeViolation(timeViolation);
+            concludeTransaction.setTimeframeViolation(true);
+            concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
 
             int amount = item.getCostPerDay() * timeViolation;
             PaymentTransaction pay = new PaymentTransaction();

@@ -24,6 +24,7 @@ public class ConflictTransaction {
   private int validationTime;
 
   public void addConflictTransaction() {
-      ConflictTransaction cfTrans = new ConflictTransaction();
+      ConflictTransaction conflictTransaction = new ConflictTransaction();
   }
+
 }

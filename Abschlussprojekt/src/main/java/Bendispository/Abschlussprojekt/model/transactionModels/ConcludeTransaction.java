@@ -4,10 +4,8 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.model.Item;
 import lombok.Data;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -27,6 +25,8 @@ public class ConcludeTransaction {
 
     private boolean lenderAccepted;
 
+    @OneToOne(cascade = CascadeType.PERSIST,
+              fetch = FetchType.EAGER)
     private ConflictTransaction cfTransaction;
 
     public void addConcludeTransaction(){
