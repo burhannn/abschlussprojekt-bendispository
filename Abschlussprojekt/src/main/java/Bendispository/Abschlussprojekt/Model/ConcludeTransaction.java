@@ -26,17 +26,15 @@ public class ConcludeTransaction {
 
     private boolean lenderAccepted;
 
-
-
-    public void conclude (LeaseTransaction leaseTransaction){
-        this.timeframeViolation = checkTimeFrameViolation(leaseTransaction);
-    }
-
-    private boolean checkTimeFrameViolation(LeaseTransaction leaseTransaction) {
-        return false;
-    }
-
     private ConflictTransaction cfTransaction;
+
+    public void overTimeFee(Person leaser, Person lender, Item item) {
+        if (timeframeViolation) {
+            ProPaySubscriber pps = new ProPaySubscriber();
+            int amount = item.getCostPerDay() * lengthOfTimeframeViolation;
+            pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+        }
+    }
 
     public void addConcludeTransaction(){
         ConcludeTransaction ccTrans = new ConcludeTransaction();

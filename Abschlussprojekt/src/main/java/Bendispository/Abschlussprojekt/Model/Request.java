@@ -31,6 +31,8 @@ public class Request {
 
     private int duration;
 
+    private int validationTime; //Zeit, die der Lender hat, um den Request zu bearbeiten
+
     // value = "denied", "approved", "pending"
     private RequestStatus status = RequestStatus.PENDING;
 
@@ -42,10 +44,11 @@ public class Request {
             Request request = requestList.get();
             lsTrans.addLeaseTransaction(request);
             setRequestOnApproved();
-            requestedItem.setAvailable(false);
+            requestedItem.setAvailable(false); //nur für duration auf false setzen
         }
         else{
             // Requester bekommt angezeigt, dass er nicht genügend Geld auf dem Konto hat
+            setStatus(RequestStatus.DENIED);
         }
     }
 

@@ -5,6 +5,8 @@ import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Optional;
 
 @Data
@@ -36,16 +38,19 @@ public class LeaseTransaction {
 
     private boolean itemIsReturned = false;
 
-    private boolean itemIsReturnedOnTime = false;
+    //private boolean itemIsReturnedOnTime = false;
+
+    private LocalDate dayOfRent;
 
     private ConcludeTransaction ccTrans;
 
     public void addLeaseTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
-        lsTrans.setItem(request.getRequestedItem());
+        lsTrans.setItem(request.getRequestedItem();
         lsTrans.setLeaser(request.getRequester());
         lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
+        lsTrans.dayOfRent = LocalDate.now();
         ccTrans.addConcludeTransaction();
     }
 
@@ -54,10 +59,16 @@ public class LeaseTransaction {
         isReturnedOnTime();
         //zurückbuchung deposit
         payRent();
+        ccTrans.overTimeFee(leaser, lender, item);
     }
 
     public void isReturnedOnTime(){
-        // Berechnung Zeitspanne
+        if(LocalDate.now().isAfter(dayOfRent.plusDays(duration))){
+            Period period = Period.between(LocalDate.now(), dayOfRent.plusDays(duration));
+            int timeViolation = period.getDays();
+            ccTrans.isTimeframeViolation(true);
+            ccTrans.setLengthOfTimeframeViolation(timeViolation);
+        }
     }
 
     public void payRent(){
