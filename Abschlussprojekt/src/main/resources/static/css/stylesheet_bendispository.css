@@ -1,0 +1,44 @@
+button,a {
+    background-color: crimson;
+    color: white;
+    padding: 6px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover, a:hover {
+    background-color: red;
+    color: white;
+    border: 2px solid white;
+}
+.projekt_container{
+    background-color: aliceblue;
+    border: 1px solid midnightblue;
+    display: inline-block;
+    border-radius: 3px;
+    margin: 3%;
+    padding: 3%;
+}
+.header_container{
+    text-align: center;
+    margin: 4%;
+}
+.header_overview{
+    font-size: 20px;
+    border-bottom: 0.5px solid darkgray;
+    margin: 9% 0% 0% 0%;
+    padding: 2%;
+    text-align: center;
+}
+.my_actions_profile{
+    float: right;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+body{
+    font-family: Cambria !important;
+}

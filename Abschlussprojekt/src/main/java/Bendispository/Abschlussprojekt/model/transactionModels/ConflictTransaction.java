@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model.transactionModels;
 
 import lombok.Data;
 
@@ -9,17 +9,17 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class ConcludeTransaction {
+public class ConflictTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    private int lengthOfTimeframeViolation;
-
-    private boolean timeframeViolation;
-
-    private boolean depositIsReturned;
-
     private boolean lenderAccepted;
+
+    private boolean leaserAccepted;
+
+    private int damageCosts;
+
+    private int validationTime;
 }

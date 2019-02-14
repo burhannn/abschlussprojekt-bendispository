@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Anfrage</h1>
+    <form method = "post">
+        <UL th:if="${thisItem.available} == true" >
+            <LI>Duration:<input type ="text" name = "duration" placeholder="in days">
+                <button type="submit">Send request</button>
+            </LI>
+        </UL>
+        <p th:if="${thisItem.available} == false">Item currently not available</p>
+    </form>
+    <form action="http://localhost:8080/">
+        <button type="submit">Back</button>
+    </form>
+</body>
+</html>

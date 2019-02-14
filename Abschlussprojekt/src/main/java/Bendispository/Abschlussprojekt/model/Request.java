@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
 import lombok.Data;
 
@@ -23,6 +23,5 @@ public class Request {
     private int duration;
 
     // value = "denied", "accepted", "pending"
-    private RequestStatus status = RequestStatus.PENDING;
-
+    private RequestStatus status;
 }

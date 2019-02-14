@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model.transactionModels;
 
 import lombok.Data;
 
@@ -9,17 +9,15 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class ConflictTransaction {
+public class PaymentTransaction {
 
+    // relies on ProPay
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    private boolean lenderAccepted;
+    private boolean isPayed;
 
-    private boolean leaserAccepted;
+    private boolean depositIsBlocked;
 
-    private int damageCosts;
-
-    private int validationTime;
 }
