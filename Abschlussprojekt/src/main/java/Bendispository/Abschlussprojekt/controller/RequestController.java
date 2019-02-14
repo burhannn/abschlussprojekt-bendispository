@@ -36,8 +36,6 @@ public class RequestController {
                                      int duration
                                      ){
         Item item = itemRepo.findById(id).orElse(null);
-        /*Person me = personRepo.findById(MEINE_ID).orELse(null);
-        request.setRequester(me);*/
         request.setRequestedItem(item);
         request.setDuration(duration);
         item.setAvailable(false);

@@ -29,6 +29,7 @@ public class ProjektController {
     @Autowired
     RequestRepo requestRepo;
 
+
     @GetMapping(path = "/addItem")
     public String addItemPage(){
         return "addItem";
@@ -48,37 +49,45 @@ public class ProjektController {
         model.addAttribute("itemOwner", item.get().getOwner());
         return "itemProfile";
     }
+
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
         return "registration";
+
     }
+
     @PostMapping(path = "/registration")
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
         return "registration";
     }
+
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
         model.addAttribute("OverviewAllItems", all);
         return "overviewAllItems";
     }
+
     @GetMapping(path= "/profile/{id}")
     public String Overview(Model model, @PathVariable Long id){
         Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profile";
     }
+
     @GetMapping(path="/profile/{id}/requests")
     public String Requests(Model model, @PathVariable Long id){
         Person me = personRepo.findById(id).orElse(null);
-        List<Request> listMyRequests = requestRepo.findByRequester(me);
-        model.addAttribute("myRequests", listMyRequests);
         List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
+        List<Request> listMyRequests = requestRepo.findByRequester(me);
+
+        model.addAttribute("myRequests", listMyRequests);
         model.addAttribute("requestsMyItems", RequestsMyItems);
         return "requests";
     }
+
     @GetMapping(path="/profile/{id}/rentedItems")
     public String rentedItems(Model model, @PathVariable Long id){
         Person me = personRepo.findById(id).orElse(null);
@@ -93,4 +102,5 @@ public class ProjektController {
         model.addAttribute("personen", all);
         return "profileDetails";
     }
+
 }
