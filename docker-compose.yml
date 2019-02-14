@@ -18,9 +18,9 @@ services:
     environment:
       POSTGRES_DB: sharingdatabase
       POSTGRES_PASSWORD: sharepw
-      POSTGRES_USER: admin
-    volumes:
-    - databasevol:/var/lib/postgresql/data
+      # POSTGRES_USER: admin
+    #volumes:
+    #- databasevol:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d sharingdatabase -U admin"]
       interval: 10s
