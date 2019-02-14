@@ -33,6 +33,7 @@ public class ProjektController {
     @Autowired
     RequestRepo requestRepo;
 
+
     @GetMapping(path = "/addItem")
     public String addItemPage(){
         return "addItem";
@@ -52,41 +53,51 @@ public class ProjektController {
         model.addAttribute("itemOwner", item.get().getOwner());
         return "itemProfile";
     }
+
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
         return "registration";
+
     }
+
     @PostMapping(path = "/registration")
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
-        return "login";
+        return "registration";
     }
+
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName();
-        Person loggedIn = personRepo.findByUsername(name);
         model.addAttribute("OverviewAllItems", all);
-        model.addAttribute("loggedInPerson",loggedIn);
         return "overviewAllItems";
     }
+
     @GetMapping(path= "/profile/{id}")
     public String Overview(Model model, @PathVariable Long id){
         Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profile";
     }
+
     @GetMapping(path="/profile/{id}/requests")
     public String Requests(Model model, @PathVariable Long id){
-        Person me = personRepo.findById(id).orElse(null);
-        List<Request> listMyRequests = requestRepo.findByRequester(me);
-        model.addAttribute("myRequests", listMyRequests);
-        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
-        model.addAttribute("requestsMyItems", RequestsMyItems);
+        setRequests(model,id);
         return "requests";
     }
+    @PostMapping(path="/profile/{id}/requests")
+    public String AcceptDeclineRequests(Model model,
+                                        @PathVariable Long id,
+                                        Long requestID,
+                                        Integer requestMyItems){
+        Request request = requestRepo.findById(requestID).orElse(null);
+        request.setStatus(requestMyItems == -1 ? RequestStatus.DENIED : RequestStatus.APPROVED);
+        requestRepo.save(request);
+        setRequests(model,id);
+        return "requests";
+    }
+
     @GetMapping(path="/profile/{id}/rentedItems")
     public String rentedItems(Model model, @PathVariable Long id){
         Person me = personRepo.findById(id).orElse(null);
@@ -94,13 +105,6 @@ public class ProjektController {
         model.addAttribute("myRentedItems", myRentedItems);
         return "rentedItems";
     }
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-    @PostMapping("/login")
-    public String loggedIn() {
-        return "OverviewAllItems";
 
     @GetMapping(path= "/profilub")
     public String profilPage(Model model){
@@ -108,12 +112,12 @@ public class ProjektController {
         model.addAttribute("personen", all);
         return "profileDetails";
     }
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-    @PostMapping("/login")
-    public String loggedIn() {
-        return "OverviewAllItems";
+
+    private void setRequests(Model model, Long id) {
+        Person me = personRepo.findById(id).orElse(null);
+        List<Request> listMyRequests = requestRepo.findByRequester(me);
+        model.addAttribute("myRequests", listMyRequests);
+        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
+        model.addAttribute("requestsMyItems", RequestsMyItems);
     }
 }

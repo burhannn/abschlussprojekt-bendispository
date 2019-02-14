@@ -1,0 +1,84 @@
+# Bendispository - Projektdokumentation
+
+---
+
+#### Grundlagen:
+
+*Coding Convention:* Google Styleguide
+
+*Datenbank:* Dev - H2 || Prod - PostgreSQL
+
+*Frameworks:*
+
+- JPA
+- JDBC
+- Thymeleaf
+- Security
+- Springboot - Web
+- Springboot - devtools
+- Lombok
+- Springboot - Starter-test
+- Springboot - Security-test
+
+---
+
+#### Montag, 11.02.2019:
+
+Erste Aufgabenverteilung:
+
+- Mandy & Clara & Kim - Views
+- Lorena - Dockerfile & Docker-Compose
+- Nina - Entities & Repositories
+- Burhan & Jannik - Login (Logik)
+- Marc - Views & Allgemeines
+
+Erreichte Ziele:
+
+- Git Branches erstellt
+- Templates, Models & Controller angefangen
+- Dockerfile angefangen
+- Login-Planung
+
+---
+
+#### Dienstag, 12.02.2019:
+
+Marc & Kim & Nina - Transactions:
+
+- Klassenplanung und Aufbau
+
+- Controller
+
+Mandy & Clara - Templates, Repos, Entities, Controller:
+
+- Aufbau der Seiten, Klassenerstellung
+
+Burhan & Jannik - Login mit Springsecurity:
+
+- Logincontroller & Logintemplate
+
+Lorena - Docker & Travis CI:
+
+- Fertigstellung der Docker-Files
+- Kennenlernen mit Travis CI
+
+---
+
+#### Mittwoch, 13.02.2019
+
+Marc & Kim & Nina - Transactions:
+
+- Buttonmanagement
+
+Mandy & Clara - Templates:
+
+- Transactiontemplates
+
+Burhan & Jannik - Login mit Springsecurity
+
+- Configurations, Controller, Repositories & Allgemeines
+
+Lorena - Docker & Projektdokumentation
+
+- Einstellung der Datenbankskonfiguration
+- Anfang der Projektdokumentation
