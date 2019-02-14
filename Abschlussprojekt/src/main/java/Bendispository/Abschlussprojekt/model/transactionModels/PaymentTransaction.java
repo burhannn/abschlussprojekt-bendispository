@@ -7,21 +7,21 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @Entity
 public class PaymentTransaction {
 
     // relies on ProPay
-    @Autowired
-    PaymentTransactionRepo paymentTransactionRepo;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
+    @ManyToOne
     private Person leaser;
 
+    @ManyToOne
     private Person lender;
 
     private int amount;
@@ -44,7 +44,7 @@ public class PaymentTransaction {
         this.amount = amount;
 
     }
-    public void pay(){
+    public void pay(PaymentTransactionRepo paymentTransactionRepo){
         ProPaySubscriber pps = new ProPaySubscriber();
         pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
         if(transferIsOk){

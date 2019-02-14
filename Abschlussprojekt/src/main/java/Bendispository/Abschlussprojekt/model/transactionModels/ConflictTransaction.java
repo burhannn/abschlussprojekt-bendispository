@@ -4,17 +4,12 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransaction
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
 public class ConflictTransaction {
 
-    @Autowired
-    PaymentTransactionRepo paymentTransactionRepo;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
@@ -27,6 +22,7 @@ public class ConflictTransaction {
 
     private int validationTime;
 
+    @OneToOne
     PaymentTransaction paymentTransaction;
 
     public void addConflictTransaction(PaymentTransaction paymentTransaction) {
@@ -37,10 +33,10 @@ public class ConflictTransaction {
     public void addConflictTransaction(){
         ConflictTransaction conflictTransaction = new ConflictTransaction();
     }
-    public void conflictSolved(){
+    public void conflictSolved(PaymentTransactionRepo paymentTransactionRepo){
         if(leaserAccepted && lenderAccepted){
             paymentTransaction.setAmount(damageCosts);
-            paymentTransaction.pay();
+            paymentTransaction.pay(paymentTransactionRepo);
         }
     }
 
