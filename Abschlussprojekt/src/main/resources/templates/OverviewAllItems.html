@@ -5,8 +5,7 @@
 <body>
     <div>Overview Items</div>
     <h2 th:text= ${loggedInPerson.username}></h2>
-    <h3 th:text= ${loggedInPerson.id}></h3>
-    <a href="/profile/1">My Profile</a> <!-- /1 bis login als placeholder -->
+    <a th:href="@{'/profile/' + ${loggedInPerson.id}}">My Profile</a>
     <a href="/addItem">Add Item</a>
     <a href="/profilub">Overview Users</a>
 <div th:each="item,iterStart : ${OverviewAllItems}">
