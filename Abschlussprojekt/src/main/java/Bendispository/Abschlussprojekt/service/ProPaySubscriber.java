@@ -1,7 +1,7 @@
 package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.repo.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

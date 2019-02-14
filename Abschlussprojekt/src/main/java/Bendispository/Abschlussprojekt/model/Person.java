@@ -24,7 +24,8 @@ public class Person {
 
     private String city;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,
+               fetch = FetchType.EAGER)
     private List<Item> Items;
 
 }

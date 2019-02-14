@@ -14,9 +14,6 @@ import java.util.Optional;
 @Entity
 public class Request {
 
-    @Autowired
-    RequestRepo requestRepo;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -36,14 +33,16 @@ public class Request {
     // value = "denied", "approved", "pending"
     private RequestStatus status = RequestStatus.PENDING;
 
-    private LeaseTransaction lsTrans;
+    @OneToOne(cascade = CascadeType.PERSIST,
+              fetch = FetchType.EAGER)
+    private LeaseTransaction leaseTransaction;
 
-    public void lenderApproved(){
+    public void lenderApproved(RequestRepo requestRepo){
         if(checkConclude() == true){
             Optional<Request> requestList = requestRepo.findById(id);
             Request request = requestList.get();
-            lsTrans.addLeaseTransaction(request);
-            setRequestOnApproved();
+            leaseTransaction.addLeaseTransaction(request);
+            setRequestOnApproved(requestRepo);
             requestedItem.setAvailable(false); //nur für duration auf false setzen
         }
         else{
@@ -60,11 +59,11 @@ public class Request {
         }
         return false;
     }
-    public void setRequestOnApproved(){
+    public void setRequestOnApproved(RequestRepo requestRepo){
         setStatus(RequestStatus.APPROVED);
-        setOtherRequestsOnDenied();
+        setOtherRequestsOnDenied(requestRepo);
     }
-    public void setOtherRequestsOnDenied(){
+    public void setOtherRequestsOnDenied(RequestRepo requestRepo) {
         List<Request> requestList = requestRepo.findAll();
         for(Request r  : requestList){
             if(r.requestedItem == requestedItem){
