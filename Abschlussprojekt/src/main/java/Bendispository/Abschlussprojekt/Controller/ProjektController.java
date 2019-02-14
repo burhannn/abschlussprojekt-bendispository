@@ -1,9 +1,11 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.repo.ItemRepo;
-import Bendispository.Abschlussprojekt.repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,37 +13,43 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Optional;
+
+import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 
 
 @Controller
 public class ProjektController {
+
     @Autowired
     ItemRepo itemRepo;
     @Autowired
     PersonsRepo personRepo;
+    @Autowired
+    RequestRepo requestRepo;
 
     @GetMapping(path = "/addItem")
     public String addItemPage(){
-        return "AddItem";
+        return "addItem";
     }
 
     @PostMapping(path = "/addItem")
-    public String addItemsToDatabase(Model model,@PathVariable Long id, Item item){
+    public String addItemsToDatabase(Model model, Item item){
         model.addAttribute("newItem", item);
         itemRepo.save(item);
-        return "AddItem";
+        return "addItem";
     }
 
-    @GetMapping(path = "/Item/{id}")
+    @GetMapping(path = "/Item/{id}" )
     public String ItemProfile(Model model, @PathVariable Long id) {
         Optional <Item> item = itemRepo.findById(id);
         model.addAttribute("itemProfile", item.get());
-        return "ItemProfile";
+        model.addAttribute("itemOwner", item.get().getOwner());
+        return "itemProfile";
     }
-
-    @GetMapping("/registration")
-    public String registration() {
+    @GetMapping(path="/registration")
+    public String SaveRegistration(Model model){
         return "registration";
     }
     @PostMapping(path = "/registration")
@@ -50,20 +58,47 @@ public class ProjektController {
         personRepo.save(person);
         return "login";
     }
-
     @GetMapping(path= "/")
     public String Overview(Model model){
-        model.addAttribute("OverviewAllItems", itemRepo);
-        return "OverviewAllItems";
+        List<Item> all = itemRepo.findAll();
+        model.addAttribute("OverviewAllItems", all);
+        return "overviewAllItems";
+    }
+    @GetMapping(path= "/profile/{id}")
+    public String Overview(Model model, @PathVariable Long id){
+        Optional<Person> person = personRepo.findById(id);
+        personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
+        return "profile";
+    }
+    @GetMapping(path="/profile/{id}/requests")
+    public String Requests(Model model, @PathVariable Long id){
+        Person me = personRepo.findById(id).orElse(null);
+        List<Request> listMyRequests = requestRepo.findByRequester(me);
+        model.addAttribute("myRequests", listMyRequests);
+        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
+        model.addAttribute("requestsMyItems", RequestsMyItems);
+        return "requests";
+    }
+    @GetMapping(path="/profile/{id}/rentedItems")
+    public String rentedItems(Model model, @PathVariable Long id){
+        Person me = personRepo.findById(id).orElse(null);
+        List<Request> myRentedItems = requestRepo.findByRequesterAndStatus(me, APPROVED);
+        model.addAttribute("myRentedItems", myRentedItems);
+        return "rentedItems";
     }
 
+    @GetMapping(path= "/profilub")
+    public String profilPage(Model model){
+        List<Person> all = personRepo.findAll();
+        model.addAttribute("personen", all);
+        return "profileDetails";
+    }
     @GetMapping("/login")
-		public String login() {
-    	return "login";
+    public String login() {
+        return "login";
     }
     @PostMapping("/login")
     public String loggedIn() {
         return "OverviewAllItems";
     }
-
 }

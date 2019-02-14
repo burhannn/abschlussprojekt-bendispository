@@ -22,9 +22,10 @@ public class Person {
     private String email;
 
     private int account;
-    
+
     private String city;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Item> Items;
+
 }

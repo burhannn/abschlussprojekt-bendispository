@@ -1,9 +1,9 @@
-package Bendispository.Abschlussprojekt.DatabaseInitializer;
+package Bendispository.Abschlussprojekt.databaseInitializer;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.repo.ItemRepo;
-import Bendispository.Abschlussprojekt.repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;
@@ -26,8 +26,8 @@ public class Initializer implements ServletContextInitializer {
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
-        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy");
-        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy");
+        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln");
+        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf");
 
         Item dummyItem1 = mkItem(12, 300, "Ich bin ein stuhl", "stuhl", dummy_1);
         Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1);
@@ -35,20 +35,21 @@ public class Initializer implements ServletContextInitializer {
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
-        addItem(dummy_1, dummyItem1, dummyItem2);
-        addItem(dummy_2, dummyItem3);
+        PersonAddItem(dummy_1, dummyItem1, dummyItem2);
+        PersonAddItem(dummy_2, dummyItem3);
 
         personRepo.saveAll(Arrays.asList(dummy_1, dummy_2));
 
     }
 
-    private Person mkPerson(int account, String email, String username, String fname, String lname){
+    private Person mkPerson(int account, String email, String username, String fname, String lname, String city){
         Person p = new Person();
         p.setAccount(account);
         p.setEmail(email);
         p.setUsername(username);
         p.setFirstName(fname);
         p.setLastName(lname);
+        p.setCity(city);
         return p;
     }
 
@@ -63,9 +64,9 @@ public class Initializer implements ServletContextInitializer {
         return item;
     }
 
-    private void addItem(Person person, Item... items){
+    private void PersonAddItem(Person person, Item... items){
         List<Item> item = new ArrayList<Item>();
         item.addAll(Arrays.asList(items));
-        //person.setItems(item);
+        person.setItems(item);
     }
 }
