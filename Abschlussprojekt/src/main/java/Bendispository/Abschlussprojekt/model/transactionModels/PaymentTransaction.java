@@ -1,5 +1,7 @@
 package Bendispository.Abschlussprojekt.model.transactionModels;
 
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -16,7 +18,7 @@ public class PaymentTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    private boolean isPayed;
+    private boolean transferIsOk;
 
     private boolean depositIsBlocked;
 
@@ -25,13 +27,19 @@ public class PaymentTransaction {
 
     private boolean lenderAccepted;
 
+    private ConflictTransaction cfTrans;
 
-    public void conclude (LeaseTransaction leaseTransaction){
-        this.timeframeViolation = checkTimeFrameViolation(leaseTransaction);
+    public void pay(Person leaser, Person lender, int amount){
+        ProPaySubscriber pps = new ProPaySubscriber();
+        pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+        if(transferIsOk){
+            // Nachricht an Beteiligte, dass Zahlung erfolgt
+            return;
+        }
+        cfTrans.addConflictTransaction();
     }
 
-    private boolean checkTimeFrameViolation(LeaseTransaction leaseTransaction) {
+    public void isTransferIsOk(){
 
-        return false;
     }
 }
