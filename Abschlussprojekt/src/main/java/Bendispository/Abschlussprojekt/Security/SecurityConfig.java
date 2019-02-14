@@ -30,26 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.loginPage("/login")
 				.permitAll();
 	}
-	/*@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable()
-				.authorizeRequests()
-				.antMatchers("/registration").permitAll()
-				//.antMatchers("/login*").permitAll()
-				.anyRequest().authenticated()
-				.and()
-				.formLogin()
-				.loginPage("/login")
-				.defaultSuccessUrl("/OverViewAllItems", true);
-				//.failureUrl("/login.html?error=true")
-				//.failureHandler(authenticationFailureHandler())
-				//.and()
-				//.logout()
-				//.logoutUrl("/perform_logout")
-				//.deleteCookies("JSESSIONID");
-				//.logoutSuccessHandler(logoutSuccessHandler());
-	}*/
 
 	/*@Override
 	public void configure(WebSecurity web) throws Exception {

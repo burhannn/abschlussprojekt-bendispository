@@ -40,13 +40,6 @@ public class ProjektController {
         return "ItemProfile";
     }
 
-    /*@GetMapping(path = "/registration")
-    public String Registration(Model model, Person person) {
-        model.addAttribute("newPerson", person);
-        personRepo.save(person);
-        return "registration";
-    }*/
-
     @GetMapping("/registration")
     public String registration() {
         return "registration";
@@ -55,7 +48,7 @@ public class ProjektController {
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
-        return "registration";
+        return "login";
     }
 
     @GetMapping(path= "/")
