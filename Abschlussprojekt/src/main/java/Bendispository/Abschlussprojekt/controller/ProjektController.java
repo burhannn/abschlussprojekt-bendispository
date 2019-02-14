@@ -13,14 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
-import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
-import static java.lang.Enum.valueOf;
 
 
 @Controller
@@ -64,13 +63,17 @@ public class ProjektController {
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
-        return "registration";
+        return "login";
     }
 
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        Person loggedIn = personRepo.findByUsername(name);
         model.addAttribute("OverviewAllItems", all);
+        model.addAttribute("loggedInPerson",loggedIn);
         return "overviewAllItems";
     }
 
@@ -109,9 +112,10 @@ public class ProjektController {
     public String login() {
         return "login";
     }
+
     @PostMapping("/login")
     public String loggedIn() {
-        return "OverviewAllItems";
+        return "OverviewAllItems"; }
 
     @GetMapping(path= "/profilub")
     public String profilPage(Model model){
