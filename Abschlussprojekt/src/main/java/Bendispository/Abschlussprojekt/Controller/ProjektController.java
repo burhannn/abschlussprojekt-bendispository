@@ -7,12 +7,14 @@ import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +63,11 @@ public class ProjektController {
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        Person loggedIn = personRepo.findByUsername(name);
         model.addAttribute("OverviewAllItems", all);
+        model.addAttribute("loggedInPerson",loggedIn);
         return "overviewAllItems";
     }
     @GetMapping(path= "/profile/{id}")
