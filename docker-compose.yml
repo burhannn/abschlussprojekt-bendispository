@@ -4,15 +4,17 @@ volumes:
   databasevol:
 
 services:
-  #shareapp:
-    #build: ./Abschlussprojekt
-    #depends_on:
-      #database:
-        #condition: service_healthy
+  shareapp:
+    build: ./Abschlussprojekt
+    depends_on:
+      database:
+        condition: service_healthy
 
   database:
     image: postgres
     restart: always
+    ports: 
+      - 5432:5432
     environment:
       POSTGRES_DB: sharingdatabase
       POSTGRES_PASSWORD: sharepw
@@ -20,7 +22,7 @@ services:
     volumes:
     - databasevol:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -d sharingdatabase -U admin"]
       interval: 10s
       timeout: 5s
       retries: 5
