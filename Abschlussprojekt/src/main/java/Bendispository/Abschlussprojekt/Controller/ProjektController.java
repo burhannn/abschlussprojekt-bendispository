@@ -51,6 +51,12 @@ public class ProjektController {
     public String registration() {
         return "registration";
     }
+    @PostMapping(path = "/registration")
+    public String Registration(Model model, Person person) {
+        model.addAttribute("newPerson", person);
+        personRepo.save(person);
+        return "registration";
+    }
 
     @GetMapping(path= "/")
     public String Overview(Model model){
@@ -61,6 +67,10 @@ public class ProjektController {
     @GetMapping("/login")
 		public String login() {
     	return "login";
+    }
+    @PostMapping("/login")
+    public String loggedIn() {
+        return "OverviewAllItems";
     }
 
 }
