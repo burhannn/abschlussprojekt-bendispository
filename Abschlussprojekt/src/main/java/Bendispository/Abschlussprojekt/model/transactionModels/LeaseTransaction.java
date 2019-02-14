@@ -18,16 +18,13 @@ public class LeaseTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(
-               fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Person leaser;
 
-    @ManyToOne(
-              fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Person lender;
 
-    @ManyToOne(
-               fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Item item;
 
     private Long requestId;

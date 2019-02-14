@@ -4,10 +4,7 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -27,7 +24,8 @@ public class PaymentTransaction {
 
     private boolean lenderAccepted;
 
-    private ConflictTransaction cfTrans;
+    @OneToOne
+    private ConflictTransaction conflictTransaction;
 
     public void pay(Person leaser, Person lender, int amount){
         ProPaySubscriber pps = new ProPaySubscriber();
@@ -36,9 +34,10 @@ public class PaymentTransaction {
             // Nachricht an Beteiligte, dass Zahlung erfolgt
             return;
         }
-        cfTrans.addConflictTransaction();
+        conflictTransaction.addConflictTransaction();
     }
+    /*
     public void isTransferIsOk(){
 
-    }
+    }*/
 }
