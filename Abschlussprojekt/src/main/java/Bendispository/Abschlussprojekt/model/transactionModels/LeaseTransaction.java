@@ -62,8 +62,8 @@ public class LeaseTransaction {
         //zurückbuchung deposit
 
         int amount = duration * item.getCostPerDay();
-        PaymentTransaction pay = new PaymentTransaction();
-        pay.pay(leaser, lender, amount);
+        PaymentTransaction pay = new PaymentTransaction(leaser, lender, amount);
+        pay.pay();
 
         isReturnedOnTime();
     }
@@ -76,8 +76,8 @@ public class LeaseTransaction {
             concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
 
             int amount = item.getCostPerDay() * timeViolation;
-            PaymentTransaction pay = new PaymentTransaction();
-            pay.pay(leaser, lender, amount);
+            PaymentTransaction pay = new PaymentTransaction(leaser, lender, amount);
+            pay.pay();
         }
     }
 }
