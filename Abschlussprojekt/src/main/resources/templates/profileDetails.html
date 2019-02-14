@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td>Profile</td>
+        <td>Name</td>
+        <td>Username</td>
+        <td>Email</td>
+    </tr>
+    <tr th:each = "person : ${personen}">
+        <td>
+            <a th:href = "@{'/profile/' + ${person.id}}">Profil</a>
+        </td>
+        <td th:text = "|${person.firstName}, ${person.lastName}|"></td>
+        <td th:text = "|${person.username}|"></td>
+        <td th:text = "|${person.email}|"></td>
+    </tr>
+</table>
+</body>
+</html>

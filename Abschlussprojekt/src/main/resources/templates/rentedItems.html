@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div>Rented Items by myself
+    <div th:each="request : ${myRentedItems}">
+        <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
+        <div>
+            <div th:text="|To be returned on: ${request.requestedItem.duration}|"></div>
+            <button type = "submit">return</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

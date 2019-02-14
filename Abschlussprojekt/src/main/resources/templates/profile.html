@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div>My Profile</div>
+
+<a th:href = "@{'/profile/' + ${person.id} + '/requests'}">Requests</a>
+<a th:href = "@{'/profile/' + ${person.id} + '/rentedItems'}">Rented Items</a>
+<div>
+    <div>
+            <tr>
+                <td>Last Name:</td>
+                <td>First Name:</td>
+                <td>Email:</td>
+                <td>City:</td>
+                <td>Account:</td>
+                <td>Username:</td>
+            </tr>
+            <tr>
+                <td th:text="${person.lastName}"></td>
+                <td th:text="${person.firstName}"></td>
+                <td th:text="${person.email}"></td>
+                <td th:text="${person.city}"></td>
+                <td th:text="${person.account}"></td>
+                <td th:text="${person.username}"></td>
+            </tr>
+        <div>My Items:
+            <table>
+                <tr th:each="item : ${person.items}">
+                    <li th:text="| - ${item.name}|"></li>
+                    <a th:href="@{'/Item/' + ${item.id}}" th:text="|Show Details ${item.name}|"></a>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <a href="/" >Back</a>
+</div>
+</body>
+</html>
