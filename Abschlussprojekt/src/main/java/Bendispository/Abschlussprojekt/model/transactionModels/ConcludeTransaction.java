@@ -25,14 +25,6 @@ public class ConcludeTransaction {
 
     private boolean lenderAccepted;
 
-    public void overTimeFee(Person leaser, Person lender, Item item) {
-        if (timeframeViolation) {
-            ProPaySubscriber pps = new ProPaySubscriber();
-            int amount = item.getCostPerDay() * lengthOfTimeframeViolation;
-            pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
-        }
-    }
-
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
     private ConflictTransaction cfTransaction;

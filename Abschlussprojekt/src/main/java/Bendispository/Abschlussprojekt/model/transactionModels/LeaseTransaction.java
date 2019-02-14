@@ -60,10 +60,13 @@ public class LeaseTransaction {
 
     public void itemReturnedToLender(){
         itemIsReturned = true;
-        isReturnedOnTime();
         //zurückbuchung deposit
-        payRent();
-        concludeTransaction.overTimeFee(leaser, lender, item);
+
+        int amount = duration * item.getCostPerDay();
+        PaymentTransaction pay = new PaymentTransaction();
+        pay.pay(leaser, lender, amount);
+
+        isReturnedOnTime();
     }
 
     public void isReturnedOnTime(){
@@ -72,12 +75,10 @@ public class LeaseTransaction {
             int timeViolation = period.getDays();
             concludeTransaction.setTimeframeViolation(true);
             concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
-        }
-    }
 
-    public void payRent(){
-        ProPaySubscriber pps = new ProPaySubscriber();
-        int amount = duration * item.getCostPerDay();
-        pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+            int amount = item.getCostPerDay() * timeViolation;
+            PaymentTransaction pay = new PaymentTransaction();
+            pay.pay(leaser, lender, amount);
+        }
     }
 }
