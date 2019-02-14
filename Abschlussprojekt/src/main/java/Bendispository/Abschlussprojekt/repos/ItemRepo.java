@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.repo;
+package Bendispository.Abschlussprojekt.repos;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import org.springframework.data.repository.CrudRepository;

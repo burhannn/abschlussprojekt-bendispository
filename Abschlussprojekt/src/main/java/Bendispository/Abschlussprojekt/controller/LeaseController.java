@@ -1,7 +1,7 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.LeaseTransaction;
-import Bendispository.Abschlussprojekt.repo.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,21 +22,21 @@ public class LeaseController {
     public String listAllLeaseTransaction(Model model){
         List<LeaseTransaction> allLease = leaseTransactionRepo.findAll();
         model.addAttribute("allLease", allLease);
-        return "leaseTransaction";
+        return "requests";
     }
 
-    @GetMapping(path = "/profile/leaseTransaction+{id}")
+    @GetMapping(path = "/profile/leaseTransaction{id}")
     public String showTransactionById(Model model, @PathVariable Long id){
         Optional<LeaseTransaction> lease = leaseTransactionRepo.findById(id);
         model.addAttribute("lease", lease.get());
-        return "leaseTransaction";
+        return "requests";
     }
 
-    @PostMapping(path = "/profile/leaseTransaction+{id}")
+    @PostMapping(path = "/profile/leaseTransaction{id}")
     public String addChangesLeaseTransaction(Model model, @PathVariable Long id, LeaseTransaction leaseTransaction){
         model.addAttribute("changeLease", leaseTransaction);
         leaseTransactionRepo.save(leaseTransaction);
-        return "leaseTransaction";
+        return "requests";
     }
 
 }

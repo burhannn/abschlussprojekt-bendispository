@@ -1,5 +1,8 @@
-package Bendispository.Abschlussprojekt.model;
+package Bendispository.Abschlussprojekt.model.transactionModels;
 
+import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 

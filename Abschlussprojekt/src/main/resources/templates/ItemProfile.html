@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<h1 th:text = "|${itemProfile?.name}, from ${itemProfile?.owner.username}"></h1>
+<h1 th:text = "|${itemProfile?.name}, from ${itemOwner?.username}"></h1>
 <dl>
     <LI th:text = "| Name: ${itemProfile?.name}|"></LI>
     <LI th:text = "| Description: ${itemProfile?.description}|" ></LI>
@@ -13,9 +13,12 @@
     <LI th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></LI>
 </dl>
 <!-- Hier kommt Anfrage Rubrik mit Zeitraum etc. (Marc und Kim)-->
+
+<a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
+
 <form action="http://localhost:8080/">
-    <a href="/" >Zur&uumlck zur  &Uumlbersicht</a>
-    <button type="submit">Gegenstand Anfragen</button>
+    <button type="submit">Zurück zur Übersicht</button>
 </form>
+
 </body>
 </html>
