@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;

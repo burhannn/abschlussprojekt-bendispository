@@ -7,7 +7,6 @@ import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Optional;
 
 @Data
 @Entity

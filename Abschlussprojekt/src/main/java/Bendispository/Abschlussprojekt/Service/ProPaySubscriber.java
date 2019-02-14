@@ -1,18 +1,11 @@
-package Bendispository.Abschlussprojekt.Service;
+package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.Model.LeaseTransaction;
-import Bendispository.Abschlussprojekt.Model.Person;
-import Bendispository.Abschlussprojekt.Repo.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.Repo.PersonsRepo;
+import Bendispository.Abschlussprojekt.repo.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repo.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 

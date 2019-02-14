@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface LeaseTransactionRepo extends CrudRepository<LeaseTransaction, Long> {
     List<LeaseTransaction> findAll();
 
-    Optional<LeaseTransaction> findBy(Long aLong);
+    Optional<LeaseTransaction> findByRequestId(Long id);
 }

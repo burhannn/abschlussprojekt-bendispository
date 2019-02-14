@@ -1,7 +1,8 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.ConflictTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
