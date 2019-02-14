@@ -105,6 +105,13 @@ public class ProjektController {
         model.addAttribute("myRentedItems", myRentedItems);
         return "rentedItems";
     }
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+    @PostMapping("/login")
+    public String loggedIn() {
+        return "OverviewAllItems";
 
     @GetMapping(path= "/profilub")
     public String profilPage(Model model){

@@ -1,8 +1,8 @@
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,10 @@ public class RequestController {
                                      int duration
                                      ){
         Item item = itemRepo.findById(id).orElse(null);
+        /*Person me = personRepo.findById(MEINE_ID).orELse(null);
+        request.setRequester(me);*/
         request.setRequestedItem(item);
         request.setDuration(duration);
-        request.setStatus(RequestStatus.PENDING);
         item.setAvailable(false);
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
