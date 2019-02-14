@@ -1,13 +1,11 @@
-package Bendispository.Abschlussprojekt.Model;
+package Bendispository.Abschlussprojekt.model;
 
-import Bendispository.Abschlussprojekt.Repo.RequestRepo;
-import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Optional;
 
 @Data
 @Entity
@@ -46,7 +44,7 @@ public class LeaseTransaction {
 
     public void addLeaseTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
-        lsTrans.setItem(request.getRequestedItem();
+        lsTrans.setItem(request.getRequestedItem());
         lsTrans.setLeaser(request.getRequester());
         lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
@@ -66,7 +64,7 @@ public class LeaseTransaction {
         if(LocalDate.now().isAfter(dayOfRent.plusDays(duration))){
             Period period = Period.between(LocalDate.now(), dayOfRent.plusDays(duration));
             int timeViolation = period.getDays();
-            ccTrans.isTimeframeViolation(true);
+            ccTrans.setTimeframeViolation(true);
             ccTrans.setLengthOfTimeframeViolation(timeViolation);
         }
     }

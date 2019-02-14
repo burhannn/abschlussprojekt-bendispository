@@ -1,7 +1,7 @@
-package Bendispository.Abschlussprojekt.Controller;
+package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.Model.Request;
-import Bendispository.Abschlussprojekt.Repo.RequestRepo;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.repo.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

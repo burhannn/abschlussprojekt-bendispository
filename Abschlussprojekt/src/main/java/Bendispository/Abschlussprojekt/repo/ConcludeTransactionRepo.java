@@ -1,6 +1,6 @@
-package Bendispository.Abschlussprojekt.Repo;
+package Bendispository.Abschlussprojekt.repo;
 
-import Bendispository.Abschlussprojekt.Model.ConcludeTransaction;
+import Bendispository.Abschlussprojekt.model.ConcludeTransaction;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
