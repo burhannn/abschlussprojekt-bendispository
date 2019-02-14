@@ -20,9 +20,9 @@
         <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
         <div th:text="|Status: ${request.status}|"></div>
         <form method="post">
-            <input type="Radio" name="requestMyItems" value="-1">reject
-            <input type="Radio" name="requestMyItems" th:value="${request.id}">accept
-            <input type="Radio" name="requestMyItems" value="-2">
+            <input type="radio" name="requestMyItems" value="-1">reject
+            <input type="radio" name="requestMyItems" value="1">accept
+            <input type="hidden" value="0" th:value="${request.id}" name="requestID">
             <button type = "submit">submit</button>
         </form>
     </div>

@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
+import static java.lang.Enum.valueOf;
 
 
 @Controller
@@ -81,19 +82,11 @@ public class ProjektController {
     @PostMapping(path="/profile/{id}/requests")
     public String AcceptDeclineRequests(Model model,
                                         @PathVariable Long id,
-                                        @RequestParam("requestMyItems") String[] requestMyItems){
-        if(requestMyItems != null){
-            for(String val : requestMyItems){
-                Request request = requestRepo.findById(Long.valueOf(id)).orElse(null);
-                if(request != null) {
-                    if (Integer.parseInt(val) >= 0) {
-                        request.setStatus(RequestStatus.APPROVED);
-                    } else if (val == "-1") {
-                        request.setStatus(RequestStatus.DENIED);
-                    }
-                }
-            }
-        }
+                                        Long requestID,
+                                        Integer requestMyItems){
+        Request request = requestRepo.findById(requestID).orElse(null);
+        request.setStatus(requestMyItems == -1 ? RequestStatus.DENIED : RequestStatus.APPROVED);
+        requestRepo.save(request);
         setRequests(model,id);
         return "requests";
     }
