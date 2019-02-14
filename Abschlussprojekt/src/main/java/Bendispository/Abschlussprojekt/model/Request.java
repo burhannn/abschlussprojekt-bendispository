@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,10 @@ public class Request {
     private Item requestedItem;
 
     private int duration;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
     private int validationTime; //Zeit, die der Lender hat, um den Request zu bearbeiten
 
