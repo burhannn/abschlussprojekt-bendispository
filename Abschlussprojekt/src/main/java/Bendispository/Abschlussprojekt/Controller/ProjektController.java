@@ -39,16 +39,17 @@ public class ProjektController {
         model.addAttribute("itemProfile", item.get());
         return "ItemProfile";
     }
+
     /*@GetMapping(path = "/registration")
     public String Registration(Model model, Person person) {
         model.addAttribute("newPerson", person);
         personRepo.save(person);
         return "registration";
     }*/
+
     @GetMapping("/registration")
     public String registration() {
-
-        return "registration.html";
+        return "registration";
     }
 
     @GetMapping(path= "/")
@@ -59,8 +60,7 @@ public class ProjektController {
 
     @GetMapping("/login")
 		public String login() {
-
-    	return "login.html";
+    	return "login";
     }
 
 }
