@@ -1,7 +1,6 @@
-package Bendispository.Abschlussprojekt.Service;
+package Bendispository.Abschlussprojekt.service;
 
 
-import Bendispository.Abschlussprojekt.Service.MyUserPrincipal;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
