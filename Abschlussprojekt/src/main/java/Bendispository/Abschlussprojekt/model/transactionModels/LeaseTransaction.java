@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.model.transactionModels;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 
@@ -18,16 +19,13 @@ public class LeaseTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(
-               fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Person leaser;
 
-    @ManyToOne(
-              fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Person lender;
 
-    @ManyToOne(
-               fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Item item;
 
     private Long requestId;
@@ -59,18 +57,18 @@ public class LeaseTransaction {
         concludeTransaction.addConcludeTransaction();
     }
 
-    public void itemReturnedToLender(){
+    public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
         itemIsReturned = true;
         //zurückbuchung deposit
 
         int amount = duration * item.getCostPerDay();
         PaymentTransaction pay = new PaymentTransaction(leaser, lender, amount);
-        pay.pay();
+        pay.pay(paymentTransactionRepo);
 
-        isReturnedOnTime();
+        isReturnedOnTime(paymentTransactionRepo);
     }
 
-    public void isReturnedOnTime(){
+    public void isReturnedOnTime(PaymentTransactionRepo paymentTransactionRepo){
         if(LocalDate.now().isAfter(endDate)){
             Period period = Period.between(LocalDate.now(), endDate);
             int timeViolation = period.getDays();
@@ -79,7 +77,7 @@ public class LeaseTransaction {
 
             int amount = item.getCostPerDay() * timeViolation;
             PaymentTransaction pay = new PaymentTransaction(leaser, lender, amount);
-            pay.pay();
+            pay.pay(paymentTransactionRepo);
         }
     }
 }
