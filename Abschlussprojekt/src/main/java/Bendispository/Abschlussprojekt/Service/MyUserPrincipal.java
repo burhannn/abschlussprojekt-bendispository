@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Service.service;
+package Bendispository.Abschlussprojekt.Service;
 
 import Bendispository.Abschlussprojekt.model.Person;
 import org.springframework.security.core.GrantedAuthority;

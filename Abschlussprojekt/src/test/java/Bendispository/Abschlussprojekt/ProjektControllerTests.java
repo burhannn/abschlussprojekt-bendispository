@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt;
 
+import Bendispository.Abschlussprojekt.Service.MyUserPrincipal;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -10,6 +11,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import org.hibernate.validator.constraints.ModCheck;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest
 @WithMockUser
-public class ControllerTests {
+public class ProjektControllerTests {
 
     @Autowired
     MockMvc mvc;
@@ -71,6 +73,9 @@ public class ControllerTests {
 
     @MockBean
     CustomUserDetailsService blabla;
+
+    @MockBean
+    MyUserPrincipal blablabla;
 
     Person dummy1;
     Person dummy2;
@@ -162,13 +167,14 @@ public class ControllerTests {
 
     @Test
     public void Overview() throws Exception {
-    /*
+
         Mockito.when(itemRepo.findAll())
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
-        mvc.perform(get("/"))
+        mvc.perform(get("/overview"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("OverviewAllItems"))
+                .andExpect(model().attributeExists("loggedInPerson"))
                 .andExpect(view().name("overviewAllItems"))
                 .andExpect(model().attribute("OverviewAllItems", hasSize(3)))
                 .andExpect(model().attribute("OverviewAllItems", hasItem(
@@ -189,7 +195,7 @@ public class ControllerTests {
                                 hasProperty("name", equalTo("Kulli")),
                                 hasProperty("description", equalTo("schicker kulli"))
                         )
-                )));*/
+                )));
     }
 
     @Test
@@ -214,8 +220,9 @@ public class ControllerTests {
 
     }
 
+    //tests für profile anderer User
     @Test
-    public void UserProfile() throws Exception {
+    public void UserProfilOther() throws Exception {
 
         mvc.perform(get("/profile/{id}", 1L))
                 .andDo(print())
@@ -276,27 +283,24 @@ public class ControllerTests {
 
     }
 
+    /*
     @Test
     public void addItem() throws Exception {
 
-        mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("lastName", "soft")
-                .param("firstName", "clara")
-                .param("username", "clari")
-                .param("email", "clari@gmx.de")
-                .param("city", "Düsseldorf")
-                .sessionAttr("newPerson", new Person()))
+        mvc.perform(post("/addItem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", "lasso")
+                .param("description", "komm hol das lasso raus")
+                .param("deposit", "69")
+                .param("costPerDay", "69")
+                .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("login"))
-                .andExpect(model().attribute("newPerson", hasProperty("id")))
-                .andExpect(model().attribute("newPerson", hasProperty("firstName", equalTo("clara"))))
-                .andExpect(model().attribute("newPerson", hasProperty("lastName", equalTo("soft"))))
-                .andExpect(model().attribute("newPerson", hasProperty("username", equalTo("clari"))))
-                .andExpect(model().attribute("newPerson", hasProperty("email", equalTo("clari@gmx.de"))))
-                .andExpect(model().attribute("newPerson", hasProperty("city", equalTo("Düsseldorf"))));
-
-    }
-
+                .andExpect(view().name("AddItem"))
+                .andExpect(model().attribute("newItem", hasProperty("id")))
+                .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
+                .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
+                .andExpect(model().attribute("newItem", hasProperty("deposit", equalTo(69))))
+                .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));
+    }*/
 
     @Test
     public void ItemProfile() throws Exception {

@@ -42,6 +42,7 @@ public class ProjektController {
                                      Item item){
         Person loggedIn = PersonLoggedIn();
         model.addAttribute("newItem", item);
+
         item.setOwner(loggedIn);
         itemRepo.save(item);
         List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);

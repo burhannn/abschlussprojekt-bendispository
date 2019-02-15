@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.security;
+package Bendispository.Abschlussprojekt.Security;
 
 import Bendispository.Abschlussprojekt.Service.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
