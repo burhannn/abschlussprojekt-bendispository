@@ -84,7 +84,7 @@ public class ControllerTests {
 
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
-        dummy1.setAccount(100);
+        dummy1.setBankaccount(100);
         dummy1.setCity("kölle");
         dummy1.setEmail("momo@gmail.com");
         dummy1.setUsername("momo");
@@ -92,7 +92,7 @@ public class ControllerTests {
 
         dummy2.setFirstName("nina");
         dummy2.setLastName("fischi");
-        dummy2.setAccount(200);
+        dummy2.setBankaccount(200);
         dummy2.setCity("düssi");
         dummy2.setEmail("nini@gmail.com");
         dummy2.setUsername("nini");
