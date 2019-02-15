@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
     <meta charset="UTF-8">
 </head>
 <body>
-<div>Rented Items by myself
+<div class="projekt_container">
+<h1>Rented Items by myself</h1>
     <div th:each="request : ${myRentedItems}">
-        <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
-        <div>
+        <tr><div class="item_name" th:text= "|Gegenstand: ${request.requestedItem.name}|"></div></tr>
+        <tr>
             <div th:text="|To be returned on: ${request.requestedItem.duration}|"></div>
             <button type = "submit">return</button>
-        </div>
+        </tr>
     </div>
 </div>
+<a class="back_button" href="/">Back</a> <!-- ergänzt um person (login) -->
 </body>
 </html>

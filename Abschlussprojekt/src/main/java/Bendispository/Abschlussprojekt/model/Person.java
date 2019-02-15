@@ -21,7 +21,7 @@ public class Person {
 
     private String email;
 
-    private int account;
+    private int bankaccount;
 
     private String city;
 
