@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDate;
 import java.time.Period;
 
+import java.time.LocalDate;
+
 import static Bendispository.Abschlussprojekt.service.ProPaySubscriber.*;
 import org.springframework.web.bind.annotation.PostMapping;
+
 
 @Controller
 public class RequestController {
@@ -53,6 +56,8 @@ public class RequestController {
                                      @PathVariable Long id
                                      //@RequestParam("startDay")
                                      ){
+        model.addAttribute("newRequest", request);
+        requestRepo.save(request);
         String username = "";
         Item item = itemRepo.findById(id).orElse(null);
         if(proPaySubscriber.checkDeposit(item.getDeposit(), username)

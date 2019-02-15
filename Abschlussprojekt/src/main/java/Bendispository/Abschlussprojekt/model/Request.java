@@ -5,6 +5,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -32,8 +33,10 @@ public class Request {
 
     private int duration;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
     //Zeit, die der Lender hat, um den Request zu bearbeiten
