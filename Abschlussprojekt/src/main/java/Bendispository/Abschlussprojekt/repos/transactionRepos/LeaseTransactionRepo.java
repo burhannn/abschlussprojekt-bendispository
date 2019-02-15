@@ -10,4 +10,6 @@ public interface LeaseTransactionRepo extends CrudRepository<LeaseTransaction, L
     List<LeaseTransaction> findAll();
 
     Optional<LeaseTransaction> findByRequestId(Long id);
+
+    List<LeaseTransaction> findAllByItemId(Long id);
 }

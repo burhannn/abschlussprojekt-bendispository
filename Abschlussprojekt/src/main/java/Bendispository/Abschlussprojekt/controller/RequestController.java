@@ -3,8 +3,12 @@ package Bendispository.Abschlussprojekt.controller;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +30,11 @@ public class RequestController {
     @Autowired
     ItemRepo itemRepo;
 
-    @GetMapping(path = "/item{id}/requestItem")
+    TransactionService transactionService;
+
+    ProPaySubscriber proPaySubscriber;
+
+    @GetMapping(path = "/item{id}/requestItems")
     public String request(Model model, @PathVariable Long id){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         return "formRequest";
@@ -40,8 +48,8 @@ public class RequestController {
                                      ){
         String username = "";
         Item item = itemRepo.findById(id).orElse(null);
-        if(checkDeposit(item.getDeposit(), username)){
-
+        if(proPaySubscriber.checkDeposit(item.getDeposit(), username)
+                && transactionService.itemIsAvailableOnTime(request)){
 
             /*
 
@@ -52,12 +60,31 @@ public class RequestController {
             request.setDuration(Period.between(startDate, endDate).getDays());
             requestRepo.save(request);
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+
             return "formRequest";
             */
 
 
         }
         return "Could_not_send_Request";
+    }
+
+
+    @PostMapping(path = "/item{id}/requestItemsss")
+    public String requestAccepted(@ModelAttribute("request") Request request,
+                                Model model,
+                                @PathVariable Long id){
+        TransactionService transactionService = new TransactionService();
+        transactionService.lenderApproved(request);
+        return "";
+    }
+
+    @PostMapping(path = "/item{id}/requestItemsssss")
+    public String requestDenied(@ModelAttribute("request") Request request,
+                                     Model model,
+                                     @PathVariable Long id){
+
+        return "";
     }
 }
 
