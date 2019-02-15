@@ -24,7 +24,6 @@ import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 
 @Controller
 public class ProjektController {
-
     @Autowired
     ItemRepo itemRepo;
     @Autowired
@@ -35,14 +34,14 @@ public class ProjektController {
 
     @GetMapping(path = "/addItem")
     public String addItemPage(){
-        return "addItem";
+        return "AddItem";
     }
 
     @PostMapping(path = "/addItem")
     public String addItemsToDatabase(Model model, Item item){
         model.addAttribute("newItem", item);
         itemRepo.save(item);
-        return "addItem";
+        return "AddItem";
     }
 
     @GetMapping(path = "/Item/{id}" )
