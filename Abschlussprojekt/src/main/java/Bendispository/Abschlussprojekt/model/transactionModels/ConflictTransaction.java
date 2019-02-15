@@ -1,9 +1,6 @@
 package Bendispository.Abschlussprojekt.model.transactionModels;
 
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
 
 @Data
@@ -13,6 +10,8 @@ public class ConflictTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
+
+    private boolean leaserGotTheDepositBack;
 
     private boolean lenderAccepted;
 
