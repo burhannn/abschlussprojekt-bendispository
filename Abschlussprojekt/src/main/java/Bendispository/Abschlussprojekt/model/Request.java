@@ -15,6 +15,9 @@ import java.util.Optional;
 @Entity
 public class Request {
 
+    // Tage, kann auf stunden gewechselt werden
+    private static final int VALIDATION = 2;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -33,7 +36,8 @@ public class Request {
 
     private LocalDate endDate;
 
-    private int validationTime; //Zeit, die der Lender hat, um den Request zu bearbeiten
+    //Zeit, die der Lender hat, um den Request zu bearbeiten
+    private int validationTime = VALIDATION;
 
     // value = "denied", "approved", "pending"
     private RequestStatus status = RequestStatus.PENDING;
