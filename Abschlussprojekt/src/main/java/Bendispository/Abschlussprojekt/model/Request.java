@@ -46,8 +46,4 @@ public class Request {
               fetch = FetchType.EAGER)
     private LeaseTransaction leaseTransaction;
 
-
-
-
-
 }
