@@ -30,7 +30,6 @@ public class PaymentTransaction {
 
     private boolean depositIsBlocked;
 
-
     private boolean depositIsReturned;
 
     private boolean lenderAccepted;
@@ -42,18 +41,8 @@ public class PaymentTransaction {
         this.leaser = leaser;
         this.lender = lender;
         this.amount = amount;
+    }
 
-    }
-    public void pay(PaymentTransactionRepo paymentTransactionRepo){
-        ProPaySubscriber pps = new ProPaySubscriber();
-        pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
-        if(transferIsOk){
-            // Nachricht an Beteiligte, dass Zahlung erfolgt
-            return;
-        }
-        Optional<PaymentTransaction> payment = paymentTransactionRepo.findById(id);
-        conflictTransaction.addConflictTransaction(payment.get());
-    }
     /*
     public void isTransferIsOk(){
 

@@ -24,15 +24,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RequestController {
     
-    @Autowired
-    RequestRepo requestRepo;
+    final RequestRepo requestRepo;
 
-    @Autowired
-    ItemRepo itemRepo;
+    final ItemRepo itemRepo;
+
+    final LeaseTransactionRepo leaseTransactionRepo;
 
     TransactionService transactionService;
 
     ProPaySubscriber proPaySubscriber;
+
+    @Autowired
+    public RequestController(RequestRepo requestRepo, ItemRepo itemRepo, LeaseTransactionRepo leaseTransactionRepo) {
+        this.requestRepo = requestRepo;
+        this.itemRepo = itemRepo;
+        this.leaseTransactionRepo = leaseTransactionRepo;
+    }
 
     @GetMapping(path = "/item{id}/requestItems")
     public String request(Model model, @PathVariable Long id){
@@ -74,7 +81,7 @@ public class RequestController {
     public String requestAccepted(@ModelAttribute("request") Request request,
                                 Model model,
                                 @PathVariable Long id){
-        TransactionService transactionService = new TransactionService();
+        TransactionService transactionService = new TransactionService(leaseTransactionRepo, requestRepo);
         transactionService.lenderApproved(request);
         return "";
     }

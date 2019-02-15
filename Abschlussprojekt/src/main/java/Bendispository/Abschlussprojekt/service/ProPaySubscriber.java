@@ -14,11 +14,9 @@ import java.net.URI;
 @Component
 public class ProPaySubscriber {
 
-    final
-    PersonsRepo personsRepo;
+    final PersonsRepo personsRepo;
 
-    final
-    LeaseTransactionRepo leaseTransactionRepo;
+    final LeaseTransactionRepo leaseTransactionRepo;
 
     @Autowired
     public ProPaySubscriber(PersonsRepo personsRepo, LeaseTransactionRepo leaseTransactionRepo) {
@@ -26,6 +24,7 @@ public class ProPaySubscriber {
         this.personsRepo = personsRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
     }
+
 
     public int makeDeposit(int deposit, String leaserName, String lenderName){
         Reservation reservation = makeReservation(leaserName, lenderName, deposit, Reservation.class);

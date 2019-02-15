@@ -33,11 +33,12 @@ public class ConflictTransaction {
     public void addConflictTransaction(){
         ConflictTransaction conflictTransaction = new ConflictTransaction();
     }
-    public void conflictSolved(PaymentTransactionRepo paymentTransactionRepo){
+
+    /*public void conflictSolved(PaymentTransactionRepo paymentTransactionRepo){
         if(leaserAccepted && lenderAccepted){
             paymentTransaction.setAmount(damageCosts);
             paymentTransaction.pay(paymentTransactionRepo);
         }
-    }
+    }*/
 
 }

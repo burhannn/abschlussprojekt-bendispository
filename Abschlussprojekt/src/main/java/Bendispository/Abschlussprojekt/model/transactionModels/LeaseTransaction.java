@@ -57,13 +57,13 @@ public class LeaseTransaction {
         concludeTransaction.addConcludeTransaction();
     }
 
-    public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
+    /*public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
         itemIsReturned = true;
         //zurückbuchung deposit
 
         int amount = duration * item.getCostPerDay();
-        PaymentTransaction pay = new PaymentTransaction(leaser, lender, amount);
-        pay.pay(paymentTransactionRepo);
+        PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
+        paymentTransaction.pay(leaser, lender, this);
 
         isReturnedOnTime(paymentTransactionRepo);
     }
@@ -76,8 +76,8 @@ public class LeaseTransaction {
             concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
 
             int amount = item.getCostPerDay() * timeViolation;
-            PaymentTransaction pay = new PaymentTransaction(leaser, lender, amount);
-            pay.pay(paymentTransactionRepo);
+            PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
+            paymentTransaction.pay(paymentTransactionRepo);
         }
-    }
+    }*/
 }
