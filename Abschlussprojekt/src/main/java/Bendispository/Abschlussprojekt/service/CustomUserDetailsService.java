@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Service.service;
+package Bendispository.Abschlussprojekt.Service;
 
 
 import Bendispository.Abschlussprojekt.Service.MyUserPrincipal;

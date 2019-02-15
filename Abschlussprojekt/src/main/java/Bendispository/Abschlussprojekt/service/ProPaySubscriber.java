@@ -14,11 +14,17 @@ import java.net.URI;
 @Component
 public class ProPaySubscriber {
 
-    @Autowired
-    PersonsRepo personsRepo;
+    final PersonsRepo personsRepo;
+
+    final LeaseTransactionRepo leaseTransactionRepo;
 
     @Autowired
-    LeaseTransactionRepo leaseTransactionRepo;
+    public ProPaySubscriber(PersonsRepo personsRepo, LeaseTransactionRepo leaseTransactionRepo) {
+        super();
+        this.personsRepo = personsRepo;
+        this.leaseTransactionRepo = leaseTransactionRepo;
+    }
+
 
     public int makeDeposit(int deposit, String leaserName, String lenderName){
         Reservation reservation = makeReservation(leaserName, lenderName, deposit, Reservation.class);
@@ -73,14 +79,14 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    public static boolean checkDeposit(int requiredDeposit, String username){
+    public boolean checkDeposit(int requiredDeposit, String username){
         ProPayAccount account = getAccount(username, ProPayAccount.class);
         if(account.getAmount() >= requiredDeposit)
             return true;
         return false;
     }
 
-    private static <T> T getAccount(String username, Class<T> type) {
+    private <T> T getAccount(String username, Class<T> type) {
         final Mono<T> mono = WebClient
                         .create()
                         .get()

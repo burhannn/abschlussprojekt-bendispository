@@ -25,36 +25,19 @@ public class PaymentTransaction {
 
     private int amount;
 
-    private boolean transferIsOk;
+    private boolean paymentIsConcluded;
 
-    private boolean depositIsBlocked;
+    // DEPOSIT, DAMAGES, RENTPRICE
+    // DEPOSIT => was blocked
+    private PaymentType type;
 
-
-    private boolean depositIsReturned;
-
-    private boolean lenderAccepted;
-
-    @OneToOne
-    private ConflictTransaction conflictTransaction;
+    @ManyToOne
+    LeaseTransaction leaseTransaction;
 
     public PaymentTransaction(Person leaser, Person lender, int amount){
         this.leaser = leaser;
         this.lender = lender;
         this.amount = amount;
-
     }
-    public void pay(PaymentTransactionRepo paymentTransactionRepo){
-        ProPaySubscriber pps = new ProPaySubscriber();
-        pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
-        if(transferIsOk){
-            // Nachricht an Beteiligte, dass Zahlung erfolgt
-            return;
-        }
-        Optional<PaymentTransaction> payment = paymentTransactionRepo.findById(id);
-        conflictTransaction.addConflictTransaction(payment.get());
-    }
-    /*
-    public void isTransferIsOk(){
 
-    }*/
 }
