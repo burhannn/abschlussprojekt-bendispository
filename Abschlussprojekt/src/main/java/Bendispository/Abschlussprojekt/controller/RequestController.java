@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Optional;
+import java.time.LocalDate;
 
 @Controller
 public class RequestController {
@@ -36,6 +36,9 @@ public class RequestController {
                                      @PathVariable Long id,
                                      int duration
                                      ){
+        model.addAttribute("newRequest", request);
+        requestRepo.save(request);
+
         Item item = itemRepo.findById(id).orElse(null);
         /*Person me = personRepo.findById(MEINE_ID).orELse(null);
         request.setRequester(me);*/

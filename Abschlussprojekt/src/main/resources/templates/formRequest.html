@@ -8,7 +8,9 @@
     <h1>Anfrage</h1>
     <form method = "post">
         <UL th:if="${thisItem.available} == true" >
-            <LI>Duration:<input type ="text" name = "duration" placeholder="in days">
+            <LI>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd">
+            <LI>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd">
+
                 <button type="submit">Send request</button>
             </LI>
         </UL>
