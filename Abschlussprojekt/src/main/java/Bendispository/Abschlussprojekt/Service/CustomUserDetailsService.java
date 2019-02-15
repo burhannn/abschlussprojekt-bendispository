@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Service;
+package Bendispository.Abschlussprojekt.Service.service;
 
 
 import Bendispository.Abschlussprojekt.model.Person;

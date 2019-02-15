@@ -14,15 +14,22 @@
                 <td>Email:</td>
                 <td>City:</td>
                 <td>Account:</td>
-                <td>Username:</td>
             </tr>
             <tr>
                 <td><Input name="lastName" type="text" placeholder="e.g.Mustermann" th:value="${newPerson?.lastName}"></td>
+                <br>
                 <td><Input name="firstName" type="text" placeholder="e.g.Max" th:value="${newPerson?.firstName}"></td>
+                <br>
                 <td><Input name="email" type="text" placeholder="e.g.max@gmx.de" th:value="${newPerson?.email}"></td>
+                <br>
                 <td><Input name="city" type="text" placeholder="e.g.Duesseldorf" th:value="${newPerson?.city}"></td>
+                <br>
                 <td><Input name="account" type="text" placeholder="e.g.56 77 234" th:value="${newPerson?.account}"></td>
-                <td><Input name="username" type="text" placeholder="e.g.56 77 234" th:value="${newPerson?.username}"></td>
+                <br>
+            </tr>
+            <tr>
+                <td>Username: <Input name="username" type="text" placeholder="Username" required th:value="${newPerson?.username}"></td>
+                <td>Password: <Input name="password" type="password" placeholder="8 characters minimum" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}"></td>
             </tr>
         </table>
         <button type="submit">Save & Create</button>

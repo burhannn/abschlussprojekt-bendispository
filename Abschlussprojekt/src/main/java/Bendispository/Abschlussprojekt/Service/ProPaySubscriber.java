@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.Service;
 
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;

@@ -1,11 +1,11 @@
 package Bendispository.Abschlussprojekt;
 
-import Bendispository.Abschlussprojekt.Service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.Service.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -222,7 +221,7 @@ public class ControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profile"))
+                .andExpect(view().name("profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
                 .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
                 .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
@@ -235,7 +234,7 @@ public class ControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profile"))
+                .andExpect(view().name("profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(2L))))
                 .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("nina"))))
                 .andExpect(model().attribute("person", hasProperty("lastName", equalTo("fischi"))))

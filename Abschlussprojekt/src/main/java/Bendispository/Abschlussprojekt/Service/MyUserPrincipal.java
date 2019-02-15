@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Service;
+package Bendispository.Abschlussprojekt.Service.service;
 
 import Bendispository.Abschlussprojekt.model.Person;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +24,7 @@ public class MyUserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return new BCryptPasswordEncoder().encode("abcd");
+        return new BCryptPasswordEncoder().encode(user.getPassword());
     }
 
     @Override

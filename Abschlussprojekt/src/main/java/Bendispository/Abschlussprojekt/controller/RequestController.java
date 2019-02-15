@@ -1,7 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -11,10 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.time.LocalDate;
-import java.time.Period;
 
-import static Bendispository.Abschlussprojekt.service.ProPaySubscriber.*;
+import static Bendispository.Abschlussprojekt.Service.ProPaySubscriber.*;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller

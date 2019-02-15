@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<head>
+</head>
+<body>
+<div class="projekt_container">
+    <h1 th:text="${person.username}"></h1>
+    <div class="profil_information">
+        <tr><div th:text="|Email: ${person.email}|"></div></tr>
+        <tr><div th:text="|City: ${person.city}|"></div></tr>
+        <div class="my_items">Offered Items:
+            <div th:each="item : ${person.items}">
+                <tr>
+                    <td><a th:href="@{'/Item/' + ${item.id}}" th:text="${item.name}"></a></td>
+                </tr>
+            </div>
+        </div>
+    </div>
+</div>
+<a href="/" class="back_button">Back</a>
+</body>
+</html>
