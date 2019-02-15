@@ -21,7 +21,7 @@ public class MyUserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return new BCryptPasswordEncoder().encode("abcd");
+        return new BCryptPasswordEncoder().encode(user.getPassword());
     }
 
     @Override
