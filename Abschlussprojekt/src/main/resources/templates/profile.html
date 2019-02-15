@@ -1,40 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
 </head>
 <body>
-<div>My Profile</div>
-
-<a th:href = "@{'/profile/' + ${person.id} + '/requests'}">Requests</a>
-<a th:href = "@{'/profile/' + ${person.id} + '/rentedItems'}">Rented Items</a>
-<div>
-    <div>
-            <tr>
-                <td>Last Name:</td>
-                <td>First Name:</td>
-                <td>Email:</td>
-                <td>City:</td>
-                <td>Account:</td>
-                <td>Username:</td>
-            </tr>
-            <tr>
-                <td th:text="${person.lastName}"></td>
-                <td th:text="${person.firstName}"></td>
-                <td th:text="${person.email}"></td>
-                <td th:text="${person.city}"></td>
-                <td th:text="${person.account}"></td>
-                <td th:text="${person.username}"></td>
-            </tr>
-        <div>My Items:
-            <table>
-                <tr th:each="item : ${person.items}">
-                    <li th:text="| - ${item.name}|"></li>
-                    <a th:href="@{'/Item/' + ${item.id}}" th:text="|Show Details ${item.name}|"></a>
-                </tr>
-            </table>
+<div class="projekt_container">
+<h1>My Profile</h1>
+    <div class="my_actions_profile">
+        <a th:href = "@{'/profile/' + ${person.id} + '/requests'}">Requests</a>
+        <a th:href = "@{'/profile/' + ${person.id} + '/rentedItems'}">Rented Items</a>
+    </div>
+    <div class="profil_information">
+        <tr><div th:text="|Last Name : ${person.lastName}|"></div></tr>
+        <tr><div th:text="|First Name: ${person.firstName}|"></div></tr>
+        <tr><div th:text="|Email: ${person.email}|"></div></tr>
+        <tr><div th:text="|City: ${person.city}|"></div></tr>
+        <tr><div th:text="|Account: ${person.bankaccount}|"></div></tr>
+        <tr><div th:text="|Username: ${person.username}|"></div></tr>
+        <div class="my_items">My Items:
+                <div th:each="item : ${person.items}">
+                    <tr>
+                        <td><a th:href="@{'/Item/' + ${item.id}}" th:text="${item.name}"></a></td>
+                    </tr>
+                </div>
         </div>
     </div>
-    <a href="/" >Back</a>
 </div>
+<a href="/" class="back_button">Back</a>
 </body>
 </html>

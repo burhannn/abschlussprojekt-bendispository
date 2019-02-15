@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.repos;
 
+import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
@@ -9,6 +10,8 @@ import java.util.List;
 
 public interface RequestRepo extends CrudRepository<Request, Long>{
     List<Request> findAll();
+
+    List<Request> findAllByRequestedItem(Item item);
 
     List<Request> findByRequester(Person requester);
 

@@ -63,3 +63,22 @@ Lorena - Docker & Travis CI:
 - Kennenlernen mit Travis CI
 
 ---
+
+#### Mittwoch, 13.02.2019
+
+Marc & Kim & Nina - Transactions:
+
+- Buttonmanagement
+
+Mandy & Clara - Templates:
+
+- Transactiontemplates
+
+Burhan & Jannik - Login mit Springsecurity
+
+- Configurations, Controller, Repositories & Allgemeines
+
+Lorena - Docker & Projektdokumentation
+
+- Einstellung der Datenbankskonfiguration
+- Anfang der Projektdokumentation
