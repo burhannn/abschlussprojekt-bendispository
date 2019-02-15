@@ -51,6 +51,8 @@ button:hover, a:hover {
     top: 0px;
 }
 body{
+    color: black;
+    background-image: url(http://i48.tinypic.com/2vn1e28.jpg);
     font-family: Cambria !important;
     background-color: #ffffcc !important;
     margin: 4% !important;
