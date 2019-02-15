@@ -15,13 +15,20 @@ import java.util.List;
 @Component
 public class TransactionService {
 
-    @Autowired
+    final
     RequestRepo requestRepo;
 
-    @Autowired
+    final
     LeaseTransactionRepo leaseTransactionRepo;
 
     ProPaySubscriber proPaySubscriber;
+
+    @Autowired
+    public TransactionService(LeaseTransactionRepo leaseTransactionRepo, RequestRepo requestRepo) {
+        super();
+        this.leaseTransactionRepo = leaseTransactionRepo;
+        this.requestRepo = requestRepo;
+    }
 
 
     public void lenderApproved(Request request){
