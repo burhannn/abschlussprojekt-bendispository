@@ -55,6 +55,7 @@ public class LeaseTransaction {
         lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
         lsTrans.startDate = request.getStartDate();
+        lsTrans.endDate = request.getEndDate();
         concludeTransaction.addConcludeTransaction();
     }
 
