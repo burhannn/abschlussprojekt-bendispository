@@ -22,7 +22,7 @@ public class PaymentService {
     /*public void pay(Person leaser, Person lender, ){
         ProPaySubscriber pps = new ProPaySubscriber();
         pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
-        if(transferIsOk){
+        if(paymentIsConcluded){
             // Nachricht an Beteiligte, dass Zahlung erfolgt
             return;
         }

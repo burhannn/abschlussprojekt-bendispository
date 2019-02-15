@@ -26,16 +26,14 @@ public class PaymentTransaction {
 
     private int amount;
 
-    private boolean transferIsOk;
+    private boolean paymentIsConcluded;
 
-    private boolean depositIsBlocked;
+    // DEPOSIT, DAMAGES, RENTPRICE
+    // DEPOSIT => was blocked
+    private PaymentType type;
 
-    private boolean depositIsReturned;
-
-    private boolean lenderAccepted;
-
-    @OneToOne
-    private ConflictTransaction conflictTransaction;
+    @ManyToOne
+    LeaseTransaction leaseTransaction;
 
     public PaymentTransaction(Person leaser, Person lender, int amount){
         this.leaser = leaser;
@@ -43,8 +41,4 @@ public class PaymentTransaction {
         this.amount = amount;
     }
 
-    /*
-    public void isTransferIsOk(){
-
-    }*/
 }

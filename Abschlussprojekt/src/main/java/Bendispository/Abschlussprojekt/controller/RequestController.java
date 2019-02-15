@@ -44,7 +44,7 @@ public class RequestController {
         this.leaseTransactionRepo = leaseTransactionRepo;
     }
 
-    @GetMapping(path = "/item{id}/requestItems")
+    @GetMapping(path = "/item{id}/requestItem")
     public String request(Model model, @PathVariable Long id){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         return "formRequest";
@@ -63,9 +63,9 @@ public class RequestController {
         if(proPaySubscriber.checkDeposit(item.getDeposit(), username)
                 && transactionService.itemIsAvailableOnTime(request)){
 
-            /*
 
-            Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
+
+            //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
 
             request.setRequestedItem(item);
             LocalDate startDate = LocalDate.of(1,1,1), endDate = LocalDate.of(2,1,1);
@@ -74,7 +74,7 @@ public class RequestController {
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
 
             return "formRequest";
-            */
+
 
 
         }

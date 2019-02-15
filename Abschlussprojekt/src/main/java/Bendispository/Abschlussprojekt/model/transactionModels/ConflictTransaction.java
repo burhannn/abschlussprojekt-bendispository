@@ -18,27 +18,11 @@ public class ConflictTransaction {
 
     private boolean leaserAccepted;
 
-    private int damageCosts;
-
     private int validationTime;
 
+    private String commentary;
+
     @OneToOne
-    PaymentTransaction paymentTransaction;
-
-    public void addConflictTransaction(PaymentTransaction paymentTransaction) {
-        ConflictTransaction conflictTransaction = new ConflictTransaction();
-        this.paymentTransaction = paymentTransaction;
-    }
-
-    public void addConflictTransaction(){
-        ConflictTransaction conflictTransaction = new ConflictTransaction();
-    }
-
-    /*public void conflictSolved(PaymentTransactionRepo paymentTransactionRepo){
-        if(leaserAccepted && lenderAccepted){
-            paymentTransaction.setAmount(damageCosts);
-            paymentTransaction.pay(paymentTransactionRepo);
-        }
-    }*/
+    LeaseTransaction leaseTransaction;
 
 }

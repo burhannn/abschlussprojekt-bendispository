@@ -73,4 +73,4 @@ public class TransactionService {
         return start1.isBefore(end2) && start2.isBefore(end1);
     }
 
-    }
+}

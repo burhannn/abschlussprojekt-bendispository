@@ -10,6 +10,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,38 +24,48 @@ public class LeaseTransaction {
     private Person leaser;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private Person lender;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     private Item item;
 
     private Long requestId;
-
-    // number of days
-    private int duration;
 
     private int depositId;
 
     private boolean itemIsReturned = false;
 
+    private boolean itemIsIntact = true;
+
+    private boolean leaseIsConcluded = false;
+
+    private int lengthOfTimeframeViolation = 0;
+
+    private boolean timeframeViolation = false;
+
     //private boolean itemIsReturnedOnTime = false;
 
+    // number of days
+    private int duration;
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @OneToMany
+    private List<PaymentTransaction> payments;
+
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
-    private ConcludeTransaction concludeTransaction;
+    private ConflictTransaction conflictTransaction;
 
     public void addLeaseTransaction(Request request){
         LeaseTransaction lsTrans = new LeaseTransaction();
         lsTrans.setItem(request.getRequestedItem());
         lsTrans.setLeaser(request.getRequester());
-        lsTrans.setLender(request.getRequestedItem().getOwner());
+        //lsTrans.setLender(request.getRequestedItem().getOwner());
         lsTrans.setDuration(request.getDuration());
         lsTrans.startDate = request.getStartDate();
         lsTrans.endDate = request.getEndDate();
-        concludeTransaction.addConcludeTransaction();
+    }
+
+    public void addPaymentTransaction(PaymentTransaction paymentTransaction){
+        this.payments.add(paymentTransaction);
     }
 
     /*public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
