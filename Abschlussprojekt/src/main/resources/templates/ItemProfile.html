@@ -6,20 +6,21 @@
     <title>Title</title>
 </head>
 <body>
-<h1 th:text = "|${itemProfile?.name}, from ${itemOwner?.username}"></h1>
-<dl>
-    <LI th:text = "| Name: ${itemProfile?.name}|"></LI>
-    <LI th:text = "| Description: ${itemProfile?.description}|" ></LI>
-    <LI th:text = "| Deposit: ${itemProfile?.deposit}|" ></LI>
-    <LI th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></LI>
-</dl>
+<div class="projekt_container">
+    <div class="item_owner_description" th:text = "|from ${itemOwner?.username}|"></div>
+        <h1 th:text = "${itemProfile?.name}"></h1>
+            <tr><div th:text = "| Name: ${itemProfile?.name}|"></div></tr>
+            <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>
+            <tr><div th:text = "| Deposit: ${itemProfile?.deposit}|" ></div></tr>
+            <tr><div th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></div></tr>
+    <a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
+
+</div>
+<form action="http://localhost:8080/">
+    <button class="back_button" type="submit">Back</button>
+</form>
 <!-- Hier kommt Anfrage Rubrik mit Zeitraum etc. (Marc und Kim)-->
 
-<a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
-
-<form action="http://localhost:8080/">
-    <button type="submit">Zurück zur Übersicht</button>
-</form>
 
 </body>
 </html>

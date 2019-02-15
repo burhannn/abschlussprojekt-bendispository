@@ -5,26 +5,37 @@ button,a {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 12px;
     border-radius: 5px;
     cursor: pointer;
+    font-family: monospace;
+    border: none;
+    margin: 0.5% 0%;
+}
+.back_button{
+    float: right;
+    background-color: olive;
+}
+.back_button:hover{
+    background-color: cornflowerblue;
 }
 button:hover, a:hover {
     background-color: red;
-    color: white;
     border: 2px solid white;
 }
 .projekt_container{
     background-color: aliceblue;
     border: 1px solid midnightblue;
     display: inline-block;
-    border-radius: 3px;
+    border-radius: 5px;
     margin: 3%;
-    padding: 3%;
+    padding: 2%;
+    width: 86%;
+    text-align: center;
 }
 .header_container{
     text-align: center;
-    margin: 4%;
+    margin: 0% 0% 2%;
 }
 .header_overview{
     font-size: 20px;
@@ -41,4 +52,30 @@ button:hover, a:hover {
 }
 body{
     font-family: Cambria !important;
+    background-color: #ffffcc !important;
+    margin: 4% !important;
+}
+h1{
+    font-weight: 100;
+    font-size: 21px;
+}
+.projekt_container tr{
+    width: 86%;
+}
+.item_owner_description{
+    float: right;
+    position: absolute;
+    right: 11%;
+}
+.item_description{
+    color: olive;
+}
+.profil_information{
+    text-align: left !important;
+}
+.my_items{
+    margin-top: 5%;
+}
+.item_name{
+    font-weight: 600;
 }

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <body>
-    <div class="header_overview">Overview Items</div>
+    <div class="header_overview">All Items currently offered</div>
     <div class="my_actions_profile">
         <a href="@{'/profile/' + ${person.id}}">My Profile</a> <!-- /1 bis login als placeholder -->
         <a href="/addItem">Add Item</a>
@@ -11,7 +11,7 @@
 <div class = "projekt_container" th:each="item,iterStart : ${OverviewAllItems}">
     <h1 class="header_container" th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
     <div>
-        <div th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
+        <div class ="item_description" th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
     </div>
     <a th:href="@{'/Item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
 </div>

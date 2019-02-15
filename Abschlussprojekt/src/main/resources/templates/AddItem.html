@@ -6,20 +6,20 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Neues Item:</h1>
+<div class = "projekt_container">
+<h1>I want to offer a new Item:</h1>
 <form method = "post">
-    <UL>
-        <LI>Name:<input type ="text" name = "name" th:value="${newItem?.name}"></input>
-        <LI>Description:<input type ="text" name = "description" th:value="${newItem?.description}"></input>
-        <LI>Deposit:<input type ="text" name = "deposit" th:value="${newItem?.deposit}"></input>
-        <LI>CostPerDay:<input type ="text" name = "costPerDay" th:value="${newItem?.costPerDay}"></LI>
-        <button type="submit" class="button">add Item</button>
-    </UL>
+        <tr>Name:<div><input type ="text" name = "name" th:value="${newItem?.name}"></div></tr>
+        <tr>Description:<div><input type ="text" name = "description" th:value="${newItem?.description}"></div></tr>
+        <tr>Deposit:<div><input type ="text" name = "deposit" th:value="${newItem?.deposit}"></div></tr>
+        <tr>CostPerDay:<div><input type ="text" name = "costPerDay" th:value="${newItem?.costPerDay}"></div></tr>
+        <button type="submit" class="button" style="margin-top: 2%">add Item</button>
+</form>
+</div>
+<form action="http://localhost:8080/">
+    <button class="back_button" type="submit">Back</button>
 </form>
 
-<form action="http://localhost:8080/">
-    <button type="submit" class="button" >Zurück zur Übersicht</button>
-</form>
 
 </body>
 </html>
