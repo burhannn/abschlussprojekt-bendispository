@@ -73,14 +73,14 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    public static boolean checkDeposit(int requiredDeposit, String username){
+    public boolean checkDeposit(int requiredDeposit, String username){
         ProPayAccount account = getAccount(username, ProPayAccount.class);
         if(account.getAmount() >= requiredDeposit)
             return true;
         return false;
     }
 
-    private static <T> T getAccount(String username, Class<T> type) {
+    private <T> T getAccount(String username, Class<T> type) {
         final Mono<T> mono = WebClient
                         .create()
                         .get()
