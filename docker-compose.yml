@@ -6,23 +6,31 @@ volumes:
 services:
   shareapp:
     build: ./Abschlussprojekt
+    ports: 
+      - 8080:8080
     depends_on:
       database:
         condition: service_healthy
 
   database:
-    image: postgres
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     restart: always
-    ports: 
-      - 5432:5432
+    ports:
+      - 3306:3306
     environment:
-      POSTGRES_DB: sharingdatabase
-      POSTGRES_PASSWORD: sharepw
-      # POSTGRES_USER: admin
-    #volumes:
-    #- databasevol:/var/lib/postgresql/data
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: sharepw
+      MYSQL_DATABASE: sharingdatabase
+      MYSQL_ROOT_PASSWORD: example
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d sharingdatabase -U admin"]
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "--password=example"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  propay:
+    image: propra/propay
+    ports:
+      - "8888:8888"
+    # Optional
