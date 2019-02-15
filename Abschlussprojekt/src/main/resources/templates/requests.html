@@ -5,30 +5,35 @@
     <meta charset="UTF-8">
 </head>
 <body>
-<title>Requests</title>
-<div>My Requests
+<div class="projekt_container">
+<h1>My Requests</h1>
   <div th:each="request : ${myRequests}">
-    <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
-    <div>
-        <div th:text="|Status: ${request.status}|"></div>
-    </div>
+      <tr>
+          <div th:text= "|Gegenstand: ${request.requestedItem.name} -Status: ${request.status}|"></div>
+      </tr>
   </div>
 </div>
-<div>Requests concerning my items
+<div class="projekt_container">
+    <h1>Requests concerning my items</h1>
     <div th:each="request : ${requestsMyItems}">
-    <h1 th:text= "|Gegenstand: ${request.requestedItem.name}|"></h1>
-    <div>
+        <table style="margin-top: 2%">
+            <tr style="text-align: left !important;">
+                <td class="item_name" th:text= "|Item: ${request.requestedItem.name}|"></td>
+            </tr>
         <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
-        <div th:text="|Status: ${request.status}|"></div>
-        <form method="post">
-            <input type="radio" name="requestMyItems" value="-1">reject
-            <input type="radio" name="requestMyItems" value="1">accept
-            <input type="hidden" value="0" th:value="${request.id}" name="requestID">
-            <button type = "submit">submit</button>
-        </form>
-    </div>
+        <td th:text="|Status: ${request.status}|"></td>
+        <td>
+            <form method="post">
+                <input type="radio" name="requestMyItems" value="-1">reject
+                <input type="radio" name="requestMyItems" value="1">accept
+                <input type="hidden" value="0" th:value="${request.id}" name="requestID">
+                <button type = "submit">submit</button>
+            </form>
+        </td>
+    </tr>
+        </table>
 </div>
 </div>
-<a href="/">Back</a> <!-- ergänzt um person (login) -->
+<a class="back_button" href="/">Back</a> <!-- ergänzt um person (login) -->
 </body>
 </html>
