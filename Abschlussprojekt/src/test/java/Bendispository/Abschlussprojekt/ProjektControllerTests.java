@@ -6,8 +6,7 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.service.service.CustomUserDetailsService;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactionRepo;
+import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
@@ -30,7 +29,6 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -51,9 +49,6 @@ public class ProjektControllerTests {
 
     @MockBean
     PersonsRepo personsRepo;
-
-    @MockBean
-    ConcludeTransactionRepo concludetransRepo;
 
     @MockBean
     ConflictTransactionRepo conflictTransactionRepo;
