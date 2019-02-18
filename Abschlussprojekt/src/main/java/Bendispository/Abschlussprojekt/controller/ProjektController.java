@@ -71,11 +71,9 @@ public class ProjektController {
                                Person person) {
         model.addAttribute("newPerson", person);
         if(personRepo.findByUsername(person.getUsername())== null) {
-            System.out.println("USER existiert nicht");
             personRepo.save(person);
             return "login";
-        }else {
-
+        } else {
             return "registration";
         }
     }
