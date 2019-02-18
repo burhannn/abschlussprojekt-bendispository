@@ -1,5 +1,7 @@
 package Bendispository.Abschlussprojekt.service;
 
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
+import Bendispository.Abschlussprojekt.model.transactionModels.Reservation
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;

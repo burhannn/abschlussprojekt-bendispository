@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.model.transactionModels;
 
 import lombok.Data;
 
