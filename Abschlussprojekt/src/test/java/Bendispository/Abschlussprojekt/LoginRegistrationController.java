@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt;
 
 
+import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -10,8 +11,10 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRe
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,6 +22,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
@@ -78,6 +86,23 @@ public class LoginRegistrationController {
                 .andExpect(model().attribute("newPerson", hasProperty("username", equalTo("clari"))))
                 .andExpect(model().attribute("newPerson", hasProperty("email", equalTo("clari@gmx.de"))))
                 .andExpect(model().attribute("newPerson", hasProperty("city", equalTo("Düsseldorf"))));
-
     }
+
+    @Test
+    public void checkRegistrationfail() throws Exception {
+
+        mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("lastName", "mandy")
+                .param("firstName", "clara")
+                .param("username", "momo")
+                .param("email", "clari@gmx.de")
+                .param("account", "0")
+                .param("city", "Düsseldorf")
+                .param("password", "abcd")
+                .sessionAttr("newPerson", new Person()))
+                .andExpect(view().name("login"))
+                .andExpect(status().isOk());
+    }
+
+
 }

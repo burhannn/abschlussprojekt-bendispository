@@ -15,12 +15,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
-@WithMockUser
+@WithMockUser(username = "momo", password = "abcd")
 public class ProjektControllerTests {
 
     @Autowired
@@ -158,7 +162,7 @@ public class ProjektControllerTests {
     }
 
     @Test
-    public void Overview() throws Exception {
+    public void checkOverviewItems() throws Exception {
 
         Mockito.when(itemRepo.findAll())
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
@@ -192,7 +196,7 @@ public class ProjektControllerTests {
 
     //tests für profile anderer User
     @Test
-    public void myProfile() throws Exception {
+    public void checkMyProfile() throws Exception {
         mvc.perform(get("/profile"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -207,10 +211,8 @@ public class ProjektControllerTests {
         //.andExpect(model().attribute("person", hasProperty("items", )));
     }
 
-
-
     @Test
-    public void UserProfilOther() throws Exception {
+    public void checkExistingUserProfilOther() throws Exception {
 
         mvc.perform(get("/profile/{id}", 1L))
                 .andDo(print())
@@ -218,8 +220,6 @@ public class ProjektControllerTests {
                 .andExpect(model().attributeExists("person"))
                 .andExpect(view().name("profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
-                .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
-                .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
                 .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))));
@@ -231,8 +231,6 @@ public class ProjektControllerTests {
                 .andExpect(model().attributeExists("person"))
                 .andExpect(view().name("profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(2L))))
-                .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("nina"))))
-                .andExpect(model().attribute("person", hasProperty("lastName", equalTo("fischi"))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("nini"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("nini@gmail.com"))))
                 .andExpect(model().attribute("person", hasProperty("city", equalTo("düssi"))));
@@ -240,7 +238,14 @@ public class ProjektControllerTests {
     }
 
     @Test
-    public void usersUebersicht() throws Exception {
+    public void checkNONExistingUserProfilOther() throws Exception {
+        mvc.perform(get("/profile/{id}", 8L))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    public void checkUsersUebersicht() throws Exception {
 
         Mockito.when(personsRepo.findAll())
                 .thenReturn(Arrays.asList(dummy1, dummy2));
@@ -271,9 +276,8 @@ public class ProjektControllerTests {
 
     }
 
-
     @Test
-    public void addItem() throws Exception {
+    public void checkAddItem() throws Exception {
 
         mvc.perform(post("/addItem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "lasso")
@@ -291,7 +295,7 @@ public class ProjektControllerTests {
     }
 
     @Test
-    public void ItemProfile() throws Exception {
+        public void checkItemProfiles() throws Exception {
 
         mvc.perform(get("/Item/{id}", 3L))
                 .andDo(print())
@@ -331,18 +335,10 @@ public class ProjektControllerTests {
     }
 
     @Test
-    public void requestsFromUser() throws Exception{
-
-    }
-
-    @Test
-    public void rentedItemsFromUser() throws Exception{
-
-    }
-
-    @Test
-    public void makeRequestForItem() throws Exception {
-
+    public void checkItemProfileDoesNotExist() throws Exception {
+        mvc.perform(get("/item/{id}", 8L))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
 }
