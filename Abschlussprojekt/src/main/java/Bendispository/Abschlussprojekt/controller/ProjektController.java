@@ -159,4 +159,9 @@ public class ProjektController {
         Person loggedIn = personRepo.findByUsername(name);
         return loggedIn;
     }
+
+	@GetMapping("/logoutTEST")
+	public String logout() {
+		return "logoutTEST";
+	}
 }
