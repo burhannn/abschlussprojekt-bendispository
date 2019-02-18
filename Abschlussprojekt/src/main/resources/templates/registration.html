@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
-<!--link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}"!-->
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
@@ -18,25 +17,25 @@
 			<Input name="firstName" type="text" class="form-control" placeholder="First Name" th:value="${newPerson?.firstName}">
 		</p>
 		<p>
-			<Input name="lastName" type="text" class="form-control" placeholder="Last Name" th:value="${newPerson?.lastName}">
+			<Input style="margin-top: -5px" name="lastName" type="text" class="form-control" placeholder="Last Name" th:value="${newPerson?.lastName}">
 		</p>
 		<p>
-			<Input name="email" type="text" class="form-control" placeholder="E-Mail" th:value="${newPerson?.email}">
+			<Input style="margin-top: -5px" name="email" type="text" class="form-control" placeholder="E-Mail" th:value="${newPerson?.email}">
 		</p>
 		<p>
-			<Input name="city" type="text" class="form-control" placeholder="City" th:value="${newPerson?.city}">
+			<Input style="margin-top: -5px" name="city" type="text" class="form-control" placeholder="City" th:value="${newPerson?.city}">
 		</p>
 		<p>
-			<Input name="bankaccount" type="text" class="form-control" placeholder="Bank Account" th:value="${newPerson?.bankaccount}">
+			<Input style="margin-top: -5px" name="bankaccount" type="text" class="form-control" placeholder="Bank Account" th:value="${newPerson?.bankaccount}">
 		</p>
 		<p>
-			<Input name="username" type="text" class="form-control" placeholder="Username" required th:value="${newPerson?.username}">
+			<Input style="margin-top: -5px" name="username" type="text" class="form-control" placeholder="Username" required th:value="${newPerson?.username}">
 		</p>
 		<p>
-			<Input name="password" type="password" class="form-control" placeholder="Password" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
+			<Input style="margin-top: -5px" name="password" type="password" class="form-control" placeholder="Password" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
 		</p>
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Save & Create</button>
-		<a href="/login" class="btn btn-lg btn-primary btn-block">Back</a>
+		<a href="/login" style="margin-top: -10px" class="btn btn-lg btn-primary btn-block">Back</a>
 
 	</form>
 </a>

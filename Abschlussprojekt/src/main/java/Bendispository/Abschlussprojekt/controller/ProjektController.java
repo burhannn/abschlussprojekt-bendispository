@@ -160,8 +160,8 @@ public class ProjektController {
         return loggedIn;
     }
 
-	@GetMapping("/logoutTEST")
+	@GetMapping("/loggedOut")
 	public String logout() {
-		return "logoutTEST";
+		return "loggedOut";
 	}
 }

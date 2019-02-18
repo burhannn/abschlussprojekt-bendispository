@@ -19,20 +19,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+	public void configureGlobal (AuthenticationManagerBuilder authenticationMgr) throws Exception {
+		authenticationMgr.inMemoryAuthentication()
+				.withUser("Admin").password("rootroot").authorities("ROLE_ADMIN");
+	}
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/registration","/css/*", "/logoutTEST").permitAll()
+                .antMatchers("/registration","/css/*", "/loggedOut").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .permitAll()
 				.and()
-				.logout()
-				.logoutSuccessUrl("/logoutTEST");
+				.logout().permitAll()
+				.logoutSuccessUrl("/loggedOut");
 
     }
 
