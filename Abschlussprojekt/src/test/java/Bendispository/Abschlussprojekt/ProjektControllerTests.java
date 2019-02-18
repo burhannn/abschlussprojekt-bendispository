@@ -68,6 +68,7 @@ public class ProjektControllerTests {
     @MockBean
     MyUserPrincipal blablabla;
 
+
     Person dummy1;
     Person dummy2;
 
@@ -189,30 +190,7 @@ public class ProjektControllerTests {
                 )));
     }
 
-    @Test
-    public void checkRegistration() throws Exception {
-
-        mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("lastName", "soft")
-                .param("firstName", "clara")
-                .param("username", "clari")
-                .param("email", "clari@gmx.de")
-                .param("account", "0")
-                .param("city", "Düsseldorf")
-                .sessionAttr("newPerson", new Person()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("login"))
-                .andExpect(model().attribute("newPerson", hasProperty("id")))
-                .andExpect(model().attribute("newPerson", hasProperty("firstName", equalTo("clara"))))
-                .andExpect(model().attribute("newPerson", hasProperty("lastName", equalTo("soft"))))
-                .andExpect(model().attribute("newPerson", hasProperty("username", equalTo("clari"))))
-                .andExpect(model().attribute("newPerson", hasProperty("email", equalTo("clari@gmx.de"))))
-                .andExpect(model().attribute("newPerson", hasProperty("city", equalTo("Düsseldorf"))));
-
-    }
-
     //tests für profile anderer User
-
     @Test
     public void myProfile() throws Exception {
         mvc.perform(get("/profile"))

@@ -60,20 +60,6 @@ public class ProjektController {
         return "itemProfile";
     }
 
-    @GetMapping(path="/registration")
-    public String SaveRegistration(Model model){
-        return "registration";
-
-    }
-
-    @PostMapping(path = "/registration")
-    public String Registration(Model model,
-                               Person person) {
-        model.addAttribute("newPerson", person);
-        personRepo.save(person);
-        return "login";
-    }
-
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
@@ -124,14 +110,6 @@ public class ProjektController {
         model.addAttribute("myRentedItems", myRentedItems);
         return "rentedItems";
     }
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String loggedIn() {
-        return "OverviewAllItems"; }
 
     @GetMapping(path= "/profilub")
     public String profilPage(Model model){
