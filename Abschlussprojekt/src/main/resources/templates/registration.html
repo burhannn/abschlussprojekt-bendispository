@@ -15,32 +15,25 @@
 	<form class="form-signin" method="post">
 		<h2 class="form-signin-heading">Registration</h2>
 		<p>
-			<div>First Name</div>
-			<Input name="firstName" type="text" class="form-control" placeholder="e.g.Max" th:value="${newPerson?.firstName}">
+			<Input name="firstName" type="text" class="form-control" placeholder="First Name" th:value="${newPerson?.firstName}">
 		</p>
 		<p>
-			<div>Last Name</div>
-			<Input name="lastName" type="text" class="form-control" placeholder="e.g.Mustermann" th:value="${newPerson?.lastName}">
+			<Input name="lastName" type="text" class="form-control" placeholder="Last Name" th:value="${newPerson?.lastName}">
 		</p>
 		<p>
-			<div>Email</div>
-			<Input name="email" type="text" class="form-control" placeholder="e.g.max@gmx.de" th:value="${newPerson?.email}">
+			<Input name="email" type="text" class="form-control" placeholder="E-Mail" th:value="${newPerson?.email}">
 		</p>
 		<p>
-			<div>City</div>
-			<Input name="city" type="text" class="form-control" placeholder="e.g.Duesseldorf" th:value="${newPerson?.city}">
+			<Input name="city" type="text" class="form-control" placeholder="City" th:value="${newPerson?.city}">
 		</p>
 		<p>
-			<div>Bankaccount</div>
-			<Input name="bankaccount" type="text" class="form-control" placeholder="e.g.56 77 234" th:value="${newPerson?.bankaccount}">
+			<Input name="bankaccount" type="text" class="form-control" placeholder="Bank Account" th:value="${newPerson?.bankaccount}">
 		</p>
 		<p>
-			<div>Username</div>
 			<Input name="username" type="text" class="form-control" placeholder="Username" required th:value="${newPerson?.username}">
 		</p>
 		<p>
-			<div>Password</div>
-			<Input name="password" type="password" class="form-control" placeholder="8 characters minimum" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
+			<Input name="password" type="password" class="form-control" placeholder="Password" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
 		</p>
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Save & Create</button>
 		<a href="/login" class="btn btn-lg btn-primary btn-block">Back</a>
