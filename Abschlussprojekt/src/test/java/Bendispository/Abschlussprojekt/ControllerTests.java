@@ -5,7 +5,6 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.ConcludeTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
@@ -25,12 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sun.javaws.JnlpxArgs.verify;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.springframework.test.web.client.ExpectedCount.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,9 +45,6 @@ public class ControllerTests {
 
     @MockBean
     PersonsRepo personsRepo;
-
-    @MockBean
-    ConcludeTransactionRepo concludetransRepo;
 
     @MockBean
     ConflictTransactionRepo conflictTransactionRepo;
@@ -84,7 +76,7 @@ public class ControllerTests {
 
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
-        dummy1.setAccount(100);
+        dummy1.setBankaccount(100);
         dummy1.setCity("kölle");
         dummy1.setEmail("momo@gmail.com");
         dummy1.setUsername("momo");
@@ -92,7 +84,7 @@ public class ControllerTests {
 
         dummy2.setFirstName("nina");
         dummy2.setLastName("fischi");
-        dummy2.setAccount(200);
+        dummy2.setBankaccount(200);
         dummy2.setCity("düssi");
         dummy2.setEmail("nini@gmail.com");
         dummy2.setUsername("nini");
