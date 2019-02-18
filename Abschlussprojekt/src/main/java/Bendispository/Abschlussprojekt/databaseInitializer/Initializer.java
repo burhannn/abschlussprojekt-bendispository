@@ -29,7 +29,7 @@ public class Initializer implements ServletContextInitializer {
         Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcd");
         Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcd");
 
-        Item dummyItem1 = mkItem(12, 300, "Ich bin ein stuhl", "stuhl", dummy_1);
+        Item dummyItem1 = mkItem(12, 0, "Ich bin ein stuhl", "stuhl", dummy_1);
         Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1);
         Item dummyItem3 = mkItem(1, 12, "ich bin billig", "stift", dummy_2);
 
