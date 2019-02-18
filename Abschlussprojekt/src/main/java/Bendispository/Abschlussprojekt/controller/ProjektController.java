@@ -70,8 +70,14 @@ public class ProjektController {
     public String Registration(Model model,
                                Person person) {
         model.addAttribute("newPerson", person);
-        personRepo.save(person);
-        return "login";
+        if(personRepo.findByUsername(person.getUsername())== null) {
+            System.out.println("USER existiert nicht");
+            personRepo.save(person);
+            return "login";
+        }else {
+
+            return "registration";
+        }
     }
 
     @GetMapping(path= "/")
