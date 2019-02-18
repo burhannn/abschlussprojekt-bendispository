@@ -46,18 +46,17 @@ public class TransactionService {
         if(proPaySubscriber.checkDeposit(deposit,
                                          requester.getUsername())) {
 
-            System.out.println("abcd");
             int depositId = proPaySubscriber.makeDeposit(request);
-            System.out.println("defg");
 
             PaymentTransaction paymentTransaction = new PaymentTransaction(requester,
                                                                            request.getRequestedItem().getOwner(),
                                                                            deposit);
             paymentTransaction.setType(PaymentType.DEPOSIT);
+            paymentTransactionRepo.save(paymentTransaction);
 
             LeaseTransaction leaseTransaction = new LeaseTransaction();
             leaseTransaction.addLeaseTransaction(request, depositId);
-            leaseTransaction.addPaymentTransaction(paymentTransaction);
+            //leaseTransaction.addPaymentTransaction(paymentTransaction);
             paymentTransaction.setLeaseTransaction(leaseTransaction);
 
             paymentTransactionRepo.save(paymentTransaction);
@@ -66,7 +65,6 @@ public class TransactionService {
             request.setLeaseTransaction(leaseTransaction);
             setRequestApproved(request);
             requestRepo.save(request);
-
 
             return true;
         }

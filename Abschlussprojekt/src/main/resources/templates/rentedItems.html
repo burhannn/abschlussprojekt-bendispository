@@ -10,7 +10,7 @@
     <div th:each="leaseTransaction : ${myRentedItems}">
         <tr><div class="item_name" th:text= "|Gegenstand: ${leaseTransaction.item.name}|"></div></tr>
         <tr>
-            <div th:text="|To be returned on: ${leaseTransaction.item.endDate}|"></div>
+            <div th:text="|To be returned on: ${leaseTransaction.endDate}|"></div>
             <button type = "submit" value="${leaseTransaction.id}">return</button>
         </tr>
     </div>
