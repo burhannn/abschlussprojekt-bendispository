@@ -74,7 +74,7 @@ public class ProjektController {
             personRepo.save(person);
             return "login";
         } else {
-            return "registration";
+            return "registrationError";
         }
     }
 
