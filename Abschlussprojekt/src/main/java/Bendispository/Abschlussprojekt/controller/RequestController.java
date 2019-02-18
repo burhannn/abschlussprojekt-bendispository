@@ -4,10 +4,12 @@ import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
@@ -42,6 +44,8 @@ public class RequestController {
 
     private final PersonsRepo personsRepo;
 
+    private final PaymentTransactionRepo paymentTransactionRepo;
+
     private TransactionService transactionService;
 
     private ProPaySubscriber proPaySubscriber;
@@ -52,19 +56,22 @@ public class RequestController {
     public RequestController(RequestRepo requestRepo,
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
-                             PersonsRepo personsRepo) {
+                             PersonsRepo personsRepo,
+                             PaymentTransactionRepo paymentTransactionRepo) {
 
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
+        this.paymentTransactionRepo = paymentTransactionRepo;
 
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                                                      leaseTransactionRepo);
         this.transactionService = new TransactionService(leaseTransactionRepo,
                                                          requestRepo,
-                                                         proPaySubscriber);
+                                                         proPaySubscriber,
+                                                         paymentTransactionRepo);
     }
 
     @GetMapping(path = "/item{id}/requestItem")
@@ -141,9 +148,17 @@ public class RequestController {
     public String rentedItems(Model model){
         Long id = authenticationService.getCurrentUser().getId();
         Person me = personsRepo.findById(id).orElse(null);
-        List<Request> myRentedItems = requestRepo.findByRequesterAndStatus(me, APPROVED);
+        List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
+                //findByRequesterAndStatus(me, APPROVED);
         model.addAttribute("myRentedItems", myRentedItems);
         return "rentedItems";
+    }
+
+    @PostMapping(path = "/profile/rentedItems")
+    public String returnItem(Model model,
+                             Long id){
+
+        return "";
     }
 
     private void showRequests(Model model,

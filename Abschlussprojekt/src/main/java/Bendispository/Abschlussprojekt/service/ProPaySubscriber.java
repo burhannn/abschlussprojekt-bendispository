@@ -40,7 +40,7 @@ public class ProPaySubscriber {
     private <T> T makeReservation(String leaserName, String lenderName, int deposit, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
@@ -56,7 +56,7 @@ public class ProPaySubscriber {
     private <T> T releaseReservation(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
@@ -72,7 +72,7 @@ public class ProPaySubscriber {
     private <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
@@ -126,10 +126,10 @@ public class ProPaySubscriber {
         // abhängig davon weitermachen...
     }
 
-    public void chargeAccount(String username, int value){
+    public void chargeAccount(String username, double value){
         final Mono<ProPayAccount> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")

@@ -46,16 +46,17 @@ public class Initializer implements ServletContextInitializer {
         personRepo.saveAll(Arrays.asList(dummy_1, dummy_2));
 
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
-        proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000);
+        proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000.0);
+        proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000.0);
 
     }
 
-    private Person mkPerson(int account, String email, String username, String fname, String lname, String city, String password){
+    private Person mkPerson(int account, String email, String username, String firstName, String lastName, String city, String password){
         Person p = new Person();
         p.setEmail(email);
         p.setUsername(username);
-        p.setFirstName(fname);
-        p.setLastName(lname);
+        p.setFirstName(firstName);
+        p.setLastName(lastName);
         p.setCity(city);
         p.setPassword(password);
         return p;
