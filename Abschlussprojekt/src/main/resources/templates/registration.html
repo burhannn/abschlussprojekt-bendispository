@@ -1,40 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<!--link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}"!-->
 <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>Registration</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
 </head>
 <body>
- <div>Registrierung</div>
-<div>
-    <form method="post">
-        <table>
-            <tr>
-                <td>Last Name:</td>
-                <td>First Name:</td>
-                <td>Email:</td>
-                <td>City:</td>
-                <td>Bankaccount:</td>
-            </tr>
-            <tr>
-                <td><Input name="lastName" type="text" placeholder="e.g.Mustermann" th:value="${newPerson?.lastName}"></td>
-                <br>
-                <td><Input name="firstName" type="text" placeholder="e.g.Max" th:value="${newPerson?.firstName}"></td>
-                <br>
-                <td><Input name="email" type="text" placeholder="e.g.max@gmx.de" th:value="${newPerson?.email}"></td>
-                <br>
-                <td><Input name="city" type="text" placeholder="e.g.Duesseldorf" th:value="${newPerson?.city}"></td>
-                <br>
-                <td><Input name="bankaccount" type="text" placeholder="e.g.56 77 234" th:value="${newPerson?.bankaccount}"></td>
-                <br>
-            </tr>
-            <tr>
-                <td>Username: <Input name="username" type="text" placeholder="Username" required th:value="${newPerson?.username}"></td>
-                <td>Password: <Input name="password" type="password" placeholder="8 characters minimum" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}"></td>
-            </tr>
-        </table>
-        <button type="submit">Save & Create</button>
-        <a href="/" >Back</a>
-    </form>
-</div>
-</body>
-</html>
+<a class="container" style="text-align: center">
+	<form class="form-signin" method="post">
+		<h2 class="form-signin-heading">Registration</h2>
+		<p>
+			<div>First Name</div>
+			<Input name="firstName" type="text" class="form-control" placeholder="e.g.Max" th:value="${newPerson?.firstName}">
+		</p>
+		<p>
+			<div>Last Name</div>
+			<Input name="lastName" type="text" class="form-control" placeholder="e.g.Mustermann" th:value="${newPerson?.lastName}">
+		</p>
+		<p>
+			<div>Email</div>
+			<Input name="email" type="text" class="form-control" placeholder="e.g.max@gmx.de" th:value="${newPerson?.email}">
+		</p>
+		<p>
+			<div>City</div>
+			<Input name="city" type="text" class="form-control" placeholder="e.g.Duesseldorf" th:value="${newPerson?.city}">
+		</p>
+		<p>
+			<div>Bankaccount</div>
+			<Input name="bankaccount" type="text" class="form-control" placeholder="e.g.56 77 234" th:value="${newPerson?.bankaccount}">
+		</p>
+		<p>
+			<div>Username</div>
+			<Input name="username" type="text" class="form-control" placeholder="Username" required th:value="${newPerson?.username}">
+		</p>
+		<p>
+			<div>Password</div>
+			<Input name="password" type="password" class="form-control" placeholder="8 characters minimum" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
+		</p>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Save & Create</button>
+		<a href="/login" class="btn btn-lg btn-primary btn-block">Back</a>
+
+	</form>
+</a>
+</body></html>
