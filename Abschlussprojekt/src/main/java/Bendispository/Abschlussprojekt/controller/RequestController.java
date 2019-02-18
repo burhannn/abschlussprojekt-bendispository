@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -52,13 +53,18 @@ public class RequestController {
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
                              PersonsRepo personsRepo) {
+
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
+
         this.authenticationService = new AuthenticationService(personsRepo);
-        this.proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
-        this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo);
+        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
+                                                     leaseTransactionRepo);
+        this.transactionService = new TransactionService(leaseTransactionRepo,
+                                                         requestRepo,
+                                                         proPaySubscriber);
     }
 
     @GetMapping(path = "/item{id}/requestItem")
@@ -102,15 +108,6 @@ public class RequestController {
         return "Could_not_send_Request";
     }
 
-    @PostMapping(path = "/item{id}/requestItemsss")
-    public String requestAccepted(@ModelAttribute("request") Request request,
-                                Model model,
-                                @PathVariable Long id){
-        TransactionService transactionService = new TransactionService(leaseTransactionRepo, requestRepo);
-        transactionService.lenderApproved(request);
-        return "";
-    }
-
     @GetMapping(path="/profile/requests")
     public String Requests(Model model){
         Long id = authenticationService.getCurrentUser().getId();
@@ -122,12 +119,22 @@ public class RequestController {
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
                                         Integer requestMyItems){
+
         Request request = requestRepo.findById(requestID).orElse(null);
-        request.setStatus(requestMyItems == -1 ? RequestStatus.DENIED : RequestStatus.APPROVED);
-        requestRepo.save(request);
         Long id = authenticationService.getCurrentUser().getId();
+
+        if(requestMyItems == -1){
+            request.setStatus(RequestStatus.DENIED);
+            requestRepo.save(request);
+            showRequests(model,id);
+            return "requests";
+        }
+        if(transactionService.lenderApproved(request)){
+            showRequests(model,id);
+            return "requests";
+        }
         showRequests(model,id);
-        return "requests";
+        return "request_reservation_not_possible";
     }
 
     @GetMapping(path="/profile/rentedItems")
@@ -144,7 +151,7 @@ public class RequestController {
         Person me = personsRepo.findById(id).orElse(null);
         List<Request> listMyRequests = requestRepo.findByRequester(me);
         model.addAttribute("myRequests", listMyRequests);
-        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwner(me);
+        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
         model.addAttribute("requestsMyItems", RequestsMyItems);
     }
 }

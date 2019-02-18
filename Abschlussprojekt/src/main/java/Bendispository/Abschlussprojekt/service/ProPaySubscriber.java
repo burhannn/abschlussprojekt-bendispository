@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.service;
 
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.model.transactionModels.Reservation;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -28,8 +29,11 @@ public class ProPaySubscriber {
     }
 
 
-    public int makeDeposit(int deposit, String leaserName, String lenderName){
-        Reservation reservation = makeReservation(leaserName, lenderName, deposit, Reservation.class);
+    public int makeDeposit(Request request){
+        Reservation reservation = makeReservation(request.getRequester().getUsername(),
+                                                  request.getRequestedItem().getOwner().getUsername(),
+                                                  request.getRequestedItem().getDeposit(),
+                                                  Reservation.class);
         return reservation.getId();
     }
 

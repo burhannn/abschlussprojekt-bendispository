@@ -1,6 +1,5 @@
 package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
@@ -15,38 +14,42 @@ import java.util.List;
 @Component
 public class TransactionService {
 
-    final
-    RequestRepo requestRepo;
+    private final RequestRepo requestRepo;
 
-    final
-    LeaseTransactionRepo leaseTransactionRepo;
+    private final LeaseTransactionRepo leaseTransactionRepo;
 
-    ProPaySubscriber proPaySubscriber;
+    private ProPaySubscriber proPaySubscriber;
 
     @Autowired
-    public TransactionService(LeaseTransactionRepo leaseTransactionRepo, RequestRepo requestRepo) {
+    public TransactionService(LeaseTransactionRepo leaseTransactionRepo,
+                              RequestRepo requestRepo,
+                              ProPaySubscriber proPaySubscriber) {
         super();
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.requestRepo = requestRepo;
+        this.proPaySubscriber = proPaySubscriber;
     }
 
 
-    public void lenderApproved(Request request){
+    public boolean lenderApproved(Request request){
         if(proPaySubscriber.checkDeposit(request.getRequestedItem().getDeposit(),
                                          request.getRequester().getUsername())) {
 
+            int depositId = proPaySubscriber.makeDeposit(request);
+
             LeaseTransaction leaseTransaction = new LeaseTransaction();
-            leaseTransaction.addLeaseTransaction(request);
+            leaseTransaction.addLeaseTransaction(request, depositId);
+            leaseTransactionRepo.save(leaseTransaction);
+
             request.setLeaseTransaction(leaseTransaction);
-            setRequestOnApproved(request);
-            Item requestedItem = request.getRequestedItem();
-            requestedItem.setAvailable(false); //nur für duration auf false setzen
+            setRequestApproved(request);
+            requestRepo.save(request);
+            return true;
         }
-        else
-            request.setStatus(RequestStatus.DENIED);
+        return false;
     }
 
-    public void setRequestOnApproved(Request request){
+    public void setRequestApproved(Request request){
         setOtherRequestsOnDenied(request);
         request.setStatus(RequestStatus.APPROVED);
     }

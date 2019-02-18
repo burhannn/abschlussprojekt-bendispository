@@ -53,14 +53,16 @@ public class LeaseTransaction {
               fetch = FetchType.EAGER)
     private ConflictTransaction conflictTransaction;
 
-    public void addLeaseTransaction(Request request){
+    public void addLeaseTransaction(Request request, int depositId){
         LeaseTransaction lsTrans = new LeaseTransaction();
         lsTrans.setItem(request.getRequestedItem());
         lsTrans.setLeaser(request.getRequester());
-        //lsTrans.setLender(request.getRequestedItem().getOwner());
+        lsTrans.setRequestId(request.getId());
         lsTrans.setDuration(request.getDuration());
         lsTrans.startDate = request.getStartDate();
         lsTrans.endDate = request.getEndDate();
+        lsTrans.depositId = depositId;
+        request.getRequester().addLeaseTransaction(lsTrans);
     }
 
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){

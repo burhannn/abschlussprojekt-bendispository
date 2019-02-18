@@ -44,7 +44,6 @@ public class Initializer implements ServletContextInitializer {
 
     private Person mkPerson(int account, String email, String username, String fname, String lname, String city, String password){
         Person p = new Person();
-        p.setBankaccount(account);
         p.setEmail(email);
         p.setUsername(username);
         p.setFirstName(fname);
@@ -59,7 +58,6 @@ public class Initializer implements ServletContextInitializer {
         item.setCostPerDay(cost);
         item.setDeposit(deposit);
         item.setDescription(desc);
-        item.setAvailable(true);
         item.setName(name);
         item.setOwner(person);
         return item;
