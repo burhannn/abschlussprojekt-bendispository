@@ -146,10 +146,8 @@ public class RequestController {
 
     @GetMapping(path="/profile/rentedItems")
     public String rentedItems(Model model){
-        Long id = authenticationService.getCurrentUser().getId();
-        Person me = personsRepo.findById(id).orElse(null);
+        Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
-                //findByRequesterAndStatus(me, APPROVED);
         model.addAttribute("myRentedItems", myRentedItems);
         return "rentedItems";
     }

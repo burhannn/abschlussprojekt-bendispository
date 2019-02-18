@@ -32,19 +32,19 @@ public class ProPaySubscriber {
     public int makeDeposit(Request request){
         Reservation reservation = makeReservation(request.getRequester().getUsername(),
                                                   request.getRequestedItem().getOwner().getUsername(),
-                                                  request.getRequestedItem().getDeposit(),
+                (double) request.getRequestedItem().getDeposit(),
                                                   Reservation.class);
         return reservation.getId();
     }
 
-    private <T> T makeReservation(String leaserName, String lenderName, int deposit, Class<T> type) {
+    private <T> T makeReservation(String leaserName, String lenderName, double deposit, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
-                                .pathSegment("reservation", "reserve", lenderName, leaserName)
+                                .pathSegment("reservation", "reserve", leaserName, lenderName)
                                 .queryParam("amount", deposit)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)

@@ -46,7 +46,9 @@ public class TransactionService {
         if(proPaySubscriber.checkDeposit(deposit,
                                          requester.getUsername())) {
 
+            System.out.println("abcd");
             int depositId = proPaySubscriber.makeDeposit(request);
+            System.out.println("defg");
 
             PaymentTransaction paymentTransaction = new PaymentTransaction(requester,
                                                                            request.getRequestedItem().getOwner(),
