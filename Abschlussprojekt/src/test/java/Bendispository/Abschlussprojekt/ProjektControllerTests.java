@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt;
 
+import Bendispository.Abschlussprojekt.controller.ProjektController;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -21,10 +22,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProjektControllerTests {
 
     @Autowired
+    private WebApplicationContext wac;
+
     MockMvc mvc;
 
     @MockBean
@@ -82,6 +90,7 @@ public class ProjektControllerTests {
 
     @Before
     public void setUp(){
+        mvc = MockMvcBuilders.webAppContextSetup(wac).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 
         dummy1 = new Person();
         dummy2 = new Person();
@@ -197,6 +206,8 @@ public class ProjektControllerTests {
     //tests für profile anderer User
     @Test
     public void checkMyProfile() throws Exception {
+        Mockito.when(blabla.PersonLoggedIn()).thenReturn(blabla.PersonLoggedIn());
+
         mvc.perform(get("/profile"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -239,8 +250,7 @@ public class ProjektControllerTests {
 
     @Test
     public void checkNONExistingUserProfilOther() throws Exception {
-        mvc.perform(get("/profile/{id}", 8L))
-                .andDo(print())
+        mvc.perform(get("/profile/{id}", 3L))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
@@ -335,7 +345,7 @@ public class ProjektControllerTests {
     }
 
     @Test
-    public void checkItemProfileDoesNotExist() throws Exception {
+    public void checkNONExistingItemProfile() throws Exception {
         mvc.perform(get("/item/{id}", 8L))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
