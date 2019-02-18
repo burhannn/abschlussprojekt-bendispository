@@ -18,8 +18,6 @@ public class Item {
 
     private String description;
 
-    private boolean available;
-
     private int deposit;
 
     private int costPerDay;

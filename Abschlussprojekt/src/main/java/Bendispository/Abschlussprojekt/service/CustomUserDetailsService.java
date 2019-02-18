@@ -28,12 +28,5 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new MyUserPrincipal(user);
     }
 
-    public Person PersonLoggedIn(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName();
-        Person loggedIn = personsRepo.findByUsername(name);
-        return loggedIn;
-    }
-
 }
 

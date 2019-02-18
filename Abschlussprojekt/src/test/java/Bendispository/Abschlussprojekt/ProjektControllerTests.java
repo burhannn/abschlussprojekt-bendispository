@@ -114,21 +114,18 @@ public class ProjektControllerTests {
 
 
         dummyItem1.setName("stuhl");
-        dummyItem1.setAvailable(true);
         dummyItem1.setDeposit(40);
         dummyItem1.setDescription("bin billig");
         dummyItem1.setCostPerDay(10);
         dummyItem1.setId(3L);
 
         dummyItem2.setName("playstation");
-        dummyItem2.setAvailable(true);
         dummyItem2.setDeposit(250);
         dummyItem2.setDescription("bin teuer");
         dummyItem2.setCostPerDay(120);
         dummyItem2.setId(4L);
 
         dummyItem3.setName("Kulli");
-        dummyItem3.setAvailable(true);
         dummyItem3.setDeposit(5);
         dummyItem3.setDescription("schicker kulli");
         dummyItem3.setCostPerDay(1);
@@ -206,7 +203,6 @@ public class ProjektControllerTests {
     //tests für profile anderer User
     @Test
     public void checkMyProfile() throws Exception {
-        Mockito.when(blabla.PersonLoggedIn()).thenReturn(blabla.PersonLoggedIn());
 
         mvc.perform(get("/profile"))
                 .andDo(print())

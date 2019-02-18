@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.model;
 
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
 import lombok.ToString;
 
@@ -20,16 +21,22 @@ public class Person {
 
     @Column(nullable = false, unique = true)
     private String username;
+
     private String password;
 
     private String email;
-
-    private int bankaccount;
 
     private String city;
 
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
-    private List<Item> Items;
+    private List<Item> items;
 
+    @OneToMany(cascade = CascadeType.ALL,
+               fetch = FetchType.LAZY)
+    private List<LeaseTransaction> leaseTransactions;
+
+    public void addLeaseTransaction(LeaseTransaction leaseTransaction){
+        leaseTransactions.add(leaseTransaction);
+    }
 }
