@@ -23,7 +23,7 @@ import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 
 
 @Controller
-public class ProjektController {
+public class ProfilController {
     @Autowired
     ItemRepo itemRepo;
     @Autowired
@@ -31,41 +31,11 @@ public class ProjektController {
     @Autowired
     RequestRepo requestRepo;
 
-
-    @GetMapping(path = "/addItem")
-    public String addItemPage(){
-        return "AddItem";
-    }
-
-    @PostMapping(path = "/addItem")
-    public String addItemsToDatabase(Model model,
-                                     Item item){
-        Person loggedIn = PersonLoggedIn();
-        model.addAttribute("newItem", item);
-
-        item.setOwner(loggedIn);
-        itemRepo.save(item);
-        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
-        loggedIn.setItems(itemsOwner);
-        personRepo.save(loggedIn);
-        return "AddItem";
-    }
-
-    @GetMapping(path = "/Item/{id}" )
-    public String ItemProfile(Model model,
-                              @PathVariable Long id) {
-        Optional <Item> item = itemRepo.findById(id);
-        model.addAttribute("itemProfile", item.get());
-        model.addAttribute("itemOwner", item.get().getOwner());
-        return "itemProfile";
-    }
-
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
         return "registration";
 
     }
-
     @PostMapping(path = "/registration")
     public String Registration(Model model,
                                Person person) {
@@ -73,7 +43,6 @@ public class ProjektController {
         personRepo.save(person);
         return "login";
     }
-
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();

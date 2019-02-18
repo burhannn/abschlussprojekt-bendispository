@@ -20,6 +20,9 @@ public class Item {
 
     private int deposit;
 
+    @Embedded
+    private UploadFile uploadFile;
+
     private int costPerDay;
 
     @ManyToOne(cascade = CascadeType.PERSIST,

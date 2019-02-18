@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.databaseInitializer;
+package Bendispository.Abschlussprojekt.Initializer;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
