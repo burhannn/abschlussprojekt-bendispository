@@ -9,11 +9,13 @@
 <div class="projekt_container">
     <h1 th:text="|Request for ${thisItem.name}|"></h1>
     <form method = "post">
-        <div th:if="${thisItem.available} == true" >
-            <tr>Duration:<div><input type ="text" name = "duration" placeholder="in days"></div>
-                <button type="submit">Send request</button>
-            </tr>
-        </div>
+        <UL th:if="${thisItem.available} == true" >
+            <LI>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd">
+            <LI>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd">
+            </LI>
+            <button type="submit">Send request</button>
+        </UL>
+
         <p th:if="${thisItem.available} == false">Item currently not available</p>
     </form>
 </div>

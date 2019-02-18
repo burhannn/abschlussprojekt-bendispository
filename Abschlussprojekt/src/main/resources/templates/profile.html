@@ -7,8 +7,8 @@
 <div class="projekt_container">
 <h1>My Profile</h1>
     <div class="my_actions_profile">
-        <a th:href = "@{'/profile/' + ${person.id} + '/requests'}">Requests</a>
-        <a th:href = "@{'/profile/' + ${person.id} + '/rentedItems'}">Rented Items</a>
+        <a href = "/profile/requests">Requests</a>
+        <a href = "/profile/rentedItems">Rented Items</a>
     </div>
     <div class="profil_information">
         <tr><div th:text="|Last Name : ${person.lastName}|"></div></tr>

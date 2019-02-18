@@ -1,11 +1,9 @@
 package Bendispository.Abschlussprojekt.model.transactionModels;
 
+import Bendispository.Abschlussprojekt.model.Person;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -16,8 +14,27 @@ public class PaymentTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    private boolean isPayed;
+    @ManyToOne
+    private Person leaser;
 
-    private boolean depositIsBlocked;
+    @ManyToOne
+    private Person lender;
+
+    private int amount;
+
+    private boolean paymentIsConcluded;
+
+    // DEPOSIT, DAMAGES, RENTPRICE
+    // DEPOSIT => was blocked
+    private PaymentType type;
+
+    @ManyToOne
+    LeaseTransaction leaseTransaction;
+
+    public PaymentTransaction(Person leaser, Person lender, int amount){
+        this.leaser = leaser;
+        this.lender = lender;
+        this.amount = amount;
+    }
 
 }
