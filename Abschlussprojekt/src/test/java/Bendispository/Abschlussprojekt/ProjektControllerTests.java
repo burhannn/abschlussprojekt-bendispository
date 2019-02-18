@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt;
 
 import Bendispository.Abschlussprojekt.controller.ProjektController;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -54,6 +55,7 @@ public class ProjektControllerTests {
     @Autowired
     private WebApplicationContext wac;
 
+    @Autowired
     MockMvc mvc;
 
     @MockBean
@@ -78,6 +80,9 @@ public class ProjektControllerTests {
     CustomUserDetailsService blabla;
 
     @MockBean
+    AuthenticationService authenticationService;
+
+    @MockBean
     MyUserPrincipal blablabla;
 
 
@@ -90,7 +95,7 @@ public class ProjektControllerTests {
 
     @Before
     public void setUp(){
-        mvc = MockMvcBuilders.webAppContextSetup(wac).apply(SecurityMockMvcConfigurers.springSecurity()).build();
+        //mvc = MockMvcBuilders.webAppContextSetup(wac).apply(SecurityMockMvcConfigurers.springSecurity()).build();
 
         dummy1 = new Person();
         dummy2 = new Person();
@@ -103,6 +108,7 @@ public class ProjektControllerTests {
         dummy1.setCity("kölle");
         dummy1.setEmail("momo@gmail.com");
         dummy1.setUsername("momo");
+        dummy1.setPassword("abcd");
         dummy1.setId(1L);
 
         dummy2.setFirstName("nina");
@@ -154,6 +160,8 @@ public class ProjektControllerTests {
                 .thenReturn(Optional.ofNullable(dummyItem2));
         Mockito.when(itemRepo.findById(5L))
                 .thenReturn(Optional.ofNullable(dummyItem3));
+
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
     }
 
 
@@ -246,7 +254,7 @@ public class ProjektControllerTests {
 
     @Test
     public void checkNONExistingUserProfilOther() throws Exception {
-        mvc.perform(get("/profile/{id}", 3L))
+        mvc.perform(get("/profile/{id}", 4L))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
@@ -310,7 +318,6 @@ public class ProjektControllerTests {
                 .andExpect(view().name("itemProfile"))
                 .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(3L))))
                 .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("stuhl"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("available", equalTo(true))))
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(40))))
                 .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("bin billig"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(10))));
@@ -322,7 +329,6 @@ public class ProjektControllerTests {
                 .andExpect(view().name("itemProfile"))
                 .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(4L))))
                 .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("playstation"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("available", equalTo(true))))
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(250))))
                 .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("bin teuer"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(120))));
@@ -334,7 +340,6 @@ public class ProjektControllerTests {
                 .andExpect(view().name("itemProfile"))
                 .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(5L))))
                 .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("Kulli"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("available", equalTo(true))))
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(5))))
                 .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("schicker kulli"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(1))));

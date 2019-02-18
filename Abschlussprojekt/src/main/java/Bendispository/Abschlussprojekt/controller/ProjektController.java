@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,22 +23,17 @@ import java.util.Optional;
 @Controller
 public class ProjektController {
 
-    @Autowired
     ItemRepo itemRepo;
-
-    @Autowired
     PersonsRepo personRepo;
-
-    @Autowired
     RequestRepo requestRepo;
-
     AuthenticationService authenticationService;
 
-    public ProjektController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo){
+    @Autowired
+    public ProjektController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
         this.itemRepo = itemRepo;
         this.personRepo = personsRepo;
         this.requestRepo = requestRepo;
-        this.authenticationService = new AuthenticationService(personRepo);
+        this.authenticationService = authenticationService;
     }
 
 
@@ -53,8 +49,7 @@ public class ProjektController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("newItem", item);
 
-
-        item.setOwner(loggedIn);
+        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         itemRepo.save(item);
 
         List<Item> itemsOwner = new ArrayList<>();
@@ -75,7 +70,7 @@ public class ProjektController {
     }
 
     @GetMapping(path= "/")
-    public String Overview(Model model){
+    public String Overview(Principal principal, Model model){
         List<Item> all = itemRepo.findAll();
 
         Person loggedIn = authenticationService.getCurrentUser();

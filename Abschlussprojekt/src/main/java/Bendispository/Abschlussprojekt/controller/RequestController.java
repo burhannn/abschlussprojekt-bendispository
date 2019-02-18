@@ -42,24 +42,24 @@ public class RequestController {
 
     private final PersonsRepo personsRepo;
 
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
-    private ProPaySubscriber proPaySubscriber;
+    private final ProPaySubscriber proPaySubscriber;
 
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
     public RequestController(RequestRepo requestRepo,
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
-                             PersonsRepo personsRepo) {
+                             PersonsRepo personsRepo, AuthenticationService authenticationService) {
 
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
 
-        this.authenticationService = new AuthenticationService(personsRepo);
+        this.authenticationService = authenticationService;
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                                                      leaseTransactionRepo);
         this.transactionService = new TransactionService(leaseTransactionRepo,
