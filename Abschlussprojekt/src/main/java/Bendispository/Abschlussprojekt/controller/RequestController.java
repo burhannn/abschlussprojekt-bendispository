@@ -155,8 +155,10 @@ public class RequestController {
     @PostMapping(path = "/profile/rentedItems")
     public String returnItem(Model model,
                              Long id){
-
-        return "";
+        LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
+        System.out.println(leaseTransaction.getLeaser().getUsername());
+        transactionService.itemReturnedToLender(leaseTransaction);
+        return "rentedItems";
     }
 
     private void showRequests(Model model,

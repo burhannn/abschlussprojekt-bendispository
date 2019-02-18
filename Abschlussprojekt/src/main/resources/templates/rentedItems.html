@@ -11,7 +11,9 @@
         <tr><div class="item_name" th:text= "|Gegenstand: ${leaseTransaction.item.name}|"></div></tr>
         <tr>
             <div th:text="|To be returned on: ${leaseTransaction.endDate}|"></div>
-            <button type = "submit" value="${leaseTransaction.id}">return</button>
+            <form method="post">
+                <button type = "submit" th:value="${leaseTransaction.id}" name="id">return</button>
+            </form>
         </tr>
     </div>
 </div>
