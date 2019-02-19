@@ -97,8 +97,6 @@ public class ProjektControllerTests {
 
     @Before
     public void setUp(){
-        //mvc = MockMvcBuilders.webAppContextSetup(wac).apply(SecurityMockMvcConfigurers.springSecurity()).build();
-
         dummy1 = new Person();
         dummy2 = new Person();
         dummyItem1 = new Item();

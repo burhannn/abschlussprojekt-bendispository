@@ -12,6 +12,7 @@ import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -153,6 +154,7 @@ public class RequestControllerTest {
 
 
     @Test
+    @Ignore
     public void retrieve() throws Exception {
         mvc.perform(get("/item3/requestItem")).andExpect(status().isOk());
         mvc.perform(get("/profile/requests", 1L)).andExpect(status().isOk());
@@ -175,6 +177,7 @@ public class RequestControllerTest {
     }
 
     @Test
+    @Ignore
     public void checkRequestOverview() throws  Exception {
         mvc.perform(get("/profile/requests", 3L))
                 .andDo(print())
