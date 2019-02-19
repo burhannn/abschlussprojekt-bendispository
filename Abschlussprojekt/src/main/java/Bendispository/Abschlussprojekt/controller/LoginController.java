@@ -38,4 +38,9 @@ public class LoginController {
     @PostMapping("/login")
     public String loggedIn() {
         return "OverviewAllItems"; }
+
+    @GetMapping("/logoutTEST")
+    public String logout() {
+        return "logoutTEST";
+    }
 }

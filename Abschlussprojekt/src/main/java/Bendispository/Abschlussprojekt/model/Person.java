@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@ToString(exclude = "Items")
 @Data
 public class Person {
     @Id

@@ -23,6 +23,7 @@ import java.util.Optional;
 @Controller
 public class ProjektController {
 
+
     ItemRepo itemRepo;
     PersonsRepo personRepo;
     RequestRepo requestRepo;
@@ -69,10 +70,10 @@ public class ProjektController {
         return "itemProfile";
     }
 
+
     @GetMapping(path= "/")
     public String Overview(Principal principal, Model model){
         List<Item> all = itemRepo.findAll();
-
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("OverviewAllItems", all);
         model.addAttribute("loggedInPerson",loggedIn);
@@ -81,7 +82,6 @@ public class ProjektController {
 
     @GetMapping(path= "/profile")
     public String profile(Model model){
-
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person",loggedIn);
         return "profile";
@@ -101,5 +101,4 @@ public class ProjektController {
         model.addAttribute("personen", all);
         return "profileDetails";
     }
-
 }

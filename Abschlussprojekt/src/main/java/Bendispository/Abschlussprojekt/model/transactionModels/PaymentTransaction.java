@@ -28,7 +28,7 @@ public class PaymentTransaction {
     // DEPOSIT => was blocked
     private PaymentType type;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     LeaseTransaction leaseTransaction;
 
     public PaymentTransaction(Person leaser, Person lender, int amount){
