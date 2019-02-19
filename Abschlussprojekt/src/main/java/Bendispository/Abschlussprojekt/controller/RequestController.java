@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -29,6 +27,7 @@ import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -77,7 +76,8 @@ public class RequestController {
     public String addRequestToLender(String startDate,
                                      String endDate,
                                      Model model,
-                                     @PathVariable Long id
+                                     @PathVariable Long id,
+                                     RedirectAttributes redirectAttributes
                                      //@RequestParam("startDay")
                                      ){
 
@@ -105,7 +105,14 @@ public class RequestController {
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
             return "formRequest";
         }
-        return "Could_not_send_Request";
+
+        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username))
+            redirectAttributes.addFlashAttribute("message", "You don't have enough money for the deposit!");
+
+        if (!transactionService.itemIsAvailableOnTime(request))
+            redirectAttributes.addFlashAttribute("message", "Item is not available during selected period!");
+
+        return "redirect:/item{id}/requestItem";
     }
 
     @GetMapping(path="/profile/requests")

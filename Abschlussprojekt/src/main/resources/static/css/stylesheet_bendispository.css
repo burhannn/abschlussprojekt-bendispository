@@ -81,3 +81,11 @@ h1{
 .item_name{
     font-weight: 600;
 }
+
+.alert {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #FFD2D2;
+    color: #D8000C;
+    margin: auto;
+}
