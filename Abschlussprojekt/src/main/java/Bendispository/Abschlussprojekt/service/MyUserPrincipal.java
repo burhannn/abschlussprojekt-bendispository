@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.Person;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,8 +11,9 @@ import java.util.Collection;
 
 // eingeloggter User
 
+@Data
 public class MyUserPrincipal implements UserDetails {
-    private Person user;
+    private final Person user;
 
     public MyUserPrincipal(Person user) {
         this.user = user;

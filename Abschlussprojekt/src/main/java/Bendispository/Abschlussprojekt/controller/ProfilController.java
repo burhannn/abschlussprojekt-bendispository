@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,16 +25,48 @@ public class ProfilController {
     ItemRepo itemRepo;
     @Autowired
     PersonsRepo personRepo;
+
     @Autowired
     RequestRepo requestRepo;
-
     AuthenticationService authenticationService;
 
-    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo){
+    @Autowired
+    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
         this.itemRepo = itemRepo;
         this.personRepo = personsRepo;
         this.requestRepo = requestRepo;
-        this.authenticationService = new AuthenticationService(personRepo);
+        this.authenticationService = authenticationService;
+    }
+
+    @GetMapping(path = "/addItem")
+    public String addItemPage(){
+        return "AddItem";
+    }
+
+    @PostMapping(path = "/addItem")
+    public String addItemsToDatabase(Model model,
+                                     Item item){
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("newItem", item);
+
+        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
+        itemRepo.save(item);
+
+        List<Item> itemsOwner = new ArrayList<>();
+	itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
+        loggedIn.setItems(itemsOwner);
+
+        personRepo.save(loggedIn);
+        return "AddItem";
+    }
+
+    @GetMapping(path = "/Item/{id}" )
+    public String ItemProfile(Model model,
+                              @PathVariable Long id) {
+        Optional <Item> item = itemRepo.findById(id);
+        model.addAttribute("itemProfile", item.get());
+        model.addAttribute("itemOwner", item.get().getOwner());
+        return "itemProfile";
     }
 
     @GetMapping(path="/registration")
@@ -40,6 +74,7 @@ public class ProfilController {
         return "registration";
 
     }
+
     @PostMapping(path = "/registration")
     public String Registration(Model model,
                                Person person) {
@@ -47,8 +82,9 @@ public class ProfilController {
         personRepo.save(person);
         return "login";
     }
+
     @GetMapping(path= "/")
-    public String Overview(Model model){
+    public String Overview(Principal principal, Model model){
         List<Item> all = itemRepo.findAll();
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("OverviewAllItems", all);
@@ -70,6 +106,7 @@ public class ProfilController {
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profileOther";
     }
+
     @GetMapping("/login")
     public String login() {
         return "login";

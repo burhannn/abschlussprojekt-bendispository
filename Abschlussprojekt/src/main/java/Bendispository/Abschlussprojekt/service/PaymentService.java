@@ -1,7 +1,5 @@
 package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

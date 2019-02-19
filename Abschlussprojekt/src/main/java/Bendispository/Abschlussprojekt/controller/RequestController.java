@@ -1,6 +1,9 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.*;
+import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -9,6 +12,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
+
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +20,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import java.time.LocalDate;
 import java.time.Period;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
+
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -37,6 +40,9 @@ public class RequestController {
     private final ItemRepo itemRepo;
     private final LeaseTransactionRepo leaseTransactionRepo;
     private final PersonsRepo personsRepo;
+
+    private final TransactionService transactionService;
+
     private final PaymentTransactionRepo paymentTransactionRepo;
     private TransactionService transactionService;
     private ProPaySubscriber proPaySubscriber;
@@ -80,17 +86,16 @@ public class RequestController {
                                      RedirectAttributes redirectAttributes
                                      //@RequestParam("startDay")
                                      ){
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startdate = LocalDate.parse(startDate, formatter);
         LocalDate enddate = LocalDate.parse(endDate, formatter);
 
-        Person currentUser = authenticationService.getCurrentUser();
 
+        Person currentUser = authenticationService.getCurrentUser();
         Item item = itemRepo.findById(id).orElse(null);
 
         Request request = new Request();
-        request.setRequester(currentUser);
+        request.setRequester(personsRepo.findByUsername(currentUser.getUsername())); ///// änderung
         request.setStartDate(startdate);
         request.setEndDate(enddate);
         request.setDuration(Period.between(startdate, enddate).getDays());
