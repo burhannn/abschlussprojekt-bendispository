@@ -74,8 +74,16 @@ public class RequestController {
     }
 
     @GetMapping(path = "/item{id}/requestItem")
-    public String request(Model model, @PathVariable Long id){
+    public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        if (itemRepo.findById(id).get().getOwner().getUsername() == authenticationService.getCurrentUser().getUsername()){
+            return "redirect:/Item/{id}"; // soll auf editieren gehen
+        }
+        List<Request> requests = requestRepo.findByRequesterAndAndRequestedItem(authenticationService.getCurrentUser(), itemRepo.findById(id).get());
+        if (!(requests.isEmpty())) {
+            redirectAttributes.addFlashAttribute("message", "You cannot rent the same item twice!");
+            return "redirect:/Item/{id}";
+        }
         return "formRequest";
     }
 
@@ -110,7 +118,7 @@ public class RequestController {
             //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
             requestRepo.save(request);
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-            return "formRequest";
+            return "redirect:/";
         }
 
         if (!proPaySubscriber.checkDeposit(item.getDeposit(), username))
