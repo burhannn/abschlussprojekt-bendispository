@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.ControllerTests;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -62,6 +63,9 @@ public class LoginRegistrationTests {
 
     @MockBean
     AuthenticationService authenticationService;
+
+    @MockBean
+    RatingRepo ratingRepo;
 
     Person dummy1;
 

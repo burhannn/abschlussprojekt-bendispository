@@ -21,12 +21,9 @@ import java.util.Optional;
 
 @Controller
 public class ProfilController {
-    @Autowired
-    ItemRepo itemRepo;
-    @Autowired
-    PersonsRepo personRepo;
 
-    @Autowired
+    ItemRepo itemRepo;
+    PersonsRepo personRepo;
     RequestRepo requestRepo;
     AuthenticationService authenticationService;
 
@@ -36,51 +33,6 @@ public class ProfilController {
         this.personRepo = personsRepo;
         this.requestRepo = requestRepo;
         this.authenticationService = authenticationService;
-    }
-
-    @GetMapping(path = "/addItem")
-    public String addItemPage(){
-        return "AddItem";
-    }
-
-    @PostMapping(path = "/addItem")
-    public String addItemsToDatabase(Model model,
-                                     Item item){
-        Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("newItem", item);
-
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        itemRepo.save(item);
-
-        List<Item> itemsOwner = new ArrayList<>();
-	itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-
-        personRepo.save(loggedIn);
-        return "AddItem";
-    }
-
-    @GetMapping(path = "/Item/{id}" )
-    public String ItemProfile(Model model,
-                              @PathVariable Long id) {
-        Optional <Item> item = itemRepo.findById(id);
-        model.addAttribute("itemProfile", item.get());
-        model.addAttribute("itemOwner", item.get().getOwner());
-        return "itemProfile";
-    }
-
-    @GetMapping(path="/registration")
-    public String SaveRegistration(Model model){
-        return "registration";
-
-    }
-
-    @PostMapping(path = "/registration")
-    public String Registration(Model model,
-                               Person person) {
-        model.addAttribute("newPerson", person);
-        personRepo.save(person);
-        return "login";
     }
 
     @GetMapping(path= "/")
@@ -106,15 +58,6 @@ public class ProfilController {
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profileOther";
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String loggedIn() {
-        return "OverviewAllItems"; }
 
     @GetMapping(path= "/profilub")
     public String profilPage(Model model){

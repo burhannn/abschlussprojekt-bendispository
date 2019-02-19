@@ -2,10 +2,12 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.UploadFile;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,22 +20,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Convert;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class FileController {
-    @Autowired
+
     ItemRepo itemRepo;
-    @Autowired
     PersonsRepo personRepo;
-    @Autowired
     RequestRepo requestRepo;
+    AuthenticationService authenticationService;
+
+    @Autowired
+    public FileController(ItemRepo itemRepo, PersonsRepo personRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
+        this.itemRepo = itemRepo;
+        this.personRepo = personRepo;
+        this.requestRepo = requestRepo;
+        this.authenticationService = authenticationService;
+    }
 
     @GetMapping(path = "/addItem")
     public String addItemPage(){

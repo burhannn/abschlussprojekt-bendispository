@@ -1,9 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.RequestStatus;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -40,14 +37,11 @@ public class RequestController {
     private final ItemRepo itemRepo;
     private final LeaseTransactionRepo leaseTransactionRepo;
     private final PersonsRepo personsRepo;
-
     private final TransactionService transactionService;
-
     private final PaymentTransactionRepo paymentTransactionRepo;
-    private TransactionService transactionService;
-    private ProPaySubscriber proPaySubscriber;
-    private AuthenticationService authenticationService;
-    private RatingRepo ratingRepo;
+    private final ProPaySubscriber proPaySubscriber;
+    private final AuthenticationService authenticationService;
+    private final RatingRepo ratingRepo;
 
     @Autowired
     public RequestController(RequestRepo requestRepo,
@@ -62,7 +56,6 @@ public class RequestController {
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
         this.paymentTransactionRepo = paymentTransactionRepo;
-
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                                                      leaseTransactionRepo);
