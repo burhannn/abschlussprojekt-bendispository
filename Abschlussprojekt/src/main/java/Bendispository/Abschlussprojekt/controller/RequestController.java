@@ -218,31 +218,33 @@ public class RequestController {
                                                     .orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
         Person me = personsRepo.findById(id).orElse(null);
-
+        System.out.println(transactionId);
         if(itemIntact == -1){
             // redirect Kommentarseite! via transactionid!
             // redirect: "Ihr Anliegen wurde an die Konfliktlösungsstelle geschickt.
             //            Er/Sie wird sich bei Ihnen melden"
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
-            return "requests";
+            return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
         transactionService.itemIsIntact(me, leaseTransaction);
         // Feld: iwie Bewertung /Clara
         return "returnedItems";
     }
 
-    @GetMapping(path= "/profile/returneditems/{id}/issue")
+    @GetMapping(path= "/profile/returneditems/{transactionId}/issue")
     public String returnedItemIsNotIntact(Model model,
-                                          Long id){
-        LeaseTransaction transaction = leaseTransactionRepo.findById(id).orElse(null);
+                                          @PathVariable Long transactionId){
+        LeaseTransaction transaction = leaseTransactionRepo.findById(transactionId).orElse(null);
+        String comment = "";
+        model.addAttribute("comment", comment);
         model.addAttribute("transaction", transaction);
-        return "returnedItems";
+        return "issue";
     }
 
     @PostMapping(path= "/profile/returneditems/{id}/issue")
     public String returnedItemIsNotIntactPost(Model model,
-                                              Long id,
-                                              String commentary){
+                                              @PathVariable Long id,
+                                              String comment){
         Long userId = authenticationService.getCurrentUser().getId();
         Person me = personsRepo.findById(userId).orElse(null);
         LeaseTransaction leaseTransaction = leaseTransactionRepo
@@ -250,7 +252,7 @@ public class RequestController {
                 .orElse(null);
 
 
-        transactionService.itemIsNotIntact(me, leaseTransaction, commentary);
+        transactionService.itemIsNotIntact(me, leaseTransaction, comment);
         return "returnedItems";
     }
 
