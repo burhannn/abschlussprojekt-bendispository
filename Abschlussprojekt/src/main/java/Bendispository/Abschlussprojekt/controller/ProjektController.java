@@ -161,7 +161,18 @@ public class ProjektController {
     }
 
 	@GetMapping("/loggedOut")
-	public String logout() {
+	public String logout(){
 		return "loggedOut";
 	}
+
+	@GetMapping("/trouble")
+	public String trouble(Model model){
+    	if(PersonLoggedIn().getUsername().equals("admin")) {
+    		return "trouble";
+		}
+		else {
+			return Overview(model);
+		}
+	}
+
 }
