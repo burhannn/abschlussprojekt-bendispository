@@ -7,6 +7,12 @@
 </head>
 <body>
 <div class="projekt_container">
+    <div th:if="${success}">
+    <div class="alert_success" th:text="${success}"></div>
+    </div>
+    <div th:if="${message}">
+        <div class="alert_error" th:text="${message}"></div>
+    </div>
     <div class="item_owner_description" th:text = "|from ${itemOwner?.username}|"></div>
         <h1 th:text = "${itemProfile?.name}"></h1>
             <tr><div th:text = "| Name: ${itemProfile?.name}|"></div></tr>
