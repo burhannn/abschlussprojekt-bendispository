@@ -88,6 +88,11 @@ public class RequestController {
                                      //@RequestParam("startDay")
                                      ){
 
+        if (startDate == "" || endDate == "") {
+            redirectAttributes.addFlashAttribute("messageDate", "Date is missing!");
+            return "redirect:/item{id}/requestItem";
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startdate = LocalDate.parse(startDate, formatter);
         LocalDate enddate = LocalDate.parse(endDate, formatter);

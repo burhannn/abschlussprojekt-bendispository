@@ -7,6 +7,9 @@
 </head>
 <body>
 <div class="projekt_container">
+    <div th:if="${messageDate}">
+        <div class="alert" th:text="${messageDate}"></div>
+    </div>
     <div th:if="${message}">
         <div class="alert" th:text="${message}"></div>
         <a href="http://localhost:8080/chargeAccount">Charge account?</a>
