@@ -10,4 +10,6 @@ public interface ItemRepo extends CrudRepository<Item,Long> {
     List<Item> findAll();
 
     List<Item> findByOwner(Person loggedIn);
+
+    List<Item> findByOwnerNot(Person loggedIn);
 }
