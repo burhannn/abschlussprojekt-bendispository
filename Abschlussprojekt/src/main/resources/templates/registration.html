@@ -14,22 +14,22 @@
 	<form class="form-signin" method="post">
 		<h2 class="form-signin-heading">Registration</h2>
 		<p>
-			<Input name="firstName" type="text" class="form-control" placeholder="First Name" required th:value="${newPerson?.firstName}">
+			<Input name="firstName" type="text" class="form-control" placeholder="First Name" pattern="[a-zA-ZöäüÖÄÜß]+" required th:value="${newPerson?.firstName}">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="lastName" type="text" class="form-control" placeholder="Last Name" required th:value="${newPerson?.lastName}">
+			<Input style="margin-top: -5px" name="lastName" type="text" class="form-control" placeholder="Last Name" pattern="[a-zA-ZöäüÖÄÜß]+" required th:value="${newPerson?.lastName}">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="email" type="text" class="form-control" placeholder="E-Mail" required th:value="${newPerson?.email}">
+			<Input style="margin-top: -5px" name="email" type="text" class="form-control" placeholder="E-Mail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required th:value="${newPerson?.email}">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="city" type="text" class="form-control" placeholder="City" required th:value="${newPerson?.city}">
+			<Input style="margin-top: -5px" name="city" type="text" class="form-control" placeholder="City" required pattern="[a-zA-ZöäüÖÄÜß 0-9]+" th:value="${newPerson?.city}">
 		</p>
 		<p>
 			<Input style="margin-top: -5px" name="bankaccount" type="text" class="form-control" placeholder="Bank Account" required pattern="[0-9]+" th:value="${newPerson?.bankaccount}">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="username" type="text" class="form-control" placeholder="Username" required th:value="${newPerson?.username}">
+			<Input style="margin-top: -5px" name="username" type="text" class="form-control" placeholder="Username" pattern="[a-zA-Z0-9öäüÖÄÜß]+" required th:value="${newPerson?.username}">
 		</p>
 		<p>
 			<Input style="margin-top: -5px" name="password" type="password" class="form-control" placeholder="Password" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
