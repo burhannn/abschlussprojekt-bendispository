@@ -261,7 +261,6 @@ public class RequestController {
                 .findById(id)
                 .orElse(null);
 
-
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
         return "returnedItems";
     }
