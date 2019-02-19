@@ -13,7 +13,7 @@
             <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>
             <tr><div th:text = "| Deposit: ${itemProfile?.deposit}|" ></div></tr>
             <tr><div th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></div></tr>
-            <tr><div th:text = "| File: ${itemProfile?.uploadFile.fileName}|" ></div></tr>
+            <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|" ></div></tr>
             <img th:src="${pic} == null ? _ : @{'data:image/png;base64,'+${pic}}">
     <a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
 

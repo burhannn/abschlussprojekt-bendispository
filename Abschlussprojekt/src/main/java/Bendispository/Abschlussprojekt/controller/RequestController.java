@@ -36,19 +36,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class RequestController {
 
     private final RequestRepo requestRepo;
-
     private final ItemRepo itemRepo;
-
     private final LeaseTransactionRepo leaseTransactionRepo;
-
     private final PersonsRepo personsRepo;
-
     private final PaymentTransactionRepo paymentTransactionRepo;
-
     private TransactionService transactionService;
-
     private ProPaySubscriber proPaySubscriber;
-
     private AuthenticationService authenticationService;
 
     @Autowired

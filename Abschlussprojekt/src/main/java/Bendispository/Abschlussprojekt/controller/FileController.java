@@ -35,8 +35,6 @@ public class FileController {
     @Autowired
     RequestRepo requestRepo;
 
-    private static String UPLOADED_FOLDER = "F://temp//";
-
     @GetMapping(path = "/addItem")
     public String addItemPage(){
         return "AddItem";
@@ -63,7 +61,11 @@ public class FileController {
                               @PathVariable Long id) {
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
-        model.addAttribute("pic",Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
+        if(item.getUploadFile() != null){
+            model.addAttribute("pic",Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
+        }else{
+            model.addAttribute("pic",null);
+        }
         return "itemProfile";
     }
     private Person PersonLoggedIn(){
