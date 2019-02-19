@@ -89,12 +89,12 @@ public class RequestController {
                                      ){
 
         if (startDate == "" || endDate == "") {
-            redirectAttributes.addFlashAttribute("messageDate", "Date is missing!");
+            redirectAttributes.addFlashAttribute("message", "Date is missing!");
             return "redirect:/item{id}/requestItem";
         }
 
         if (startDate.length() < 10) {
-            redirectAttributes.addFlashAttribute("messageDate", "Invalid date!");
+            redirectAttributes.addFlashAttribute("message", "Invalid date!");
             return "redirect:/item{id}/requestItem";
         }
 
@@ -103,12 +103,12 @@ public class RequestController {
         LocalDate enddate = LocalDate.parse(endDate, formatter);
 
         if (startdate.isAfter(enddate)) {
-            redirectAttributes.addFlashAttribute("messageDate", "Start date must be after end Date!");
+            redirectAttributes.addFlashAttribute("message", "Start date must be after end Date!");
             return "redirect:/item{id}/requestItem";
         }
 
         if (startdate.isEqual(enddate)) {
-            redirectAttributes.addFlashAttribute("messageDate", "Start date and end date cannot be the same!");
+            redirectAttributes.addFlashAttribute("message", "Start date and end date cannot be the same!");
             return "redirect:/item{id}/requestItem";
         }
 
@@ -124,6 +124,16 @@ public class RequestController {
         request.setRequestedItem(item);
         String username = currentUser.getUsername();
 
+        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
+            redirectAttributes.addFlashAttribute("messageDeposit", "You don't have enough money for the deposit!");
+            return "redirect:/item{id}/requestItem";
+        }
+
+        if (!transactionService.itemIsAvailableOnTime(request)) {
+            redirectAttributes.addFlashAttribute("message", "Item is not available during selected period!");
+            return "redirect:/item{id}/requestItem";
+        }
+
         if(proPaySubscriber.checkDeposit(item.getDeposit(), username)
                 && transactionService.itemIsAvailableOnTime(request)){
 
@@ -133,13 +143,8 @@ public class RequestController {
             return "formRequest";
         }
 
-        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username))
-            redirectAttributes.addFlashAttribute("message", "You don't have enough money for the deposit!");
-
-        if (!transactionService.itemIsAvailableOnTime(request))
-            redirectAttributes.addFlashAttribute("message", "Item is not available during selected period!");
-
         return "redirect:/item{id}/requestItem";
+
     }
 
     @GetMapping(path="/profile/requests")
