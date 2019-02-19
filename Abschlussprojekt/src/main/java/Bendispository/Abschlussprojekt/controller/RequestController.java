@@ -140,6 +140,8 @@ public class RequestController {
             //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
             requestRepo.save(request);
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+            model.addAttribute("success", "Request has been sent!");
+
             return "formRequest";
         }
 
