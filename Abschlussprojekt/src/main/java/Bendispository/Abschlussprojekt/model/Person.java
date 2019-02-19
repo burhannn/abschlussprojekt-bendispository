@@ -2,7 +2,6 @@ package Bendispository.Abschlussprojekt.model;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;

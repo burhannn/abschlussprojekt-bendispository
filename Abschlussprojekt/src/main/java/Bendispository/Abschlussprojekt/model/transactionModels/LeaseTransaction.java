@@ -3,12 +3,10 @@ package Bendispository.Abschlussprojekt.model.transactionModels;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 
 @Data

@@ -1,7 +1,6 @@
 package Bendispository.Abschlussprojekt.model;
 
 import lombok.Data;
-import lombok.ToString;
 
 import javax.persistence.*;
 
