@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt;
+package Bendispository.Abschlussprojekt.ControllerTests;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -179,7 +179,7 @@ public class RequestControllerTest {
         mvc.perform(get("/profile/requests", 3L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("formRequest"));
+                .andExpect(view().name("requests"));
         /*
 
          */
