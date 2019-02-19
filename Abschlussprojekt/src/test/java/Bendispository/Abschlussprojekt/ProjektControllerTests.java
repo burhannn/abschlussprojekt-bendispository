@@ -29,7 +29,6 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -163,7 +162,7 @@ public class ProjektControllerTests {
         Mockito.when(itemRepo.findAll())
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
-        mvc.perform(get("/overview"))
+        mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("OverviewAllItems"))
                 .andExpect(model().attributeExists("loggedInPerson"))
@@ -213,6 +212,25 @@ public class ProjektControllerTests {
     }
 
     //tests für profile anderer User
+
+    @Test
+    public void myProfile() throws Exception {
+        mvc.perform(get("/profile"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("person"))
+                .andExpect(view().name("profile"))
+                .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
+                .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
+                .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
+                .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
+                .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
+                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))));
+        //.andExpect(model().attribute("person", hasProperty("items", )));
+    }
+
+
+
     @Test
     public void UserProfilOther() throws Exception {
 
@@ -275,7 +293,7 @@ public class ProjektControllerTests {
 
     }
 
-    /*
+
     @Test
     public void addItem() throws Exception {
 
@@ -292,7 +310,7 @@ public class ProjektControllerTests {
                 .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
                 .andExpect(model().attribute("newItem", hasProperty("deposit", equalTo(69))))
                 .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));
-    }*/
+    }
 
     @Test
     public void ItemProfile() throws Exception {

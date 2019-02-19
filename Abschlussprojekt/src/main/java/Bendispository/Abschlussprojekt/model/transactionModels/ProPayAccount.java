@@ -9,4 +9,8 @@ public class ProPayAccount {
     private int amount;
     private Reservation[] reservations;
 
+    public String toString(){
+        return "account: " + account + " amount: " + amount;
+    }
+
 }

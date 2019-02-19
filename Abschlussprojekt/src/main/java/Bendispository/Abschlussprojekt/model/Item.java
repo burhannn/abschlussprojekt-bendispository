@@ -16,8 +16,6 @@ public class Item {
 
     private String description;
 
-    private boolean available;
-
     private int deposit;
 
     @Embedded

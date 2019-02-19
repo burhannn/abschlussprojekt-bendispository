@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.service;
 
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.model.transactionModels.Reservation;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -28,20 +29,23 @@ public class ProPaySubscriber {
     }
 
 
-    public int makeDeposit(int deposit, String leaserName, String lenderName){
-        Reservation reservation = makeReservation(leaserName, lenderName, deposit, Reservation.class);
+    public int makeDeposit(Request request){
+        Reservation reservation = makeReservation(request.getRequester().getUsername(),
+                                                  request.getRequestedItem().getOwner().getUsername(),
+                (double) request.getRequestedItem().getDeposit(),
+                                                  Reservation.class);
         return reservation.getId();
     }
 
-    private <T> T makeReservation(String leaserName, String lenderName, int deposit, Class<T> type) {
+    private <T> T makeReservation(String leaserName, String lenderName, double deposit, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
-                                .pathSegment("reservation", "reserve", lenderName, leaserName)
-                                .query("amount={deposit}")
+                                .pathSegment("reservation", "reserve", leaserName, lenderName)
+                                .queryParam("amount", deposit)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
@@ -49,15 +53,15 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservation(String username, int reservationId, Class<T> type) {
+    private <T> T releaseReservation(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("reservation", "release", username)
-                                .query("reservationId={reservationId}")
+                                .queryParam("reservationId", id)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
@@ -65,15 +69,15 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservationAndPunishUser(String username, int reservationId, Class<T> type) {
+    private <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("reservation", "punish", username)
-                                .query("reservationId={reservationId}")
+                                .queryParam("reservationId", id)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
@@ -108,13 +112,13 @@ public class ProPaySubscriber {
         return "";
     }
 
-    private void executeTransfer(String leaserName, String lenderName, int amount) {
+    private void executeTransfer(String leaserName, String lenderName, int value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
                 .host("propra-propay.herokuapp.com")
                 .pathSegment("account", leaserName, "transfer", lenderName)
-                .query("amount={amount}")
+                .queryParam("amount", value)
                 .build()
                 .toUri();
 
@@ -122,15 +126,15 @@ public class ProPaySubscriber {
         // abhängig davon weitermachen...
     }
 
-    public void chargeAccount(String username, int amount){
+    public void chargeAccount(String username, double value){
         final Mono<ProPayAccount> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("account", username)
-                                .query("amount={amount}")
+                                .queryParam("amount", value)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()

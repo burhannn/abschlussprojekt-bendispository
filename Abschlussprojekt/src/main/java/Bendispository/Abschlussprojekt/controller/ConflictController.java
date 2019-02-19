@@ -28,7 +28,7 @@ public class ConflictController {
         return "conflictTransaction";
     }
 
-    @GetMapping(path = "/profile/conflictsTransaction{id}")
+    @GetMapping(path = "/profile/conflictTransaction{id}")
     public String showTransactionById(Model model, @PathVariable Long id){
         Optional<ConflictTransaction> conflict = conflictTransactionRepo.findById(id);
         model.addAttribute("conflict", conflict.get());

@@ -46,48 +46,28 @@ public class LeaseTransaction {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PaymentTransaction> payments;
 
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
     private ConflictTransaction conflictTransaction;
 
-    public void addLeaseTransaction(Request request){
+    public void addLeaseTransaction(Request request, int depositId){
         LeaseTransaction lsTrans = new LeaseTransaction();
         lsTrans.setItem(request.getRequestedItem());
         lsTrans.setLeaser(request.getRequester());
-        //lsTrans.setLender(request.getRequestedItem().getOwner());
+        lsTrans.setRequestId(request.getId());
         lsTrans.setDuration(request.getDuration());
         lsTrans.startDate = request.getStartDate();
         lsTrans.endDate = request.getEndDate();
+        lsTrans.depositId = depositId;
+        request.getRequester().addLeaseTransaction(lsTrans);
     }
 
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){
         this.payments.add(paymentTransaction);
     }
 
-    /*public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
-        itemIsReturned = true;
-        //zurückbuchung deposit
 
-        int amount = duration * item.getCostPerDay();
-        PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
-        paymentTransaction.pay(leaser, lender, this);
-
-        isReturnedOnTime(paymentTransactionRepo);
-    }
-
-    public void isReturnedOnTime(PaymentTransactionRepo paymentTransactionRepo){
-        if(LocalDate.now().isAfter(endDate)){
-            Period period = Period.between(LocalDate.now(), endDate);
-            int timeViolation = period.getDays();
-            concludeTransaction.setTimeframeViolation(true);
-            concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
-
-            int amount = item.getCostPerDay() * timeViolation;
-            PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
-            paymentTransaction.pay(paymentTransactionRepo);
-        }
-    }*/
 }

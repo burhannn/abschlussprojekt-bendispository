@@ -7,29 +7,65 @@ import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
-
-import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 
 
 @Controller
 public class ProfilController {
     @Autowired
     ItemRepo itemRepo;
+
     @Autowired
     PersonsRepo personRepo;
+
     @Autowired
     RequestRepo requestRepo;
+
+   AuthenticationService authenticationService;
+
+    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo){
+        this.itemRepo = itemRepo;
+        this.personRepo = personsRepo;
+        this.requestRepo = requestRepo;
+        this.authenticationService = new AuthenticationService(personRepo);
+    }
+
+    @GetMapping(path = "/addItem")
+    public String addItemPage(){
+        return "AddItem";
+    }
+
+    @PostMapping(path = "/addItem")
+    public String addItemsToDatabase(Model model,
+                                     Item item){
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("newItem", item);
+
+        item.setOwner(loggedIn);
+        itemRepo.save(item);
+        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
+        loggedIn.setItems(itemsOwner);
+        personRepo.save(loggedIn);
+        return "AddItem";
+    }
+
+    @GetMapping(path = "/Item/{id}" )
+    public String ItemProfile(Model model,
+                              @PathVariable Long id) {
+        Optional <Item> item = itemRepo.findById(id);
+        model.addAttribute("itemProfile", item.get());
+        model.addAttribute("itemOwner", item.get().getOwner());
+        return "itemProfile";
+    }
 
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
@@ -46,7 +82,7 @@ public class ProfilController {
     @GetMapping(path= "/")
     public String Overview(Model model){
         List<Item> all = itemRepo.findAll();
-        Person loggedIn = PersonLoggedIn();
+        Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("OverviewAllItems", all);
         model.addAttribute("loggedInPerson",loggedIn);
         return "overviewAllItems";
@@ -54,7 +90,7 @@ public class ProfilController {
 
     @GetMapping(path= "/profile")
     public String profile(Model model){
-        Person loggedIn = PersonLoggedIn();
+        Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person",loggedIn);
         return "profile";
     }
