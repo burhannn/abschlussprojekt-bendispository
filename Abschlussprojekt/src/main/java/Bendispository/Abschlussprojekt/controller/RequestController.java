@@ -8,6 +8,7 @@ import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
@@ -24,6 +25,7 @@ import java.time.Period;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
@@ -45,6 +47,8 @@ public class RequestController {
 
     private final PaymentTransactionRepo paymentTransactionRepo;
 
+    private final ConflictTransactionRepo conflictTransactionRepo;
+
     private TransactionService transactionService;
 
     private ProPaySubscriber proPaySubscriber;
@@ -56,13 +60,15 @@ public class RequestController {
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
                              PersonsRepo personsRepo,
-                             PaymentTransactionRepo paymentTransactionRepo) {
+                             PaymentTransactionRepo paymentTransactionRepo,
+                             ConflictTransactionRepo conflictTransactionRepo) {
 
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
         this.paymentTransactionRepo = paymentTransactionRepo;
+        this.conflictTransactionRepo = conflictTransactionRepo;
 
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
@@ -70,7 +76,8 @@ public class RequestController {
         this.transactionService = new TransactionService(leaseTransactionRepo,
                                                          requestRepo,
                                                          proPaySubscriber,
-                                                         paymentTransactionRepo);
+                                                         paymentTransactionRepo,
+                                                         conflictTransactionRepo);
     }
 
     @GetMapping(path = "/item{id}/requestItem")
@@ -197,9 +204,61 @@ public class RequestController {
     public String returnItem(Model model,
                              Long id){
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
-        System.out.println(leaseTransaction.getLeaser().getUsername());
         transactionService.itemReturnedToLender(leaseTransaction);
         return "rentedItems";
+    }
+
+    @GetMapping(path= "/profile/returneditems")
+    public String returnedItem(Model model){
+        List<LeaseTransaction> transactionList = leaseTransactionRepo.findAllByItemIsReturnedIsTrue();
+        model.addAttribute("transactionList", transactionList);
+        return "returnedItems";
+    }
+
+    @PostMapping(path= "/profile/returneditems")
+    public String stateOfItem(Model model,
+                              Long transactionId,
+                              Integer itemIntact){
+
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                                                    .findById(transactionId)
+                                                    .orElse(null);
+        Long id = authenticationService.getCurrentUser().getId();
+        Person me = personsRepo.findById(id).orElse(null);
+
+        if(itemIntact == -1){
+            // redirect Kommentarseite! via transactionid!
+            // redirect: "Ihr Anliegen wurde an die Konfliktlösungsstelle geschickt.
+            //            Er/Sie wird sich bei Ihnen melden"
+            // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
+            return "requests";
+        }
+        transactionService.itemIsIntact(me, leaseTransaction);
+        // Feld: iwie Bewertung /Clara
+        return "returnedItems";
+    }
+
+    @GetMapping(path= "/profile/returneditems/{id}/issue")
+    public String returnedItemIsNotIntact(Model model,
+                                          Long id){
+        LeaseTransaction transaction = leaseTransactionRepo.findById(id).orElse(null);
+        model.addAttribute("transaction", transaction);
+        return "returnedItems";
+    }
+
+    @PostMapping(path= "/profile/returneditems/{id}/issue")
+    public String returnedItemIsNotIntactPost(Model model,
+                                              Long id,
+                                              String commentary){
+        Long userId = authenticationService.getCurrentUser().getId();
+        Person me = personsRepo.findById(userId).orElse(null);
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                .findById(id)
+                .orElse(null);
+
+
+        transactionService.itemIsNotIntact(me, leaseTransaction, commentary);
+        return "returnedItems";
     }
 
     private void showRequests(Model model,
