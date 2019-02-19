@@ -68,28 +68,4 @@ public class LeaseTransaction {
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){
         this.payments.add(paymentTransaction);
     }
-
-    /*public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
-        itemIsReturned = true;
-        //zurückbuchung deposit
-
-        int amount = duration * item.getCostPerDay();
-        PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
-        paymentTransaction.pay(leaser, lender, this);
-
-        isReturnedOnTime(paymentTransactionRepo);
-    }
-
-    public void isReturnedOnTime(PaymentTransactionRepo paymentTransactionRepo){
-        if(LocalDate.now().isAfter(endDate)){
-            Period period = Period.between(LocalDate.now(), endDate);
-            int timeViolation = period.getDays();
-            concludeTransaction.setTimeframeViolation(true);
-            concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
-
-            int amount = item.getCostPerDay() * timeViolation;
-            PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
-            paymentTransaction.pay(paymentTransactionRepo);
-        }
-    }*/
 }

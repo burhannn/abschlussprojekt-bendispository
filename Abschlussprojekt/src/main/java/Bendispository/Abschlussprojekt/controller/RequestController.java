@@ -3,12 +3,16 @@ package Bendispository.Abschlussprojekt.controller;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+
 import Bendispository.Abschlussprojekt.model.RequestStatus;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
+
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -27,6 +30,14 @@ import java.util.List;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.APPROVED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
+
+
+import java.time.LocalDate;
+import java.time.Period;
+
+import java.time.LocalDate;
+
+import static Bendispository.Abschlussprojekt.service.ProPaySubscriber.*;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -65,6 +76,7 @@ public class RequestController {
         this.transactionService = new TransactionService(leaseTransactionRepo,
                                                          requestRepo,
                                                          proPaySubscriber);
+
     }
 
     @GetMapping(path = "/item{id}/requestItem")
@@ -80,7 +92,6 @@ public class RequestController {
                                      @PathVariable Long id
                                      //@RequestParam("startDay")
                                      ){
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startdate = LocalDate.parse(startDate, formatter);
         LocalDate enddate = LocalDate.parse(endDate, formatter);
