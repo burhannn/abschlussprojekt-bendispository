@@ -93,9 +93,24 @@ public class RequestController {
             return "redirect:/item{id}/requestItem";
         }
 
+        if (startDate.length() < 10) {
+            redirectAttributes.addFlashAttribute("messageDate", "Invalid date!");
+            return "redirect:/item{id}/requestItem";
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startdate = LocalDate.parse(startDate, formatter);
         LocalDate enddate = LocalDate.parse(endDate, formatter);
+
+        if (startdate.isAfter(enddate)) {
+            redirectAttributes.addFlashAttribute("messageDate", "Start date must be after end Date!");
+            return "redirect:/item{id}/requestItem";
+        }
+
+        if (startdate.isEqual(enddate)) {
+            redirectAttributes.addFlashAttribute("messageDate", "Start date and end date cannot be the same!");
+            return "redirect:/item{id}/requestItem";
+        }
 
         Person currentUser = authenticationService.getCurrentUser();
 
