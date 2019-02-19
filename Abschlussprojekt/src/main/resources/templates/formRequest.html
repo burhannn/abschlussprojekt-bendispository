@@ -15,7 +15,7 @@
     </div>
     <div th:if="${messageDeposit}">
         <div class="alert_error" th:text="${messageDeposit}"></div>
-        <a href="http://localhost:8080/chargeAccount">Charge account?</a>
+        <a href="/chargeAccount">Charge account?</a>
     </div>
     <h1 th:text="|Request for ${thisItem.name}|"></h1>
     <form method = "post">
