@@ -6,7 +6,6 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity
-@ToString(exclude = "owner")
 @Data
 public class Item {
 

@@ -23,6 +23,7 @@ import java.util.Optional;
 @Controller
 public class ProjektController {
 
+
     ItemRepo itemRepo;
     PersonsRepo personRepo;
     RequestRepo requestRepo;
@@ -45,6 +46,7 @@ public class ProjektController {
     @PostMapping(path = "/addItem")
     public String addItemsToDatabase(Model model,
                                      Item item){
+
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("newItem", item);
 

@@ -101,12 +101,12 @@ public class RequestController {
         LocalDate startdate = LocalDate.parse(startDate, formatter);
         LocalDate enddate = LocalDate.parse(endDate, formatter);
 
-        Person currentUser = authenticationService.getCurrentUser();
 
+        Person currentUser = authenticationService.getCurrentUser();
         Item item = itemRepo.findById(id).orElse(null);
 
         Request request = new Request();
-        request.setRequester(currentUser);
+        request.setRequester(personsRepo.findByUsername(currentUser.getUsername())); ///// änderung
         request.setStartDate(startdate);
         request.setEndDate(enddate);
         request.setDuration(Period.between(startdate, enddate).getDays());
