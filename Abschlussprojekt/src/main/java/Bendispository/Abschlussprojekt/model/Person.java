@@ -14,7 +14,6 @@ public class Person {
     private Long id;
 
     private String lastName;
-
     private String firstName;
 
     @Column(nullable = false, unique = true)
@@ -28,7 +27,7 @@ public class Person {
 
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
-    private List<Item> items;
+    private List<Item> Items;
 
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
@@ -36,5 +35,11 @@ public class Person {
 
     public void addLeaseTransaction(LeaseTransaction leaseTransaction){
         leaseTransactions.add(leaseTransaction);
+    }
+    @Embedded
+    private List<Rating> ratings;
+
+    public int getAverageRatings() {
+        return ratings.stream().mapToInt(Rating::getRatingPoints).sum()/ratings.size();
     }
 }
