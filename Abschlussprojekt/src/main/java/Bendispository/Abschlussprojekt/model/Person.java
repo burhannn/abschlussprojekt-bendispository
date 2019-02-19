@@ -36,6 +36,7 @@ public class Person {
     public void addLeaseTransaction(LeaseTransaction leaseTransaction){
         leaseTransactions.add(leaseTransaction);
     }
+
     @Embedded
     private List<Rating> ratings;
 
