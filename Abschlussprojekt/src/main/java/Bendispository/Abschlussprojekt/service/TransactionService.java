@@ -44,7 +44,7 @@ public class TransactionService {
 
 
     public boolean lenderApproved(Request request){
-        int deposit = request.getRequestedItem().getDeposit();
+        double deposit = request.getRequestedItem().getDeposit();
         Person requester = request.getRequester();
         if(proPaySubscriber.checkDeposit(deposit,
                                          requester.getUsername())) {
@@ -107,7 +107,7 @@ public class TransactionService {
 
         //zurückbuchung deposit
 
-        int amount = leaseTransaction.getDuration() * leaseTransaction.getItem().getCostPerDay();
+        double amount = leaseTransaction.getDuration() * leaseTransaction.getItem().getCostPerDay();
         makePayment(leaser, lender, amount, leaseTransaction, PaymentType.RENTPRICE);
 
         // 1. zeitgemäß?
@@ -124,7 +124,7 @@ public class TransactionService {
             leaseTransaction.setTimeframeViolation(true);
             leaseTransaction.setLengthOfTimeframeViolation(timeViolation);
 
-            int amount = leaseTransaction.getItem().getCostPerDay() * timeViolation;
+            double amount = leaseTransaction.getItem().getCostPerDay() * timeViolation;
             makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
         }
     }
@@ -143,7 +143,7 @@ public class TransactionService {
         leaseTransactionRepo.save(leaseTransaction);
     }
 
-    private void makePayment(Person leaser, Person lender, int amount, LeaseTransaction leaseTransaction, PaymentType type){
+    private void makePayment(Person leaser, Person lender, double amount, LeaseTransaction leaseTransaction, PaymentType type){
         PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
         paymentTransaction.setType(type);
         paymentTransaction.setLeaseTransaction(leaseTransaction);

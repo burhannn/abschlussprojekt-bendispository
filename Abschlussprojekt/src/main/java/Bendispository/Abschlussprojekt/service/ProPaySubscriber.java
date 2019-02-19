@@ -85,7 +85,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    public boolean checkDeposit(int requiredDeposit, String username){
+    public boolean checkDeposit(double requiredDeposit, String username){
         ProPayAccount account = getAccount(username, ProPayAccount.class);
         if(account.getAmount() >= requiredDeposit)
             return true;
@@ -107,12 +107,12 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    public String transferMoney(String leaserName, String lenderName, int amount){
+    public String transferMoney(String leaserName, String lenderName, double amount){
         executeTransfer(leaserName, lenderName, amount);
         return "";
     }
 
-    private void executeTransfer(String leaserName, String lenderName, int value) {
+    private void executeTransfer(String leaserName, String lenderName, double value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
