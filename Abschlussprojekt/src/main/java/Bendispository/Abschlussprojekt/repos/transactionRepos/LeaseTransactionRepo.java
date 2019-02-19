@@ -1,5 +1,7 @@
 package Bendispository.Abschlussprojekt.repos.transactionRepos;
 
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import org.springframework.data.repository.CrudRepository;
 
@@ -12,4 +14,6 @@ public interface LeaseTransactionRepo extends CrudRepository<LeaseTransaction, L
     Optional<LeaseTransaction> findByRequestId(Long id);
 
     List<LeaseTransaction> findAllByItemId(Long id);
+
+    List<LeaseTransaction> findAllByLeaserAndItemIsReturnedIsFalse(Person leaser);
 }

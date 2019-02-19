@@ -32,19 +32,19 @@ public class ProPaySubscriber {
     public int makeDeposit(Request request){
         Reservation reservation = makeReservation(request.getRequester().getUsername(),
                                                   request.getRequestedItem().getOwner().getUsername(),
-                                                  request.getRequestedItem().getDeposit(),
+                (double) request.getRequestedItem().getDeposit(),
                                                   Reservation.class);
         return reservation.getId();
     }
 
-    private <T> T makeReservation(String leaserName, String lenderName, int deposit, Class<T> type) {
+    private <T> T makeReservation(String leaserName, String lenderName, double deposit, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
-                                .pathSegment("reservation", "reserve", lenderName, leaserName)
+                                .pathSegment("reservation", "reserve", leaserName, lenderName)
                                 .queryParam("amount", deposit)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -56,7 +56,7 @@ public class ProPaySubscriber {
     private <T> T releaseReservation(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
@@ -72,7 +72,7 @@ public class ProPaySubscriber {
     private <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
@@ -126,10 +126,10 @@ public class ProPaySubscriber {
         // abhängig davon weitermachen...
     }
 
-    public void chargeAccount(String username, int value){
+    public void chargeAccount(String username, double value){
         final Mono<ProPayAccount> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
