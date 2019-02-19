@@ -12,6 +12,7 @@ import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -223,8 +224,8 @@ public class ProjektControllerTests {
                 .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
-                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))));
-                //.andExpect(model().attribute("person", hasProperty("items", )));
+                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
+                .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem1, dummyItem2))));
     }
 
     @Test
@@ -238,8 +239,8 @@ public class ProjektControllerTests {
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
-                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))));
-                //.andExpect(model().attribute("person", hasProperty("items", )));
+                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
+                .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem2, dummyItem1))));
 
         mvc.perform(get("/profile/{id}", 2L))
                 .andDo(print())
@@ -249,8 +250,8 @@ public class ProjektControllerTests {
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(2L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("nini"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("nini@gmail.com"))))
-                .andExpect(model().attribute("person", hasProperty("city", equalTo("düssi"))));
-                //.andExpect(model().attribute("person", hasProperty("items", )));
+                .andExpect(model().attribute("person", hasProperty("city", equalTo("düssi"))))
+                .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem3))));
     }
 
     @Test

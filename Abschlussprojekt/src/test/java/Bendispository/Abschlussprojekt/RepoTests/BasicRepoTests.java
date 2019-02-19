@@ -58,7 +58,7 @@ public class BasicRepoTests {
         Assertions.assertThat(testPersons.get(0).getId().equals(10));
     }
 
-    /*
+
     @Test
     public void checkItemRepo(){
         Person dummy1 = new Person();
@@ -134,5 +134,5 @@ public class BasicRepoTests {
         Assertions.assertThat(testRequests.get(0).getStartDate().equals(startDate));
         Assertions.assertThat(testRequests.get(0).getStatus().equals(RequestStatus.PENDING));
     }
-    */
+
 }
