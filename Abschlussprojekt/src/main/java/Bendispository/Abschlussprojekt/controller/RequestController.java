@@ -1,12 +1,10 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.RequestStatus;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
@@ -43,14 +41,16 @@ public class RequestController {
     private TransactionService transactionService;
     private ProPaySubscriber proPaySubscriber;
     private AuthenticationService authenticationService;
+    private RatingRepo ratingRepo;
 
     @Autowired
     public RequestController(RequestRepo requestRepo,
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
                              PersonsRepo personsRepo,
-                             PaymentTransactionRepo paymentTransactionRepo) {
-
+                             PaymentTransactionRepo paymentTransactionRepo,
+                             RatingRepo ratingrepo) {
+        this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
@@ -142,6 +142,22 @@ public class RequestController {
         }
         showRequests(model,id);
         return "request_reservation_not_possible";
+    }
+    @PostMapping(path="/rating")
+    public String Rating(Model model,
+                         int rating,
+                         Long requestID){
+
+        Request request = requestRepo.findById(requestID).orElse(null);
+        Person owner = request.getRequestedItem().getOwner();
+
+        if (rating != -1){
+            Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),rating);
+            ratingRepo.save(rating1);
+            owner.getRatings().add(rating1);
+            personsRepo.save(owner);
+        }
+        return "redirect:";
     }
 
     @GetMapping(path="/profile/rentedItems")

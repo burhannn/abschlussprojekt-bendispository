@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.Initializer;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -30,9 +31,10 @@ public class Initializer implements ServletContextInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+        List<Rating> Ratings = new ArrayList<>();
 
-        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcd");
-        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcd");
+        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcd", Ratings);
+        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcd", Ratings);
 
         Item dummyItem1 = mkItem(12, 5, "Ich bin ein stuhl", "stuhl", dummy_1);
         Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1);
@@ -51,7 +53,7 @@ public class Initializer implements ServletContextInitializer {
 
     }
 
-    private Person mkPerson(int account, String email, String username, String firstName, String lastName, String city, String password){
+    private Person mkPerson(int account, String email, String username, String firstName, String lastName, String city, String password, List<Rating> Ratings){
         Person p = new Person();
         p.setEmail(email);
         p.setUsername(username);
@@ -59,6 +61,7 @@ public class Initializer implements ServletContextInitializer {
         p.setLastName(lastName);
         p.setCity(city);
         p.setPassword(password);
+        p.setRatings(Ratings);
         return p;
     }
 

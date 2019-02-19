@@ -4,6 +4,7 @@ import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,10 +38,13 @@ public class Person {
         leaseTransactions.add(leaseTransaction);
     }
 
-    @Embedded
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Rating> ratings;
 
     public int getAverageRatings() {
+        if(ratings.size() == 0){
+            return -1;
+        }
         return ratings.stream().mapToInt(Rating::getRatingPoints).sum()/ratings.size();
     }
 }

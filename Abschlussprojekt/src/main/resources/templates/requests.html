@@ -9,14 +9,16 @@
 <h1>My Requests</h1>
   <div th:each="request : ${myRequests}">
       <tr>
-          <div th:text= "|Gegenstand: ${request.requestedItem.name} -Status: ${request.status}|"></div>
-          <div>
-              <form method="post">
+          <div th:text= "|Gegenstand: ${request.requestedItem.name} -Status: ${request.status} -von: ${request.requestedItem.owner.username}|"></div>
+          <div th:if="${request.status.name() == 'APPROVED'}">
+              <form method="post" action="/rating">
+                  <td>Geben Sie Ihr Rating ab:</td>
                   <input type="radio" name="rating" value="1">1
                   <input type="radio" name="rating" value="2">2
                   <input type="radio" name="rating" value="3">3
                   <input type="radio" name="rating" value="4">4
                   <input type="radio" name="rating" value="5">5
+                  <input type="hidden" name="rating" value="-1" checked>
                   <input type="hidden" value="0" th:value="${request.id}" name="requestID">
                   <button type = "submit">submit</button>
               </form>
@@ -34,12 +36,27 @@
             </tr>
         <td th:text="|Status: ${request.status}|"></td>
         <td>
-            <form method="post">
-                <input type="radio" name="requestMyItems" value="-1">reject
-                <input type="radio" name="requestMyItems" value="1">accept
-                <input type="hidden" value="0" th:value="${request.id}" name="requestID">
-                <button type = "submit">submit</button>
-            </form>
+            <div th:if="${request.status.name() == 'PENDING'}">
+                <form method="post">
+                    <input type="radio" name="requestMyItems" value="-1">reject
+                    <input type="radio" name="requestMyItems" value="1">accept
+                    <input type="hidden" value="0" th:value="${request.id}" name="requestID">
+                    <button type = "submit">submit</button>
+                </form>
+            </div>
+            <div th:if="${request.status.name() == 'APPROVED'}">
+                <form method="post" action="/rating">
+                    <td>Geben Sie Ihr Rating ab:</td>
+                    <input type="radio" name="rating" value="1">1
+                    <input type="radio" name="rating" value="2">2
+                    <input type="radio" name="rating" value="3">3
+                    <input type="radio" name="rating" value="4">4
+                    <input type="radio" name="rating" value="5">5
+                    <input type="hidden" name="rating" value="-1" checked>
+                    <input type="hidden" value="0" th:value="${request.id}" name="requestID">
+                    <button type = "submit">submit</button>
+                </form>
+            </div>
         </td>
     </tr>
         </table>

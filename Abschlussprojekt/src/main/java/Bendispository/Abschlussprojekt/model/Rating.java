@@ -1,12 +1,20 @@
 package Bendispository.Abschlussprojekt.model;
 
 import lombok.Data;
-import javax.persistence.Embeddable;
 
-@Embeddable
+import javax.persistence.*;
+
+@Entity
 @Data
 public class Rating {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @OneToOne
     private Request request;
+    @ManyToOne
     private Person rater;
     private Integer ratingPoints;
 
