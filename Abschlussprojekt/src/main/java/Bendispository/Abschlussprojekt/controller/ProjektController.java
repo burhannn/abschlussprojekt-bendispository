@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -141,6 +142,7 @@ public class ProjektController {
     public String profilPage(Model model){
         List<Person> all = personRepo.findAll();
         model.addAttribute("personen", all);
+        model.addAttribute("loggedInPerson", PersonLoggedIn());
         return "profileDetails";
     }
 
@@ -170,4 +172,11 @@ public class ProjektController {
     	if(PersonLoggedIn().getUsername().equals("admin")) return "trouble";
 		else return "redirect:/";
 	}
+	@GetMapping(value="deleteUser/{username}")
+    public String deleteUser(@PathVariable String username){
+        Person deletePerson = personRepo.findByUsername(username);
+        personRepo.delete(deletePerson);
+
+        return "redirect:/profilub";
+    }
 }

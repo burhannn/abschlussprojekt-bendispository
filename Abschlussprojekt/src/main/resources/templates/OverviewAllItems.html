@@ -6,9 +6,10 @@
     <h2 th:text= ${loggedInPerson.username}></h2>
     </div>
     <div class="my_actions_profile">
-        <a href="/profile">My Profile</a> <!-- /1 bis login als placeholder -->
+        <a href="/profile">My Profile</a>
         <a href="/addItem">Add Item</a>
         <a href="/profilub">Overview Users</a>
+
     </div>
 <div class = "projekt_container" th:each="item,iterStart : ${OverviewAllItems}">
     <h1 class="header_container" th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>

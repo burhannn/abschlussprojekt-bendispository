@@ -16,11 +16,15 @@
     <tr th:each = "person : ${personen}">
         <td>
             <a th:href = "@{'/profile/' + ${person.id}}">Profil</a>
+            <a th:if="${loggedInPerson.username == 'admin' and person.username != 'admin'}" th:href = "@{'/deleteUser/' + ${person.username}}" type="submit">User löschen</a>
+
         </td>
         <td th:text = "|${person.firstName}, ${person.lastName}|"></td>
         <td th:text = "|${person.username}|"></td>
         <td th:text = "|${person.email}|"></td>
+
     </tr>
 </table>
+<a href="/" class="back_button">Back</a>
 </body>
 </html>
