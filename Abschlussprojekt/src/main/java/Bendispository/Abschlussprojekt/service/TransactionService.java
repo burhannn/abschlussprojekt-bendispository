@@ -46,10 +46,10 @@ public class TransactionService {
     public boolean lenderApproved(Request request){
         double deposit = request.getRequestedItem().getDeposit();
         Person requester = request.getRequester();
+
         if(proPaySubscriber.checkDeposit(deposit,
                                          requester.getUsername())) {
             int depositId = proPaySubscriber.makeDeposit(request);
-
             LeaseTransaction leaseTransaction = new LeaseTransaction();
             leaseTransaction.addLeaseTransaction(request, depositId);
 

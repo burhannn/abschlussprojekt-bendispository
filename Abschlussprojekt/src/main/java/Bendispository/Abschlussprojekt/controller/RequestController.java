@@ -226,7 +226,6 @@ public class RequestController {
                                                     .orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
         Person me = personsRepo.findById(id).orElse(null);
-        System.out.println(transactionId);
         if(itemIntact == -1){
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";

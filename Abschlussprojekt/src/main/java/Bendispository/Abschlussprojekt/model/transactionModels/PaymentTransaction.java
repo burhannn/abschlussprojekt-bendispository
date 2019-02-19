@@ -38,6 +38,8 @@ public class PaymentTransaction {
         this.amount = amount;
     }
 
+    public PaymentTransaction(){}
+
     public String toString(){
         return "amount:" + amount + "paymentisconcluded:" + paymentIsConcluded + "type:" + type;
     }

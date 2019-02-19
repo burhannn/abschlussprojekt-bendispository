@@ -56,15 +56,14 @@ public class LeaseTransaction {
     private ConflictTransaction conflictTransaction;
 
     public void addLeaseTransaction(Request request, int depositId){
-        LeaseTransaction lsTrans = new LeaseTransaction();
-        lsTrans.setItem(request.getRequestedItem());
-        lsTrans.setLeaser(request.getRequester());
-        lsTrans.setRequestId(request.getId());
-        lsTrans.setDuration(request.getDuration());
-        lsTrans.startDate = request.getStartDate();
-        lsTrans.endDate = request.getEndDate();
-        lsTrans.depositId = depositId;
-        request.getRequester().addLeaseTransaction(lsTrans);
+        this.setItem(request.getRequestedItem());
+        this.setLeaser(request.getRequester());
+        this.setRequestId(request.getId());
+        this.setDuration(request.getDuration());
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+        this.depositId = depositId;
+        request.getRequester().addLeaseTransaction(this);
     }
 
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){
