@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,7 +12,10 @@
 <body>
 <a class="container" style="text-align: center">
     <form class="form-signin" method="post" action="/login">
-        <h2 style="margin-bottom: 15px" class="form-signin-heading">Please sign in</h2>
+		<div th:if="${param.error}" class="alert alert-danger">
+			Invalid username and password.
+		</div>
+		<h2 style="margin-bottom: 15px" class="form-signin-heading">Please sign in</h2>
         <p>
             <label for="username" class="sr-only">Username</label>
             <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
