@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt;
+package Bendispository.Abschlussprojekt.ControllerTests;
 
 
 import Bendispository.Abschlussprojekt.model.Item;
@@ -9,6 +9,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import org.junit.Before;
@@ -37,8 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
-@WithMockUser
-public class LoginRegistrationController {
+public class LoginRegistrationTests {
 
     @Autowired
     MockMvc mvc;
@@ -67,7 +67,30 @@ public class LoginRegistrationController {
     @MockBean
     MyUserPrincipal blablabla;
 
+    @MockBean
+    AuthenticationService authenticationService;
+
+    Person dummy1;
+
+    @Before
+    public void setUp(){
+        dummy1 = new Person();
+
+        dummy1.setFirstName("mandy");
+        dummy1.setLastName("moraru");
+        dummy1.setCity("kölle");
+        dummy1.setEmail("momo@gmail.com");
+        dummy1.setUsername("momo");
+        dummy1.setPassword("abcd");
+        dummy1.setId(1L);
+
+        personsRepo.save(dummy1);
+        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+    }
+
+
     @Test
+    @WithMockUser(username = "momo", password = "abcd", roles = "USER")
     public void checkRegistration() throws Exception {
 
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -89,7 +112,10 @@ public class LoginRegistrationController {
     }
 
     @Test
+    //@WithMockUser(username = "momo", password = "abcd", roles = "USER")
     public void checkRegistrationfail() throws Exception {
+
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lastName", "mandy")
