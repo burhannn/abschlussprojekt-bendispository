@@ -3,10 +3,9 @@ package Bendispository.Abschlussprojekt.service;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
-import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentType;
+import Bendispository.Abschlussprojekt.model.transactionModels.*;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +24,22 @@ public class TransactionService {
 
     private final PaymentTransactionRepo paymentTransactionRepo;
 
+    private final ConflictTransactionRepo conflictTransactionRepo;
+
     private ProPaySubscriber proPaySubscriber;
 
     @Autowired
     public TransactionService(LeaseTransactionRepo leaseTransactionRepo,
                               RequestRepo requestRepo,
                               ProPaySubscriber proPaySubscriber,
-                              PaymentTransactionRepo paymentTransactionRepo) {
+                              PaymentTransactionRepo paymentTransactionRepo,
+                              ConflictTransactionRepo conflictTransactionRepo) {
         super();
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.requestRepo = requestRepo;
         this.proPaySubscriber = proPaySubscriber;
         this.paymentTransactionRepo = paymentTransactionRepo;
+        this.conflictTransactionRepo = conflictTransactionRepo;
     }
 
 
@@ -45,7 +48,6 @@ public class TransactionService {
         Person requester = request.getRequester();
         if(proPaySubscriber.checkDeposit(deposit,
                                          requester.getUsername())) {
-
             int depositId = proPaySubscriber.makeDeposit(request);
 
             PaymentTransaction paymentTransaction = new PaymentTransaction(requester,
@@ -95,7 +97,7 @@ public class TransactionService {
 
     // Disclaimer: https://stackoverflow.com/a/17107966
     private static boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
-        return start1.isBefore(end2) && start2.isBefore(end1);
+        return (start1.isBefore(end2) && start2.isBefore(end1));
     }
 
     public void itemReturnedToLender(LeaseTransaction leaseTransaction){
@@ -110,12 +112,12 @@ public class TransactionService {
 
         // 1. zeitgemäß?
         isReturnedInTime(leaseTransaction, leaser, lender);
-
+        leaseTransactionRepo.save(leaseTransaction);
         // 2. intakt? ja, vorbei => kaution rückbuchen; nein => konfliktstelle!
 
     }
 
-    public void isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
+    private void isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
         if(LocalDate.now().isAfter(leaseTransaction.getEndDate())){
             Period period = Period.between(leaseTransaction.getEndDate(), LocalDate.now());
             int timeViolation = period.getDays();
@@ -124,8 +126,21 @@ public class TransactionService {
 
             int amount = leaseTransaction.getItem().getCostPerDay() * timeViolation;
             makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
-
         }
+    }
+
+    public void itemIsIntact(Person me, LeaseTransaction leaseTransaction){
+        ProPayAccount account = proPaySubscriber.releaseReservation(me.getUsername(), leaseTransaction.getDepositId(), ProPayAccount.class);
+        List<PaymentTransaction> payments = leaseTransaction.getPayments();
+        for (PaymentTransaction payment : payments){
+            if(payment.getType() == PaymentType.DEPOSIT){
+                payment.setPaymentIsConcluded(true);
+                paymentTransactionRepo.save(payment);
+                break;
+            }
+        }
+        leaseTransaction.setLeaseIsConcluded(true);
+        leaseTransactionRepo.save(leaseTransaction);
     }
 
     private void makePayment(Person leaser, Person lender, int amount, LeaseTransaction leaseTransaction, PaymentType type){
@@ -136,4 +151,10 @@ public class TransactionService {
         proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
     }
 
+    public void itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {
+        ConflictTransaction conflictTransaction = new ConflictTransaction();
+        conflictTransaction.setLeaseTransaction(leaseTransaction);
+        conflictTransaction.setCommentary(commentary);
+        conflictTransactionRepo.save(conflictTransaction);
+    }
 }
