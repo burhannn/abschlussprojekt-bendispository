@@ -20,7 +20,7 @@ public class PaymentTransaction {
     @ManyToOne
     private Person lender;
 
-    private int amount;
+    private double amount;
 
     private boolean paymentIsConcluded;
 
@@ -31,7 +31,7 @@ public class PaymentTransaction {
     @ManyToOne(cascade = CascadeType.ALL)
     LeaseTransaction leaseTransaction;
 
-    public PaymentTransaction(Person leaser, Person lender, int amount){
+    public PaymentTransaction(Person leaser, Person lender, double amount){
         this.leaser = leaser;
         this.lender = lender;
         this.amount = amount;
