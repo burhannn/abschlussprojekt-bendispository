@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt;
+package Bendispository.Abschlussprojekt.ControllerTests;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
