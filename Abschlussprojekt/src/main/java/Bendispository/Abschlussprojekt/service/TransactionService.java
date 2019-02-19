@@ -50,18 +50,12 @@ public class TransactionService {
                                          requester.getUsername())) {
             int depositId = proPaySubscriber.makeDeposit(request);
 
-            PaymentTransaction paymentTransaction = new PaymentTransaction(requester,
-                                                                           request.getRequestedItem().getOwner(),
-                                                                           deposit);
-            paymentTransaction.setType(PaymentType.DEPOSIT);
-            paymentTransactionRepo.save(paymentTransaction);
-
             LeaseTransaction leaseTransaction = new LeaseTransaction();
             leaseTransaction.addLeaseTransaction(request, depositId);
-            //leaseTransaction.addPaymentTransaction(paymentTransaction);
-            paymentTransaction.setLeaseTransaction(leaseTransaction);
 
-            paymentTransactionRepo.save(paymentTransaction);
+            PaymentTransaction payment = makePayment(requester, request.getRequestedItem().getOwner(),
+                                                                deposit, leaseTransaction, PaymentType.DEPOSIT);
+            leaseTransaction.addPaymentTransaction(payment);
             leaseTransactionRepo.save(leaseTransaction);
 
             request.setLeaseTransaction(leaseTransaction);
@@ -105,16 +99,12 @@ public class TransactionService {
         Person lender = leaseTransaction.getItem().getOwner();
         leaseTransaction.setItemIsReturned(true);
 
-        //zurückbuchung deposit
-
-        double amount = leaseTransaction.getDuration() * leaseTransaction.getItem().getCostPerDay();
-        makePayment(leaser, lender, amount, leaseTransaction, PaymentType.RENTPRICE);
-
-        // 1. zeitgemäß?
+        double amount = (double) leaseTransaction.getDuration() * leaseTransaction.getItem().getCostPerDay();
+        PaymentTransaction payment = makePayment(leaser, lender, amount,
+                                                 leaseTransaction, PaymentType.RENTPRICE);
+        leaseTransaction.addPaymentTransaction(payment);
         isReturnedInTime(leaseTransaction, leaser, lender);
         leaseTransactionRepo.save(leaseTransaction);
-        // 2. intakt? ja, vorbei => kaution rückbuchen; nein => konfliktstelle!
-
     }
 
     private void isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
@@ -125,7 +115,8 @@ public class TransactionService {
             leaseTransaction.setLengthOfTimeframeViolation(timeViolation);
 
             double amount = leaseTransaction.getItem().getCostPerDay() * timeViolation;
-            makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
+            PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
+            leaseTransaction.addPaymentTransaction(payment);
         }
     }
 
@@ -143,12 +134,15 @@ public class TransactionService {
         leaseTransactionRepo.save(leaseTransaction);
     }
 
-    private void makePayment(Person leaser, Person lender, double amount, LeaseTransaction leaseTransaction, PaymentType type){
+    private PaymentTransaction makePayment(Person leaser, Person lender, double amount,
+                                           LeaseTransaction leaseTransaction, PaymentType type){
         PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
         paymentTransaction.setType(type);
         paymentTransaction.setLeaseTransaction(leaseTransaction);
+        paymentTransaction.setPaymentIsConcluded(true);
         paymentTransactionRepo.save(paymentTransaction);
         proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+        return paymentTransaction;
     }
 
     public void itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {

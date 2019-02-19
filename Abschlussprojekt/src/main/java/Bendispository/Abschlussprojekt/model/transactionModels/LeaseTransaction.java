@@ -5,10 +5,13 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -39,15 +42,14 @@ public class LeaseTransaction {
 
     private boolean timeframeViolation = false;
 
-    //private boolean itemIsReturnedOnTime = false;
-
     // number of days
     private int duration;
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL)
-    private List<PaymentTransaction> payments;
+    private List<PaymentTransaction> payments = new ArrayList<PaymentTransaction>();
 
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
@@ -68,6 +70,5 @@ public class LeaseTransaction {
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){
         this.payments.add(paymentTransaction);
     }
-
 
 }

@@ -21,7 +21,7 @@ public class ConflictTransaction {
 
     private String commentary;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     LeaseTransaction leaseTransaction;
 
 }

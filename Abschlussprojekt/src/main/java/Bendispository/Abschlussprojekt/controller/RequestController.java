@@ -5,6 +5,7 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
+import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,19 +108,15 @@ public class RequestController {
                                      //@RequestParam("startDay")
                                      ){
 
-        if (startDate == "" || endDate == "") {
-            redirectAttributes.addFlashAttribute("message", "Date is missing!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if (startDate.length() < 10) {
+        LocalDate startdate, enddate;
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            startdate = LocalDate.parse(startDate, formatter);
+            enddate = LocalDate.parse(endDate, formatter);
+        } catch(DateTimeParseException e){
             redirectAttributes.addFlashAttribute("message", "Invalid date!");
             return "redirect:/item{id}/requestItem";
         }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate startdate = LocalDate.parse(startDate, formatter);
-        LocalDate enddate = LocalDate.parse(endDate, formatter);
 
         if (startdate.isAfter(enddate)) {
             redirectAttributes.addFlashAttribute("message", "Start date must be after end Date!");
@@ -213,7 +211,7 @@ public class RequestController {
 
     @GetMapping(path= "/profile/returneditems")
     public String returnedItem(Model model){
-        List<LeaseTransaction> transactionList = leaseTransactionRepo.findAllByItemIsReturnedIsTrue();
+        List<LeaseTransaction> transactionList = leaseTransactionRepo.findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
         model.addAttribute("transactionList", transactionList);
         return "returnedItems";
     }
@@ -230,9 +228,6 @@ public class RequestController {
         Person me = personsRepo.findById(id).orElse(null);
         System.out.println(transactionId);
         if(itemIntact == -1){
-            // redirect Kommentarseite! via transactionid!
-            // redirect: "Ihr Anliegen wurde an die Konfliktlösungsstelle geschickt.
-            //            Er/Sie wird sich bei Ihnen melden"
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
