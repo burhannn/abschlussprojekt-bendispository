@@ -10,7 +10,7 @@ import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -40,6 +39,7 @@ import java.time.LocalDate;
 import static Bendispository.Abschlussprojekt.service.ProPaySubscriber.*;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -55,6 +55,8 @@ public class RequestController {
 
     private final TransactionService transactionService;
 
+    private final PaymentTransactionRepo paymentTransactionRepo;
+
     private final ProPaySubscriber proPaySubscriber;
 
     private final AuthenticationService authenticationService;
@@ -63,20 +65,22 @@ public class RequestController {
     public RequestController(RequestRepo requestRepo,
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
-                             PersonsRepo personsRepo, AuthenticationService authenticationService) {
+                             PersonsRepo personsRepo,
+                             PaymentTransactionRepo paymentTransactionRepo) {
 
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
+        this.paymentTransactionRepo = paymentTransactionRepo;
 
-        this.authenticationService = authenticationService;
+        this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                                                      leaseTransactionRepo);
         this.transactionService = new TransactionService(leaseTransactionRepo,
                                                          requestRepo,
-                                                         proPaySubscriber);
-
+                                                         proPaySubscriber,
+                                                         paymentTransactionRepo);
     }
 
     @GetMapping(path = "/item{id}/requestItem")
@@ -89,7 +93,8 @@ public class RequestController {
     public String addRequestToLender(String startDate,
                                      String endDate,
                                      Model model,
-                                     @PathVariable Long id
+                                     @PathVariable Long id,
+                                     RedirectAttributes redirectAttributes
                                      //@RequestParam("startDay")
                                      ){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -116,7 +121,14 @@ public class RequestController {
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
             return "formRequest";
         }
-        return "Could_not_send_Request";
+
+        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username))
+            redirectAttributes.addFlashAttribute("message", "You don't have enough money for the deposit!");
+
+        if (!transactionService.itemIsAvailableOnTime(request))
+            redirectAttributes.addFlashAttribute("message", "Item is not available during selected period!");
+
+        return "redirect:/item{id}/requestItem";
     }
 
     @GetMapping(path="/profile/requests")
@@ -150,10 +162,18 @@ public class RequestController {
 
     @GetMapping(path="/profile/rentedItems")
     public String rentedItems(Model model){
-        Long id = authenticationService.getCurrentUser().getId();
-        Person me = personsRepo.findById(id).orElse(null);
-        List<Request> myRentedItems = requestRepo.findByRequesterAndStatus(me, APPROVED);
+        Person me = authenticationService.getCurrentUser();
+        List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
         model.addAttribute("myRentedItems", myRentedItems);
+        return "rentedItems";
+    }
+
+    @PostMapping(path = "/profile/rentedItems")
+    public String returnItem(Model model,
+                             Long id){
+        LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
+        System.out.println(leaseTransaction.getLeaser().getUsername());
+        transactionService.itemReturnedToLender(leaseTransaction);
         return "rentedItems";
     }
 

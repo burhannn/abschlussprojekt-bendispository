@@ -46,7 +46,7 @@ public class LeaseTransaction {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PaymentTransaction> payments;
 
     @OneToOne(cascade = CascadeType.PERSIST,
