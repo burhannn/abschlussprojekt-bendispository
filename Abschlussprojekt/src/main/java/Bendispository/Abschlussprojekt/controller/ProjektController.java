@@ -166,12 +166,12 @@ public class ProjektController {
 	}
 
 	@GetMapping("/trouble")
-	public String trouble(Model model){
+	public String trouble(){
     	if(PersonLoggedIn().getUsername().equals("admin")) {
     		return "trouble";
 		}
 		else {
-			return Overview(model);
+			return "redirect:/";
 		}
 	}
 }
