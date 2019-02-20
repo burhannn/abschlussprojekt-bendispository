@@ -46,7 +46,7 @@ public class FileController {
 
     @GetMapping(path = "/addItem")
     public String addItemPage(){
-        return "AddItem";
+        return "addItem";
     }
 
     @PostMapping(path = "/addItem", consumes = {"multipart/form-data"})
@@ -67,7 +67,7 @@ public class FileController {
         loggedIn.setItems(itemsOwner);
 
         personRepo.save(loggedIn);
-        return "AddItem";
+        return "addItem";
     }
 
     @GetMapping(path = "/Item/{id}" )

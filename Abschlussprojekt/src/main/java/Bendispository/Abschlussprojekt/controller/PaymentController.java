@@ -44,7 +44,7 @@ public class PaymentController {
 
     @GetMapping(path = "/chargeAccount")
     public String saveAccount(){
-        return "/chargeAccount";
+        return "chargeAccount";
     }
 
     @PostMapping(path="/chargeAccount")
