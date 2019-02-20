@@ -41,7 +41,7 @@ public class Person {
     }
 
     @OneToMany(cascade = CascadeType.ALL)
-    @LazyCollection(LazyCollectionOption.TRUE)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Rating> ratings;
 
     public int getAverageRatings() {
