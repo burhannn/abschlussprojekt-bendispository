@@ -81,7 +81,9 @@ public class TransactionService {
     }
 
     public boolean itemIsAvailableOnTime(Request request) {
-        List<LeaseTransaction> leaseTransactionList = leaseTransactionRepo.findAllByItemId(request.getRequestedItem().getId());
+        List<LeaseTransaction> leaseTransactionList =
+                leaseTransactionRepo
+                        .findAllByItemId(request.getRequestedItem().getId());
         for(LeaseTransaction l  : leaseTransactionList)
             if(isOverlapping(l.getStartDate(), l.getEndDate(),
                     request.getStartDate(), request.getEndDate()))
