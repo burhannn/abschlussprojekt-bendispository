@@ -26,7 +26,6 @@ public class ConflictService {
         this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo);
     }
 
-
     public void resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){
         conflict.setLeaserAccepted(true);
         conflict.setLenderAccepted(true);

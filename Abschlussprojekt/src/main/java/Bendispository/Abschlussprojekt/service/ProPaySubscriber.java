@@ -113,7 +113,7 @@ public class ProPaySubscriber {
         return "";
     }
 
-    private void executeTransfer(String leaserName, String lenderName, double value) {
+    private String executeTransfer(String leaserName, String lenderName, double value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
@@ -122,9 +122,14 @@ public class ProPaySubscriber {
                 .queryParam("amount", value)
                 .build()
                 .toUri();
-
-        // Wie response code checken?????
-        // abhängig davon weitermachen...
+        final Mono<String> mono = WebClient
+                .create()
+                .post()
+                .uri(uri)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .retrieve()
+                .bodyToMono(String.class);
+        return mono.block();
     }
 
     public void chargeAccount(String username, double value){
