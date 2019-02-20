@@ -14,9 +14,11 @@ public class Rating {
 
     @OneToOne
     private Request request;
+
     @ManyToOne
     private Person rater;
     private Integer ratingPoints;
+
 
     public Rating(){}
 

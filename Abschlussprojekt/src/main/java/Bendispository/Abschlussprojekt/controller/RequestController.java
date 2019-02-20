@@ -45,7 +45,7 @@ public class RequestController {
     private final PaymentTransactionRepo paymentTransactionRepo;
     private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
-    private final RatingRepo ratingRepo;
+    private RatingRepo ratingRepo;
     private final ConflictTransactionRepo conflictTransactionRepo;
 
 
@@ -204,12 +204,12 @@ public class RequestController {
         Request request = requestRepo.findById(requestID).orElse(null);
         Person owner = request.getRequestedItem().getOwner();
 
-        if (rating != -1){
-            Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),rating);
+        //if (rating != -1){
+            Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
             ratingRepo.save(rating1);
-            owner.getRatings().add(rating1);
+            owner.addRating(rating1);
             personsRepo.save(owner);
-        }
+        //}
         return "redirect:";
     }
 
