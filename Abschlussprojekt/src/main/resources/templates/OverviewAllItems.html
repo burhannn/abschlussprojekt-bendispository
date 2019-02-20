@@ -2,18 +2,19 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml" lang="">
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <body>
+<div class="my_actions_profile">
+    <a href="/profile">My Profile</a>
+    <a href="/addItem">Add Item</a>
+    <a href="/profilub">Overview Users</a>
+    <a th:if="${loggedInPerson.username == 'admin'}" href="/trouble">Conflicts</a>
+    <a href="/logout">Logout</a>
+
+
+</div>
     <div class="header_overview">All Items currently offered
     <h2 th:text= ${loggedInPerson.username}></h2>
     </div>
-    <div class="my_actions_profile">
-        <a href="/profile">My Profile</a>
-        <a href="/addItem">Add Item</a>
-        <a href="/profilub">Overview Users</a>
-		<a th:if="${loggedInPerson.username == 'admin'}" href="/trouble">Conflicts</a>
-		<a href="/logout">Logout</a>
 
-
-    </div>
 <div class = "projekt_container" th:each="item,iterStart : ${OverviewAllItems}">
     <h1 class="header_container" th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
     <div>

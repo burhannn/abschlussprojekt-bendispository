@@ -45,9 +45,11 @@ button:hover, a:hover {
     text-align: center;
 }
 .my_actions_profile{
-    float: right;
+    /*float: left;
     position: absolute;
     right: 0px;
+    top: 0px;*/
+    text-align: center;
     top: 0px;
 }
 body{

@@ -57,6 +57,7 @@ public class ProjektController {
         Optional <Item> item = itemRepo.findById(id);
         model.addAttribute("itemProfile", item.get());
         model.addAttribute("itemOwner", item.get().getOwner());
+        model.addAttribute("loggedInPerson",PersonLoggedIn());
         return "itemProfile";
     }
 
@@ -176,5 +177,29 @@ public class ProjektController {
         Person deletePerson = personRepo.findByUsername(username);
         personRepo.delete(deletePerson);
         return "redirect:/profilub";
+    }
+
+    @GetMapping(path = "/editItem/{id}")
+    public String editItem(Model model,
+                           @PathVariable Long id){
+        Optional <Item> item = itemRepo.findById(id);
+        model.addAttribute("Item", item.get());
+        /*if(PersonLoggedIn().getUsername() == item.getOwner()){
+            return "redirect:/";
+        }*/
+        return "editItem";
+    }
+
+    @PostMapping(path = "/editItem/{id}")
+    public String editItemInDatabase(Model model,
+                                     @PathVariable Long id, Item inpItem){
+        Optional <Item> item = itemRepo.findById(id);
+        model.addAttribute("Item", item.get());
+        Person loggedIn = PersonLoggedIn();
+        inpItem.setOwner(loggedIn);
+        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
+        loggedIn.setItems(itemsOwner);
+        itemRepo.save(inpItem);
+        return "redirect:/";
     }
 }
