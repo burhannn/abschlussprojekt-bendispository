@@ -24,8 +24,7 @@ import java.time.Period;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
@@ -102,6 +101,7 @@ public class RequestController {
         List<LeaseTransaction> list =
                 leaseTransactionRepo
                         .findAllByItemIdAndStartDateGreaterThan(id, LocalDate.now());
+        Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);
         return "formRequest";
     }
