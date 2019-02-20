@@ -111,13 +111,8 @@ public class RequestController {
             return "redirect:/item{id}/requestItem";
         }
 
-        if (startdate.isAfter(enddate)) {
-            redirectAttributes.addFlashAttribute("message", "Start date must be after end Date!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if (startdate.isEqual(enddate)) {
-            redirectAttributes.addFlashAttribute("message", "Start date and end date cannot be the same!");
+        if (startdate.isAfter(enddate) && startdate.isEqual(enddate)) {
+            redirectAttributes.addFlashAttribute("message", "Invalid date!");
             return "redirect:/item{id}/requestItem";
         }
 
@@ -166,7 +161,8 @@ public class RequestController {
     @PostMapping(path="/profile/requests")
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
-                                        Integer requestMyItems){
+                                        Integer requestMyItems,
+                                        RedirectAttributes redirectAttributes){
 
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
@@ -182,8 +178,10 @@ public class RequestController {
             return "requests";
         }
         showRequests(model,id);
-        return "request_reservation_not_possible";
+        redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
+        return "redirect:/Item/{id}";
     }
+
     @PostMapping(path="/rating")
     public String Rating(Model model,
                          int rating,
@@ -219,7 +217,9 @@ public class RequestController {
 
     @GetMapping(path= "/profile/returneditems")
     public String returnedItem(Model model){
-        List<LeaseTransaction> transactionList = leaseTransactionRepo.findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+        List<LeaseTransaction> transactionList =
+                leaseTransactionRepo
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
         model.addAttribute("transactionList", transactionList);
         return "returnedItems";
     }
@@ -238,6 +238,10 @@ public class RequestController {
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
+        List<LeaseTransaction> transactionList =
+                leaseTransactionRepo
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+        model.addAttribute("transactionList", transactionList);
         transactionService.itemIsIntact(leaseTransaction);
         // Feld: iwie Bewertung /Clara
         return "returnedItems";

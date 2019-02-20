@@ -118,12 +118,12 @@ public class ProjektController {
         return "profileDetails";
     }
 
-    @GetMapping("/trouble")
+    /*@GetMapping("/trouble")
     public String trouble(){
         Person loggedin = authenticationService.getCurrentUser();
         if(loggedin.getUsername().equals("admin")) return "trouble";
         else return "redirect:/";
-    }
+    }*/
 
 
     @GetMapping(value="deleteUser/{username}")

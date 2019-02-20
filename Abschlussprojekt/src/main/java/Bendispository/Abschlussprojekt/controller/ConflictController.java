@@ -1,7 +1,9 @@
 package Bendispository.Abschlussprojekt.controller;
 
+import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.transactionModels.ConflictTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ConflictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,30 +19,40 @@ import java.util.List;
 @Controller
 public class ConflictController {
 
-    private ConflictService conflictService;
+    private final AuthenticationService authenticationService;
+
+    private final ConflictService conflictService;
 
     private final ConflictTransactionRepo conflictTransactionRepo;
 
     @Autowired
     public ConflictController(ConflictTransactionRepo conflictTransactionRepo,
-                              ConflictService conflictService){
+                              ConflictService conflictService,
+                              AuthenticationService authenticationService){
         this.conflictTransactionRepo = conflictTransactionRepo;
         this.conflictService = conflictService;
+        this.authenticationService = authenticationService;
     }
 
-    @GetMapping(path = "/profile/conflicts")
+    @GetMapping(path = "/conflicts")
     public String listAllConflictTransaction(Model model){
-        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
-        model.addAttribute("allConflicts", allConflicts);
-        return "conflictTransaction";
+        Person loggedin = authenticationService.getCurrentUser();
+        if(loggedin.getUsername().equals("admin")){
+            List<ConflictTransaction> allConflicts =
+                    conflictTransactionRepo
+                            .findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
+            model.addAttribute("allConflicts", allConflicts);
+            return "conflictTransaction";
+        }
+        return "redirect:/";
     }
 
-    @PostMapping(path = "/profile/conflicts")
+    @PostMapping(path = "/conflicts")
     public String addChangesConflictTransaction(Model model,
                                                 Long conflictId,
-                                                int benificiary){
+                                                int beneficiary){
         ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
-        conflictService.resolveConflict(conflict, conflictTransactionRepo, benificiary == -1);
+        conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1);
         List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
         model.addAttribute("allConflicts", allConflicts);
         return "conflictTransaction";
