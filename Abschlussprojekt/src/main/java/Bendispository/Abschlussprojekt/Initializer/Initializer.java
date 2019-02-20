@@ -33,9 +33,10 @@ public class Initializer implements ServletContextInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
         List<Rating> ratings = new ArrayList<>();
 
-        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcd", ratings);
-        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcd", ratings);
-		Person admin = mkPerson(0, "", "admin", "", "", "", "root", ratings);
+        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcdabcd", ratings);
+        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcdabcd", ratings);
+		Person admin = mkPerson(10, "admin@admin.de", "admin", "admin", "admin", "admin", "rootroot", ratings);
+
 
 
         Item dummyItem1 = mkItem(12, 5, "Ich bin ein stuhl", "stuhl", dummy_1);
