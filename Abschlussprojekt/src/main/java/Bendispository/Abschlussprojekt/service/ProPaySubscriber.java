@@ -33,7 +33,7 @@ public class ProPaySubscriber {
     public int makeDeposit(Request request){
         Reservation reservation = makeReservation(request.getRequester().getUsername(),
                                                   request.getRequestedItem().getOwner().getUsername(),
-                (double) request.getRequestedItem().getDeposit(),
+                                                  (double) request.getRequestedItem().getDeposit(),
                                                   Reservation.class);
         return reservation.getId();
     }
@@ -54,7 +54,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservation(String username, int id, Class<T> type) {
+    public <T> T releaseReservation(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()
@@ -70,7 +70,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
+    public <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()

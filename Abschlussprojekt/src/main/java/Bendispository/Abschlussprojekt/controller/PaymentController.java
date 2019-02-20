@@ -48,14 +48,16 @@ public class PaymentController {
     }
 
     @PostMapping(path="/chargeAccount")
-    public String chargeAccount(double amount) {
+    public String chargeAccount(Model model, double amount) {
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
 
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
 
         proPaySubscriber.chargeAccount(username, amount);
+        model.addAttribute("success", "Account has been charged!");
 
         return "chargeAccount";
     }
+
 }

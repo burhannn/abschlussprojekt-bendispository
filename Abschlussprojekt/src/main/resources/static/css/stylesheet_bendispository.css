@@ -90,10 +90,18 @@ h1{
     font-weight: 600;
 }
 
-.alert {
+.alert_error{
+     padding: 10px;
+     border-radius: 5px;
+     background-color: #FFD2D2;
+     color: #D8000C;
+     margin: auto;
+}
+
+.alert_success{
     padding: 10px;
     border-radius: 5px;
-    background-color: #FFD2D2;
-    color: #D8000C;
+    background-color: #DFF2BF;
+    color: #4F8A10;
     margin: auto;
 }
