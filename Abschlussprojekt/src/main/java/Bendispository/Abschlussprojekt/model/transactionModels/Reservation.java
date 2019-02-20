@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class Reservation {
 
-    private int amount;
     private int id;
-
+    private double amount;
 }

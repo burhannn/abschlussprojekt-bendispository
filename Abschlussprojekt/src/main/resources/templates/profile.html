@@ -9,13 +9,18 @@
     <div class="my_actions_profile">
         <a href = "/profile/requests">Requests</a>
         <a href = "/profile/rentedItems">Rented Items</a>
+        <a href = "/profile/returneditems">Returned To You</a>
+        <a href="/chargeAccount">Charge account</a>
+    </div>
+    <div class="my_rating">
+        <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person.getAverageRatings()}|"></tr>
+        <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
     </div>
     <div class="profil_information">
         <tr><div th:text="|Last Name : ${person.lastName}|"></div></tr>
         <tr><div th:text="|First Name: ${person.firstName}|"></div></tr>
         <tr><div th:text="|Email: ${person.email}|"></div></tr>
         <tr><div th:text="|City: ${person.city}|"></div></tr>
-        <tr><div th:text="|Account: ${person.bankaccount}|"></div></tr>
         <tr><div th:text="|Username: ${person.username}|"></div></tr>
         <div class="my_items">My Items:
                 <div th:each="item : ${person.items}">

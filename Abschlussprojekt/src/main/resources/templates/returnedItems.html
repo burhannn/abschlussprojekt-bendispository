@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="projekt_container">
+    <h1>Recently returned Items</h1>
+    <div th:each="transaction : ${transactionList}">
+        <table style="margin-top: 2%">
+            <tr style="text-align: left !important;">
+                <td class="item_name" th:text= "|Item: ${transaction.item.name}|"></td>
+            </tr>
+            <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
+            <td th:text="|Rented By: ${transaction.leaser.username}|"></td>
+            <td>
+                <form method="post">
+                    <input type="radio" name="itemIntact" value="-1">Damaged
+                    <input type="radio" name="itemIntact" value="1">Ok
+                    <input type="hidden" value="0" th:value="${transaction.id}" name="transactionId">
+                    <button type = "submit">submit</button>
+                </form>
+            </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<a class="back_button" href="/profile">Back</a> <!-- ergänzt um person (login) -->
+</body>
+</html>

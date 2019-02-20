@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.service;
 
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.model.transactionModels.Reservation;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -27,21 +28,23 @@ public class ProPaySubscriber {
         this.leaseTransactionRepo = leaseTransactionRepo;
     }
 
-
-    public int makeDeposit(int deposit, String leaserName, String lenderName){
-        Reservation reservation = makeReservation(leaserName, lenderName, deposit, Reservation.class);
+    public int makeDeposit(Request request){
+        Reservation reservation = makeReservation(request.getRequester().getUsername(),
+                                                  request.getRequestedItem().getOwner().getUsername(),
+                                                  (double) request.getRequestedItem().getDeposit(),
+                                                  Reservation.class);
         return reservation.getId();
     }
 
-    private <T> T makeReservation(String leaserName, String lenderName, int deposit, Class<T> type) {
+    private <T> T makeReservation(String leaserName, String lenderName, double deposit, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
-                                .pathSegment("reservation", "reserve", lenderName, leaserName)
-                                .query("amount={deposit}")
+                                .pathSegment("reservation", "reserve", leaserName, lenderName)
+                                .queryParam("amount", deposit)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
@@ -49,15 +52,15 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservation(String username, int reservationId, Class<T> type) {
+    public <T> T releaseReservation(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("reservation", "release", username)
-                                .query("reservationId={reservationId}")
+                                .queryParam("reservationId", id)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
@@ -65,15 +68,15 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservationAndPunishUser(String username, int reservationId, Class<T> type) {
+    public <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("reservation", "punish", username)
-                                .query("reservationId={reservationId}")
+                                .queryParam("reservationId", id)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
@@ -81,7 +84,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    public boolean checkDeposit(int requiredDeposit, String username){
+    public boolean checkDeposit(double requiredDeposit, String username){
         ProPayAccount account = getAccount(username, ProPayAccount.class);
         if(account.getAmount() >= requiredDeposit)
             return true;
@@ -103,34 +106,39 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    public String transferMoney(String leaserName, String lenderName, int amount){
+    public String transferMoney(String leaserName, String lenderName, double amount){
         executeTransfer(leaserName, lenderName, amount);
         return "";
     }
 
-    private void executeTransfer(String leaserName, String lenderName, int amount) {
+    private String executeTransfer(String leaserName, String lenderName, double value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
                 .host("propra-propay.herokuapp.com")
                 .pathSegment("account", leaserName, "transfer", lenderName)
-                .query("amount={amount}")
+                .queryParam("amount", value)
                 .build()
                 .toUri();
-
-        // Wie response code checken?????
-        // abhängig davon weitermachen...
+        final Mono<String> mono = WebClient
+                .create()
+                .post()
+                .uri(uri)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .retrieve()
+                .bodyToMono(String.class);
+        return mono.block();
     }
 
-    public void chargeAccount(String username, int amount){
+    public void chargeAccount(String username, double value){
         final Mono<ProPayAccount> mono = WebClient
                 .create()
-                .get()
+                .post()
                 .uri(builder ->
                         builder.scheme("https")
                                 .host("propra-propay.herokuapp.com")
                                 .pathSegment("account", username)
-                                .query("amount={amount}")
+                                .queryParam("amount", value)
                                 .build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()

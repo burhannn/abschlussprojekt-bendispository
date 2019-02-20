@@ -3,24 +3,34 @@
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Request Item</title>
 </head>
 <body>
 <div class="projekt_container">
+    <div th:if="${success}">
+        <div class="alert_success" th:text="${success}"></div>
+    </div>
+    <div th:if="${message}">
+        <div class="alert_error" th:text="${message}"></div>
+    </div>
+    <div th:if="${messageDeposit}">
+        <div class="alert_error" th:text="${messageDeposit}"></div>
+        <a href="/chargeAccount">Charge account?</a>
+    </div>
     <h1 th:text="|Request for ${thisItem.name}|"></h1>
     <form method = "post">
-        <UL th:if="${thisItem.available} == true" >
-            <LI>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd">
-            <LI>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd">
-            </LI>
+            <tr>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd"></tr>
+            <tr>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd"></tr>
             <button type="submit">Send request</button>
-        </UL>
-
-        <p th:if="${thisItem.available} == false">Item currently not available</p>
     </form>
+    <div style="width:300px;height:150px;line-height:3em;overflow:auto;padding:5px;">
+        <h4>Future Reservations</h4>
+        <div th:each="lease : ${leases}">
+            <p th:text="|${#temporals.format(lease.startDate, 'yyyy.MM.dd')} - ${#temporals.format(lease.endDate, 'yyyy.MM.dd')}|"></p>
+        </div>
+    </div>
+
 </div>
-<form action="http://localhost:8080/">
-    <button class="back_button" type="submit">Back</button>
-</form>
+<a href="javascript:history.back()" class="back_button">Back</a>
 </body>
 </html>

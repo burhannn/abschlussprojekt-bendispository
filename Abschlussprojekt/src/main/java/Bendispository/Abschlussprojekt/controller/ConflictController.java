@@ -1,44 +1,56 @@
 package Bendispository.Abschlussprojekt.controller;
 
+import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.transactionModels.ConflictTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ConflictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.util.List;
-import java.util.Optional;
-
-
-//
 
 @Controller
 public class ConflictController {
 
+    private final AuthenticationService authenticationService;
+
+    private final ConflictService conflictService;
+
+    private final ConflictTransactionRepo conflictTransactionRepo;
+
     @Autowired
-    ConflictTransactionRepo conflictTransactionRepo;
+    public ConflictController(ConflictTransactionRepo conflictTransactionRepo,
+                              ConflictService conflictService,
+                              AuthenticationService authenticationService){
+        this.conflictTransactionRepo = conflictTransactionRepo;
+        this.conflictService = conflictService;
+        this.authenticationService = authenticationService;
+    }
 
-    @GetMapping(path = "/profile/conflictTransaction")
+    @GetMapping(path = "/conflicts")
     public String listAllConflictTransaction(Model model){
-        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAll();
+        Person loggedin = authenticationService.getCurrentUser();
+        if(loggedin.getUsername().equals("admin")){
+            List<ConflictTransaction> allConflicts =
+                    conflictTransactionRepo
+                            .findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
+            model.addAttribute("allConflicts", allConflicts);
+            return "conflictTransaction";
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping(path = "/conflicts")
+    public String addChangesConflictTransaction(Model model,
+                                                Long conflictId,
+                                                int beneficiary){
+        ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
+        conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1);
+        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
         model.addAttribute("allConflicts", allConflicts);
-        return "conflictTransaction";
-    }
-
-    @GetMapping(path = "/profile/conflictsTransaction{id}")
-    public String showTransactionById(Model model, @PathVariable Long id){
-        Optional<ConflictTransaction> conflict = conflictTransactionRepo.findById(id);
-        model.addAttribute("conflict", conflict.get());
-        return "conflictTransaction";
-    }
-
-    @PostMapping(path = "/profile/conflictTransaction{id}")
-    public String addChangesConflictTransaction(Model model, @PathVariable Long id, ConflictTransaction conflictTransaction){
-        model.addAttribute("changeConflict", conflictTransaction);
-        conflictTransactionRepo.save(conflictTransaction);
         return "conflictTransaction";
     }
 }

@@ -9,18 +9,15 @@
 
 <div class = "projekt_container">
 <h1>I want to offer a new Item:</h1>
-<form method = "post">
+<form method = "post" enctype="multipart/form-data">
         <tr>Name:<div><input type ="text" name = "name" th:value="${newItem?.name}"></div></tr>
         <tr>Description:<div><input type ="text" name = "description" th:value="${newItem?.description}"></div></tr>
         <tr>Deposit:<div><input type ="text" name = "deposit" th:value="${newItem?.deposit}"></div></tr>
         <tr>CostPerDay:<div><input type ="text" name = "costPerDay" th:value="${newItem?.costPerDay}"></div></tr>
+        <tr>Upload File:<div><input type ="file" name = "file"></div></tr>
         <button type="submit" class="button" style="margin-top: 2%">add Item</button>
 </form>
 </div>
-<form action="http://localhost:8080/">
-    <button class="back_button" type="submit">Back</button>
-</form>
-
-
+<a href="/" class="back_button">Back</a>
 </body>
 </html>

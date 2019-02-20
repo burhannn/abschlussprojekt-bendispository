@@ -3,12 +3,15 @@ package Bendispository.Abschlussprojekt.model.transactionModels;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+
 import java.util.List;
 
 @Data
@@ -39,55 +42,31 @@ public class LeaseTransaction {
 
     private boolean timeframeViolation = false;
 
-    //private boolean itemIsReturnedOnTime = false;
-
     // number of days
     private int duration;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany
-    private List<PaymentTransaction> payments;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<PaymentTransaction> payments = new ArrayList<PaymentTransaction>();
 
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
     private ConflictTransaction conflictTransaction;
 
-    public void addLeaseTransaction(Request request){
-        LeaseTransaction lsTrans = new LeaseTransaction();
-        lsTrans.setItem(request.getRequestedItem());
-        lsTrans.setLeaser(request.getRequester());
-        //lsTrans.setLender(request.getRequestedItem().getOwner());
-        lsTrans.setDuration(request.getDuration());
-        lsTrans.startDate = request.getStartDate();
-        lsTrans.endDate = request.getEndDate();
+    public void addLeaseTransaction(Request request, int depositId){
+        this.setItem(request.getRequestedItem());
+        this.setLeaser(request.getRequester());
+        this.setRequestId(request.getId());
+        this.setDuration(request.getDuration());
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+        this.depositId = depositId;
+        request.getRequester().addLeaseTransaction(this);
     }
 
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){
         this.payments.add(paymentTransaction);
     }
-
-    /*public void itemReturnedToLender(PaymentTransactionRepo paymentTransactionRepo){
-        itemIsReturned = true;
-        //zurückbuchung deposit
-
-        int amount = duration * item.getCostPerDay();
-        PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
-        paymentTransaction.pay(leaser, lender, this);
-
-        isReturnedOnTime(paymentTransactionRepo);
-    }
-
-    public void isReturnedOnTime(PaymentTransactionRepo paymentTransactionRepo){
-        if(LocalDate.now().isAfter(endDate)){
-            Period period = Period.between(LocalDate.now(), endDate);
-            int timeViolation = period.getDays();
-            concludeTransaction.setTimeframeViolation(true);
-            concludeTransaction.setLengthOfTimeframeViolation(timeViolation);
-
-            int amount = item.getCostPerDay() * timeViolation;
-            PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
-            paymentTransaction.pay(paymentTransactionRepo);
-        }
-    }*/
 }

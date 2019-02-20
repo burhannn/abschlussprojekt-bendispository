@@ -1,7 +1,9 @@
 package Bendispository.Abschlussprojekt.model;
 
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
-
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
@@ -31,9 +33,6 @@ public class Person {
     @Email
     private String email;
 
-	@Digits(integer = 9, fraction = 0)
-    private int bankaccount;
-
     @Pattern(regexp="[a-zA-ZöäüÖÄÜß 0-9]+")
     private String city;
 
@@ -41,4 +40,25 @@ public class Person {
                fetch = FetchType.EAGER)
     private List<Item> Items;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    private List<LeaseTransaction> leaseTransactions;
+
+    public void addLeaseTransaction(LeaseTransaction leaseTransaction){
+        leaseTransactions.add(leaseTransaction);
+    }
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Rating> ratings;
+
+    public void addRating(Rating rating){
+        ratings.add(rating);
+    }
+    public int getAverageRatings() {
+        if(ratings.size() == 0){
+            return -1;
+        }
+        return ratings.stream().mapToInt(Rating::getRatingPoints).sum()/ratings.size();
+    }
 }

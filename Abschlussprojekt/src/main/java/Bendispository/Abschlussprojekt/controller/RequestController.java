@@ -1,102 +1,269 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDate;
 import java.time.Period;
-
-import java.time.LocalDate;
-
-import static Bendispository.Abschlussprojekt.service.ProPaySubscriber.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RequestController {
-    
-    final RequestRepo requestRepo;
 
-    final ItemRepo itemRepo;
-
-    final LeaseTransactionRepo leaseTransactionRepo;
-
-    TransactionService transactionService;
-
-    ProPaySubscriber proPaySubscriber;
+    private final RequestRepo requestRepo;
+    private final ItemRepo itemRepo;
+    private final LeaseTransactionRepo leaseTransactionRepo;
+    private final PersonsRepo personsRepo;
+    private final TransactionService transactionService;
+    private final PaymentTransactionRepo paymentTransactionRepo;
+    private final ProPaySubscriber proPaySubscriber;
+    private final AuthenticationService authenticationService;
+    private RatingRepo ratingRepo;
+    private final ConflictTransactionRepo conflictTransactionRepo;
 
     @Autowired
-    public RequestController(RequestRepo requestRepo, ItemRepo itemRepo, LeaseTransactionRepo leaseTransactionRepo) {
+    public RequestController(RequestRepo requestRepo,
+                             ItemRepo itemRepo,
+                             LeaseTransactionRepo leaseTransactionRepo,
+                             PersonsRepo personsRepo,
+                             PaymentTransactionRepo paymentTransactionRepo,
+                             RatingRepo ratingrepo,
+                             ConflictTransactionRepo conflictTransactionRepo) {
+        this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
+        this.personsRepo = personsRepo;
+        this.paymentTransactionRepo = paymentTransactionRepo;
+        this.conflictTransactionRepo = conflictTransactionRepo;
+        this.authenticationService = new AuthenticationService(personsRepo);
+        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
+                                                     leaseTransactionRepo);
+        this.transactionService = new TransactionService(leaseTransactionRepo,
+                                                         requestRepo,
+                                                         proPaySubscriber,
+                                                         paymentTransactionRepo,
+                                                         conflictTransactionRepo);
     }
 
     @GetMapping(path = "/item{id}/requestItem")
-    public String request(Model model, @PathVariable Long id){
+    public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        if (itemRepo.findById(id).get().getOwner().getUsername()
+                .equals(authenticationService.getCurrentUser().getUsername())){
+            return "redirect:/Item/{id}"; // soll auf editieren gehen
+        }
+        List<Request> requests = requestRepo.findByRequesterAndAndRequestedItemAndStatus
+                (authenticationService.getCurrentUser(), itemRepo.findById(id).get(), RequestStatus.PENDING);
+        if (!(requests.isEmpty())) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You cannot request the same item twice!");
+            return "redirect:/Item/{id}";
+        }
+        List<LeaseTransaction> list =
+                leaseTransactionRepo
+                        .findAllByItemIdAndStartDateGreaterThan(id, LocalDate.now());
+        Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
+        model.addAttribute("leases", list);
         return "formRequest";
     }
 
     @PostMapping(path = "/item{id}/requestItem")
-    public String addRequestToLender(@ModelAttribute("request") Request request,
+    public String addRequestToLender(String startDate,
+                                     String endDate,
                                      Model model,
-                                     @PathVariable Long id
+                                     @PathVariable Long id,
+                                     RedirectAttributes redirectAttributes
                                      //@RequestParam("startDay")
                                      ){
-        model.addAttribute("newRequest", request);
-        requestRepo.save(request);
-        String username = "";
+        LocalDate startdate, enddate;
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            startdate = LocalDate.parse(startDate, formatter);
+            enddate = LocalDate.parse(endDate, formatter);
+        } catch(DateTimeParseException e){
+            redirectAttributes.addFlashAttribute("message", "Invalid date!");
+            return "redirect:/item{id}/requestItem";
+        }
+
+        if (startdate.isAfter(enddate) && startdate.isEqual(enddate)) {
+            redirectAttributes.addFlashAttribute("message", "Invalid date!");
+            return "redirect:/item{id}/requestItem";
+        }
+
+        Person currentUser = authenticationService.getCurrentUser();
         Item item = itemRepo.findById(id).orElse(null);
+
+        Request request = new Request();
+        request.setRequester(personsRepo.findByUsername(currentUser.getUsername())); ///// änderung
+        request.setStartDate(startdate);
+        request.setEndDate(enddate);
+        request.setDuration(Period.between(startdate, enddate).getDays());
+        request.setRequestedItem(item);
+        String username = currentUser.getUsername();
+
+        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
+            redirectAttributes.addFlashAttribute("messageDeposit", "You don't have enough money for the deposit!");
+            return "redirect:/item{id}/requestItem";
+        }
+
+        if (!transactionService.itemIsAvailableOnTime(request)) {
+            redirectAttributes.addFlashAttribute("message", "Item is not available during selected period!");
+            return "redirect:/item{id}/requestItem";
+        }
+
         if(proPaySubscriber.checkDeposit(item.getDeposit(), username)
                 && transactionService.itemIsAvailableOnTime(request)){
-
-
-
             //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
-
-            request.setRequestedItem(item);
-            LocalDate startDate = LocalDate.of(1,1,1), endDate = LocalDate.of(2,1,1);
-            request.setDuration(Period.between(startDate, endDate).getDays());
             requestRepo.save(request);
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-
-            return "formRequest";
-
-
-
+            redirectAttributes.addFlashAttribute("success", "Request has been sent!");
+            return "redirect:/Item/{id}";
         }
-        return "Could_not_send_Request";
+        return "redirect:/item{id}/requestItem";
     }
 
-
-    @PostMapping(path = "/item{id}/requestItemsss")
-    public String requestAccepted(@ModelAttribute("request") Request request,
-                                Model model,
-                                @PathVariable Long id){
-        TransactionService transactionService = new TransactionService(leaseTransactionRepo, requestRepo);
-        transactionService.lenderApproved(request);
-        return "";
+    @GetMapping(path="/profile/requests")
+    public String Requests(Model model){
+        Long id = authenticationService.getCurrentUser().getId();
+        showRequests(model,id);
+        return "requests";
     }
 
-    @PostMapping(path = "/item{id}/requestItemsssss")
-    public String requestDenied(@ModelAttribute("request") Request request,
-                                     Model model,
-                                     @PathVariable Long id){
+    @PostMapping(path="/profile/requests")
+    public String AcceptDeclineRequests(Model model,
+                                        Long requestID,
+                                        Integer requestMyItems,
+                                        RedirectAttributes redirectAttributes){
+        Request request = requestRepo.findById(requestID).orElse(null);
+        Long id = authenticationService.getCurrentUser().getId();
 
-        return "";
+        if(requestMyItems == -1){
+            request.setStatus(RequestStatus.DENIED);
+            requestRepo.save(request);
+            showRequests(model,id);
+            return "requests";
+        }
+        if(transactionService.lenderApproved(request)){
+            showRequests(model,id);
+            return "requests";
+        }
+        showRequests(model,id);
+        redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
+        return "redirect:/Item/{id}";
+    }
+
+    @PostMapping(path="/rating")
+    public String Rating(Model model,
+                         int rating,
+                         Long requestID){
+        Request request = requestRepo.findById(requestID).orElse(null);
+        Person owner = request.getRequestedItem().getOwner();
+        //if (rating != -1){
+            Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
+            ratingRepo.save(rating1);
+            owner.addRating(rating1);
+            personsRepo.save(owner);
+        //}
+        return "redirect:";
+    }
+
+    @GetMapping(path="/profile/rentedItems")
+    public String rentedItems(Model model){
+        Person me = authenticationService.getCurrentUser();
+        List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
+        model.addAttribute("myRentedItems", myRentedItems);
+        return "rentedItems";
+    }
+
+    @PostMapping(path = "/profile/rentedItems")
+    public String returnItem(Model model,
+                             Long id){
+        LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
+        transactionService.itemReturnedToLender(leaseTransaction);
+        return "rentedItems";
+    }
+
+    @GetMapping(path= "/profile/returneditems")
+    public String returnedItem(Model model){
+        List<LeaseTransaction> transactionList =
+                leaseTransactionRepo
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+        model.addAttribute("transactionList", transactionList);
+        return "returnedItems";
+    }
+
+    @PostMapping(path= "/profile/returneditems")
+    public String stateOfItem(Model model,
+                              Long transactionId,
+                              Integer itemIntact){
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                                                    .findById(transactionId)
+                                                    .orElse(null);
+        Long id = authenticationService.getCurrentUser().getId();
+        Person me = personsRepo.findById(id).orElse(null);
+        if(itemIntact == -1){
+            // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
+            return "redirect:/profile/returneditems/" + transactionId + "/issue";
+        }
+        List<LeaseTransaction> transactionList =
+                leaseTransactionRepo
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+        model.addAttribute("transactionList", transactionList);
+        transactionService.itemIsIntact(leaseTransaction);
+        // Feld: iwie Bewertung /Clara
+        return "returnedItems";
+    }
+
+    @GetMapping(path= "/profile/returneditems/{transactionId}/issue")
+    public String returnedItemIsNotIntact(Model model,
+                                          @PathVariable Long transactionId){
+        LeaseTransaction transaction = leaseTransactionRepo.findById(transactionId).orElse(null);
+        String comment = "";
+        model.addAttribute("comment", comment);
+        model.addAttribute("transaction", transaction);
+        return "issue";
+    }
+
+    @PostMapping(path= "/profile/returneditems/{id}/issue")
+    public String returnedItemIsNotIntactPost(Model model,
+                                              @PathVariable Long id,
+                                              String comment){
+        Long userId = authenticationService.getCurrentUser().getId();
+        Person me = personsRepo.findById(userId).orElse(null);
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                .findById(id)
+                .orElse(null);
+        transactionService.itemIsNotIntact(me, leaseTransaction, comment);
+        return "returnedItems";
+    }
+
+    private void showRequests(Model model,
+                              Long id) {
+        Person me = personsRepo.findById(id).orElse(null);
+        List<Request> listMyRequests = requestRepo.findByRequester(me);
+        model.addAttribute("myRequests", listMyRequests);
+        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
+        model.addAttribute("requestsMyItems", RequestsMyItems);
     }
 }
 

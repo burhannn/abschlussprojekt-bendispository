@@ -43,5 +43,4 @@ public class Request {
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
     private LeaseTransaction leaseTransaction;
-
 }

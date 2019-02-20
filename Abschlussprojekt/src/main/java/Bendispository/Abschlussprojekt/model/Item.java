@@ -16,9 +16,10 @@ public class Item {
 
     private String description;
 
-    private boolean available;
-
     private int deposit;
+
+    @Embedded
+    private UploadFile uploadFile;
 
     private int costPerDay;
 

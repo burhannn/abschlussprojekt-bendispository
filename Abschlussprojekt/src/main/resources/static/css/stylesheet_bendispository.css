@@ -45,16 +45,22 @@ button:hover, a:hover {
     text-align: center;
 }
 .my_actions_profile{
-    /*float: left;
+    float: right;
     position: absolute;
     right: 0px;
-    top: 0px;*/
-    text-align: center;
     top: 0px;
 }
 body{
     color: black;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    background-image: url(http://i48.tinypic.com/2vn1e28.jpg);
+=======
     /*background-image: url(http://i48.tinypic.com/2vn1e28.jpg);*/
+>>>>>>> origin/benutzerverwaltung
+=======
+    /* background-image: url(http://i48.tinypic.com/2vn1e28.jpg); */
+>>>>>>> origin/newTransactions
     font-family: Cambria !important;
     background-color: #ffffcc !important;
     margin: 4% !important;
@@ -82,4 +88,20 @@ h1{
 }
 .item_name{
     font-weight: 600;
+}
+
+.alert_error{
+     padding: 10px;
+     border-radius: 5px;
+     background-color: #FFD2D2;
+     color: #D8000C;
+     margin: auto;
+}
+
+.alert_success{
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #DFF2BF;
+    color: #4F8A10;
+    margin: auto;
 }
