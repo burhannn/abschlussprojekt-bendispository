@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="projekt_container">
+    <h1>Recent Conflicts</h1>
+    <div th:each="conflict : ${allConflicts}">
+        <table style="margin-top: 2%">
+            <tr style="text-align: left !important;">
+                <td class="item_name" th:text= "|Item: ${conflict.leaseTransaction.item.name}|"></td>
+            </tr>
+            <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
+            <td th:text="|Rented By: ${conflict.leaseTransaction.leaser.username}|"></td>
+            <td th:text="|Owned By: ${conflict.leaseTransaction.item.owner.username}|"></td>
+            <td th:text="|Owner Commentary: ${conflict.commentary}|"></td>
+            <td>
+                <form method="post">
+                    <input type="radio" name="benificiary" value="-1" th:text="${conflict.leaseTransaction.leaser.username}">
+                    <input type="radio" name="benificiary" value="1" th:text="${conflict.leaseTransaction.item.owner.username}">
+                    <input type="hidden" value="0" th:value="${conflict.id}" name="conflictId">
+                    <button type = "submit">submit</button>
+                </form>
+            </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<a class="back_button" href="/">Back</a> <!-- ergänzt um person (login) -->
+</body>
+</html>

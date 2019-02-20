@@ -19,15 +19,4 @@ public class PaymentService {
         this.paymentTransactionRepo = paymentTransactionRepo;
     }
 
-    /*public void pay(Person leaser, Person lender, ){
-        ProPaySubscriber pps = new ProPaySubscriber();
-        pps.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
-        if(paymentIsConcluded){
-            // Nachricht an Beteiligte, dass Zahlung erfolgt
-            return;
-        }
-        Optional<PaymentTransaction> payment = paymentTransactionRepo.findById(id);
-        conflictTransaction.addConflictTransaction(payment.get());
-    }*/
-
 }
