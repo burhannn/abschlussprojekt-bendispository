@@ -72,9 +72,9 @@ public class ProjektController {
 
     @GetMapping(path= "/")
     public String Overview(Principal principal, Model model){
-        List<Item> all = itemRepo.findAll();
         Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("OverviewAllItems", all);
+        List<Item> allOtherItems = itemRepo.findByOwnerNot(personRepo.findByUsername(loggedIn.getUsername()));
+        model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
         return "overviewAllItems";
     }
@@ -82,7 +82,7 @@ public class ProjektController {
     @GetMapping(path= "/profile")
     public String profile(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("person",loggedIn);
+        model.addAttribute("person", loggedIn);
         return "profile";
     }
 

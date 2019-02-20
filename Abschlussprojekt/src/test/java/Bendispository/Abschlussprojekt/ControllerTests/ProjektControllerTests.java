@@ -178,7 +178,7 @@ public class ProjektControllerTests {
                 .andExpect(model().attributeExists("OverviewAllItems"))
                 .andExpect(model().attributeExists("loggedInPerson"))
                 .andExpect(view().name("overviewAllItems"))
-                .andExpect(model().attribute("OverviewAllItems", hasSize(3)))
+                //.andExpect(model().attribute("OverviewAllItems", hasSize(3)))  (änderung im controller --> nur items von anderen leuten sind sichtbar)
                 .andExpect(model().attribute("OverviewAllItems", hasItem(
                         allOf(
                                 hasProperty("id", equalTo(3L)),
