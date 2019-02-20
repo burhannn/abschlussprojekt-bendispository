@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ConflictTransactionRepo extends CrudRepository<ConflictTransaction, Long> {
     List<ConflictTransaction> findAll();
+    List<ConflictTransaction> findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
 }

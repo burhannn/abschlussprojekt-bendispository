@@ -69,7 +69,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
+    public <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()

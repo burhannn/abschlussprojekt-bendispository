@@ -2,15 +2,14 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.ConflictTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+import Bendispository.Abschlussprojekt.service.ConflictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 
 //
@@ -18,27 +17,32 @@ import java.util.Optional;
 @Controller
 public class ConflictController {
 
-    @Autowired
-    ConflictTransactionRepo conflictTransactionRepo;
+    private ConflictService conflictService;
 
-    @GetMapping(path = "/profile/conflictTransaction")
+    private final ConflictTransactionRepo conflictTransactionRepo;
+
+    @Autowired
+    public ConflictController(ConflictTransactionRepo conflictTransactionRepo,
+                              ConflictService conflictService){
+        this.conflictTransactionRepo = conflictTransactionRepo;
+        this.conflictService = conflictService;
+    }
+
+    @GetMapping(path = "/profile/conflicts")
     public String listAllConflictTransaction(Model model){
-        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAll();
+        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
         model.addAttribute("allConflicts", allConflicts);
         return "conflictTransaction";
     }
 
-    @GetMapping(path = "/profile/conflictTransaction{id}")
-    public String showTransactionById(Model model, @PathVariable Long id){
-        Optional<ConflictTransaction> conflict = conflictTransactionRepo.findById(id);
-        model.addAttribute("conflict", conflict.get());
-        return "conflictTransaction";
-    }
-
-    @PostMapping(path = "/profile/conflictTransaction{id}")
-    public String addChangesConflictTransaction(Model model, @PathVariable Long id, ConflictTransaction conflictTransaction){
-        model.addAttribute("changeConflict", conflictTransaction);
-        conflictTransactionRepo.save(conflictTransaction);
+    @PostMapping(path = "/profile/conflicts")
+    public String addChangesConflictTransaction(Model model,
+                                                Long conflictId,
+                                                int benificiary){
+        ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
+        conflictService.resolveConflict(conflict, conflictTransactionRepo, benificiary == -1);
+        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
+        model.addAttribute("allConflicts", allConflicts);
         return "conflictTransaction";
     }
 }

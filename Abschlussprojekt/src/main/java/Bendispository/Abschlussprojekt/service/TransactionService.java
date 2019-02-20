@@ -120,9 +120,25 @@ public class TransactionService {
         }
     }
 
-    public void itemIsIntact(Person me, LeaseTransaction leaseTransaction){
-        ProPayAccount account = proPaySubscriber.releaseReservation(me.getUsername(), leaseTransaction.getDepositId(), ProPayAccount.class);
-        List<PaymentTransaction> payments = leaseTransaction.getPayments();
+    public void itemIsIntact(LeaseTransaction leaseTransaction, List<PaymentTransaction> payments){
+        proPaySubscriber
+                .releaseReservation(
+                        leaseTransaction.getLeaser().getUsername(),
+                        leaseTransaction.getDepositId(),
+                        ProPayAccount.class);
+        conclude(leaseTransaction, payments);
+    }
+
+    public void itemIsNotIntactConclusion(LeaseTransaction leaseTransaction, List<PaymentTransaction> payments) {
+        proPaySubscriber
+                .releaseReservationAndPunishUser(
+                        leaseTransaction.getLeaser().getUsername(),
+                        leaseTransaction.getDepositId(),
+                        ProPayAccount.class);
+        conclude(leaseTransaction, payments);
+    }
+
+    private void conclude(LeaseTransaction leaseTransaction, List<PaymentTransaction> payments){
         for (PaymentTransaction payment : payments){
             if(payment.getType() == PaymentType.DEPOSIT){
                 payment.setPaymentIsConcluded(true);
@@ -151,4 +167,5 @@ public class TransactionService {
         conflictTransaction.setCommentary(commentary);
         conflictTransactionRepo.save(conflictTransaction);
     }
+
 }

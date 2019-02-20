@@ -230,7 +230,10 @@ public class RequestController {
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
-        transactionService.itemIsIntact(me, leaseTransaction);
+        List<PaymentTransaction> payments = leaseTransaction.getPayments();
+        for (PaymentTransaction p : payments)
+            System.out.println(p);
+        transactionService.itemIsIntact(leaseTransaction, payments);
         // Feld: iwie Bewertung /Clara
         return "returnedItems";
     }
