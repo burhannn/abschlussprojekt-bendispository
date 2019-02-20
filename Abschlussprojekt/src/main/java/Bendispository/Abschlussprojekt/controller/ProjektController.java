@@ -125,7 +125,6 @@ public class ProjektController {
         else return "redirect:/";
     }
 
-
     @GetMapping(value="deleteUser/{username}")
     public String deleteUser(@PathVariable String username){
         Person deletePerson = personRepo.findByUsername(username);

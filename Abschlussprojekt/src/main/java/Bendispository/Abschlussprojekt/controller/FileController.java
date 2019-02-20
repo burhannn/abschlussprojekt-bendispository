@@ -77,11 +77,6 @@ public class FileController {
         }
         return "itemProfile";
     }
-    private Person PersonLoggedIn(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName();
-        Person loggedIn = personRepo.findByUsername(name);
-        return loggedIn;
-    }
+
 }
 */
