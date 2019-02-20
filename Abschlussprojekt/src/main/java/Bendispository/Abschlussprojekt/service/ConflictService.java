@@ -33,9 +33,9 @@ public class ConflictService {
         conflict.setLeaserGotTheDepositBack(depositBackToLeaser);
         conflictTransactionRepo.save(conflict);
         if(depositBackToLeaser)
-            transactionService.itemIsIntact(conflict.getLeaseTransaction(), conflict.getLeaseTransaction().getPayments());
+            transactionService.itemIsIntact(conflict.getLeaseTransaction());
         else
-            transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction(), conflict.getLeaseTransaction().getPayments());
+            transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction());
     }
 
 
