@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="projekt_container">
-    <div class="item_owner_description" th:text = "|from ${itemProfile?.owner.username}|"></div>
+    <div class="item_owner_description" th:text = "|from ${itemOwner?.username}|"></div>
         <h1 th:text = "${itemProfile?.name}"></h1>
             <tr><div th:text = "| Name: ${itemProfile?.name}|"></div></tr>
             <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>

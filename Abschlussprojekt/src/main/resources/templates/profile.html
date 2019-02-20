@@ -10,6 +10,10 @@
         <a href = "/profile/requests">Requests</a>
         <a href = "/profile/rentedItems">Rented Items</a>
     </div>
+    <div class="my_rating">
+        <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person.getAverageRatings()}|"></tr>
+        <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
+    </div>
     <div class="profil_information">
         <tr><div th:text="|Last Name : ${person.lastName}|"></div></tr>
         <tr><div th:text="|First Name: ${person.firstName}|"></div></tr>

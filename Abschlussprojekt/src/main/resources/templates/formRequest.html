@@ -16,12 +16,9 @@
     </div>
     <h1 th:text="|Request for ${thisItem.name}|"></h1>
     <form method = "post">
-        <UL>
-            <LI>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd">
-            <LI>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd">
-            </LI>
+            <tr>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd"></tr>
+            <tr>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd"></tr>
             <button type="submit">Send request</button>
-        </UL>
     </form>
 </div>
 <a href="/" class="back_button">Back</a>

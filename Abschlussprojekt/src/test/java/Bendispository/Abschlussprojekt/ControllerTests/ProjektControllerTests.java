@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import Bendispository.Abschlussprojekt.model.Item;
@@ -78,6 +79,9 @@ public class ProjektControllerTests {
 
     @MockBean
     MyUserPrincipal blablabla;
+
+    @MockBean
+    RatingRepo ratingRepo;
 
 
     Person dummy1;
