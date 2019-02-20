@@ -28,7 +28,7 @@ import java.util.Optional;
 
 
 @Controller
-public class ProjektController {
+public class ProfilController {
 
     ItemRepo itemRepo;
     PersonsRepo personRepo;
@@ -36,54 +36,11 @@ public class ProjektController {
     AuthenticationService authenticationService;
 
     @Autowired
-    public ProjektController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
+    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
         this.itemRepo = itemRepo;
         this.personRepo = personsRepo;
         this.requestRepo = requestRepo;
         this.authenticationService = authenticationService;
-    }
-
-    @GetMapping(path = "/addItem")
-    public String addItemPage(){
-        return "AddItem";
-    }
-
-    @PostMapping(path = "/addItem", consumes = {"multipart/form-data"})
-    public String addItemsToDatabase(Model model,
-                                     @Valid @RequestParam("file") MultipartFile multipart,
-                                     Item item) throws IOException, SQLException {
-
-        String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-        item.setUploadFile(uploadFile);
-
-
-        Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("newItem", item);
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        itemRepo.save(item);
-        List<Item> itemsOwner = new ArrayList<>();
-        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-
-        personRepo.save(loggedIn);
-        return "AddItem";
-    }
-
-    @GetMapping(path = "/Item/{id}" )
-    public String ItemProfile(Model model,
-                              @PathVariable Long id) {
-
-        Item item = itemRepo.findById(id).orElse(null);
-        model.addAttribute("itemProfile", item);
-        model.addAttribute("itemOwner", item.getOwner());
-
-        if(item.getUploadFile() != null){
-            model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
-        }else{
-            model.addAttribute("pic",null);
-        }
-        return "itemProfile";
     }
 
     @GetMapping(path= "/")

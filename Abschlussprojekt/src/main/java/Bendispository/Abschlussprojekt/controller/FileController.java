@@ -1,5 +1,4 @@
 
-/*
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
@@ -25,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -50,28 +50,37 @@ public class FileController {
     }
 
     @PostMapping(path = "/addItem", consumes = {"multipart/form-data"})
-    public String addItemsToDatabase(@Valid @RequestParam("file")MultipartFile multipart,
+    public String addItemsToDatabase(Model model,
+                                     @Valid @RequestParam("file") MultipartFile multipart,
                                      Item item) throws IOException, SQLException {
-        Person loggedIn = PersonLoggedIn();
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
         UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
         item.setUploadFile(uploadFile);
 
-        item.setOwner(loggedIn);
+
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("newItem", item);
+        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         itemRepo.save(item);
-        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
+        List<Item> itemsOwner = new ArrayList<>();
+        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
+
         personRepo.save(loggedIn);
         return "AddItem";
     }
+
     @GetMapping(path = "/Item/{id}" )
     public String ItemProfile(Model model,
                               @PathVariable Long id) {
+
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
+        model.addAttribute("itemOwner", item.getOwner());
+
         if(item.getUploadFile() != null){
-            model.addAttribute("pic",Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
+            model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
         }else{
             model.addAttribute("pic",null);
         }
@@ -79,4 +88,3 @@ public class FileController {
     }
 
 }
-*/

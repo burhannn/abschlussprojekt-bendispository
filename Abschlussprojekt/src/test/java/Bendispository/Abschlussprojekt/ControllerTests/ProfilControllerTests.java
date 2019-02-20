@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest
 @WithMockUser(username = "momo", password = "abcd")
-public class ProjektControllerTests {
+public class ProfilControllerTests {
 
     @Autowired
     private WebApplicationContext wac;
