@@ -44,10 +44,4 @@ public class LoginController {
         return "loggedOut";
     }
 
-    @GetMapping("/trouble")
-    public String trouble(){
-        if(authenticationService.getCurrentUser().getUsername().equals("admin")) return "trouble";
-        else return "redirect:/";
-    }
-
 }
