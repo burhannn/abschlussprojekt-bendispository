@@ -2,10 +2,12 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
+import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
@@ -21,7 +23,9 @@ import java.time.LocalDate;
 import java.time.Period;
 
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
@@ -43,6 +47,7 @@ public class RequestController {
     private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
     private final RatingRepo ratingRepo;
+    private final ConflictTransactionRepo conflictTransactionRepo;
 
 
     @Autowired
@@ -51,25 +56,39 @@ public class RequestController {
                              LeaseTransactionRepo leaseTransactionRepo,
                              PersonsRepo personsRepo,
                              PaymentTransactionRepo paymentTransactionRepo,
-                             RatingRepo ratingrepo) {
+                             RatingRepo ratingrepo,
+                             ConflictTransactionRepo conflictTransactionRepo) {
         this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
         this.paymentTransactionRepo = paymentTransactionRepo;
+        this.conflictTransactionRepo = conflictTransactionRepo;
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                                                      leaseTransactionRepo);
         this.transactionService = new TransactionService(leaseTransactionRepo,
                                                          requestRepo,
                                                          proPaySubscriber,
-                                                         paymentTransactionRepo);
+                                                         paymentTransactionRepo,
+                                                         conflictTransactionRepo);
     }
 
     @GetMapping(path = "/item{id}/requestItem")
-    public String request(Model model, @PathVariable Long id){
+    public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        if (itemRepo.findById(id).get().getOwner().getUsername()
+                == authenticationService.getCurrentUser().getUsername()){
+            return "redirect:/Item/{id}"; // soll auf editieren gehen
+        }
+        List<Request> requests = requestRepo.findByRequesterAndAndRequestedItemAndStatus
+                (authenticationService.getCurrentUser(), itemRepo.findById(id).get(), RequestStatus.PENDING);
+        if (!(requests.isEmpty())) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You cannot request the same item twice!");
+            return "redirect:/Item/{id}";
+        }
         return "formRequest";
     }
 
@@ -82,19 +101,15 @@ public class RequestController {
                                      //@RequestParam("startDay")
                                      ){
 
-        if (startDate == "" || endDate == "") {
-            redirectAttributes.addFlashAttribute("message", "Date is missing!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if (startDate.length() < 10) {
+        LocalDate startdate, enddate;
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            startdate = LocalDate.parse(startDate, formatter);
+            enddate = LocalDate.parse(endDate, formatter);
+        } catch(DateTimeParseException e){
             redirectAttributes.addFlashAttribute("message", "Invalid date!");
             return "redirect:/item{id}/requestItem";
         }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate startdate = LocalDate.parse(startDate, formatter);
-        LocalDate enddate = LocalDate.parse(endDate, formatter);
 
         if (startdate.isAfter(enddate)) {
             redirectAttributes.addFlashAttribute("message", "Start date must be after end Date!");
@@ -133,7 +148,8 @@ public class RequestController {
             //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
             requestRepo.save(request);
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-            return "formRequest";
+            redirectAttributes.addFlashAttribute("success", "Request has been sent!");
+            return "redirect:/Item/{id}";
         }
 
         return "redirect:/item{id}/requestItem";
@@ -199,6 +215,56 @@ public class RequestController {
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
         transactionService.itemReturnedToLender(leaseTransaction);
         return "rentedItems";
+    }
+
+    @GetMapping(path= "/profile/returneditems")
+    public String returnedItem(Model model){
+        List<LeaseTransaction> transactionList = leaseTransactionRepo.findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+        model.addAttribute("transactionList", transactionList);
+        return "returnedItems";
+    }
+
+    @PostMapping(path= "/profile/returneditems")
+    public String stateOfItem(Model model,
+                              Long transactionId,
+                              Integer itemIntact){
+
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                                                    .findById(transactionId)
+                                                    .orElse(null);
+        Long id = authenticationService.getCurrentUser().getId();
+        Person me = personsRepo.findById(id).orElse(null);
+        if(itemIntact == -1){
+            // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
+            return "redirect:/profile/returneditems/" + transactionId + "/issue";
+        }
+        transactionService.itemIsIntact(leaseTransaction);
+        // Feld: iwie Bewertung /Clara
+        return "returnedItems";
+    }
+
+    @GetMapping(path= "/profile/returneditems/{transactionId}/issue")
+    public String returnedItemIsNotIntact(Model model,
+                                          @PathVariable Long transactionId){
+        LeaseTransaction transaction = leaseTransactionRepo.findById(transactionId).orElse(null);
+        String comment = "";
+        model.addAttribute("comment", comment);
+        model.addAttribute("transaction", transaction);
+        return "issue";
+    }
+
+    @PostMapping(path= "/profile/returneditems/{id}/issue")
+    public String returnedItemIsNotIntactPost(Model model,
+                                              @PathVariable Long id,
+                                              String comment){
+        Long userId = authenticationService.getCurrentUser().getId();
+        Person me = personsRepo.findById(userId).orElse(null);
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                .findById(id)
+                .orElse(null);
+
+        transactionService.itemIsNotIntact(me, leaseTransaction, comment);
+        return "returnedItems";
     }
 
     private void showRequests(Model model,

@@ -4,9 +4,14 @@ import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
+
 import java.util.List;
 
 @Data
@@ -37,30 +42,28 @@ public class LeaseTransaction {
 
     private boolean timeframeViolation = false;
 
-    //private boolean itemIsReturnedOnTime = false;
-
     // number of days
     private int duration;
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL)
-    private List<PaymentTransaction> payments;
+    private List<PaymentTransaction> payments = new ArrayList<PaymentTransaction>();
 
     @OneToOne(cascade = CascadeType.PERSIST,
               fetch = FetchType.EAGER)
     private ConflictTransaction conflictTransaction;
 
     public void addLeaseTransaction(Request request, int depositId){
-        LeaseTransaction lsTrans = new LeaseTransaction();
-        lsTrans.setItem(request.getRequestedItem());
-        lsTrans.setLeaser(request.getRequester());
-        lsTrans.setRequestId(request.getId());
-        lsTrans.setDuration(request.getDuration());
-        lsTrans.startDate = request.getStartDate();
-        lsTrans.endDate = request.getEndDate();
-        lsTrans.depositId = depositId;
-        request.getRequester().addLeaseTransaction(lsTrans);
+        this.setItem(request.getRequestedItem());
+        this.setLeaser(request.getRequester());
+        this.setRequestId(request.getId());
+        this.setDuration(request.getDuration());
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+        this.depositId = depositId;
+        request.getRequester().addLeaseTransaction(this);
     }
 
     public void addPaymentTransaction(PaymentTransaction paymentTransaction){

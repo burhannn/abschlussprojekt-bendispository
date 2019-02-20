@@ -28,13 +28,20 @@ public class PaymentTransaction {
     // DEPOSIT => was blocked
     private PaymentType type;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,
+               fetch = FetchType.EAGER)
     LeaseTransaction leaseTransaction;
 
     public PaymentTransaction(Person leaser, Person lender, double amount){
         this.leaser = leaser;
         this.lender = lender;
         this.amount = amount;
+    }
+
+    public PaymentTransaction(){}
+
+    public String toString(){
+        return "amount:" + amount + "paymentisconcluded:" + paymentIsConcluded + "type:" + type;
     }
 
 }

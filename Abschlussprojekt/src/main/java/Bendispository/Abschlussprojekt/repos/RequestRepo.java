@@ -21,4 +21,6 @@ public interface RequestRepo extends CrudRepository<Request, Long>{
 
 
     List<Request> findByRequesterAndStatus(Person person, RequestStatus status);
+
+    List<Request> findByRequesterAndAndRequestedItemAndStatus(Person person, Item item, RequestStatus status);
 }

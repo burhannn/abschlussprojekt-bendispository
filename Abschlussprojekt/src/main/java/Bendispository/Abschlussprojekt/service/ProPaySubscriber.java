@@ -33,7 +33,7 @@ public class ProPaySubscriber {
     public int makeDeposit(Request request){
         Reservation reservation = makeReservation(request.getRequester().getUsername(),
                                                   request.getRequestedItem().getOwner().getUsername(),
-                (double) request.getRequestedItem().getDeposit(),
+                                                  (double) request.getRequestedItem().getDeposit(),
                                                   Reservation.class);
         return reservation.getId();
     }
@@ -54,7 +54,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservation(String username, int id, Class<T> type) {
+    public <T> T releaseReservation(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()
@@ -70,7 +70,7 @@ public class ProPaySubscriber {
         return mono.block();
     }
 
-    private <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
+    public <T> T releaseReservationAndPunishUser(String username, int id, Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()
@@ -113,7 +113,7 @@ public class ProPaySubscriber {
         return "";
     }
 
-    private void executeTransfer(String leaserName, String lenderName, double value) {
+    private String executeTransfer(String leaserName, String lenderName, double value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
@@ -122,9 +122,14 @@ public class ProPaySubscriber {
                 .queryParam("amount", value)
                 .build()
                 .toUri();
-
-        // Wie response code checken?????
-        // abhängig davon weitermachen...
+        final Mono<String> mono = WebClient
+                .create()
+                .post()
+                .uri(uri)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .retrieve()
+                .bodyToMono(String.class);
+        return mono.block();
     }
 
     public void chargeAccount(String username, double value){
