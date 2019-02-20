@@ -75,11 +75,21 @@ public class RequestController {
                                                          conflictTransactionRepo);
     }
 
+
+
+
+
+
+
+
+
+
+
     @GetMapping(path = "/item{id}/requestItem")
     public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         if (itemRepo.findById(id).get().getOwner().getUsername()
-                == authenticationService.getCurrentUser().getUsername()){
+                .equals(authenticationService.getCurrentUser().getUsername())){
             return "redirect:/Item/{id}"; // soll auf editieren gehen
         }
         List<Request> requests = requestRepo.findByRequesterAndAndRequestedItemAndStatus
@@ -89,6 +99,10 @@ public class RequestController {
                     "You cannot request the same item twice!");
             return "redirect:/Item/{id}";
         }
+        List<LeaseTransaction> list =
+                leaseTransactionRepo
+                        .findAllByItemIdAndStartDateGreaterThan(id, LocalDate.now());
+        model.addAttribute("leases", list);
         return "formRequest";
     }
 

@@ -42,7 +42,6 @@ public class TransactionService {
         this.conflictTransactionRepo = conflictTransactionRepo;
     }
 
-
     public boolean lenderApproved(Request request){
         double deposit = request.getRequestedItem().getDeposit();
         Person requester = request.getRequester();

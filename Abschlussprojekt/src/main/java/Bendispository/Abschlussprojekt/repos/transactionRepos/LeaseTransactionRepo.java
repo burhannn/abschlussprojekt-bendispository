@@ -4,6 +4,7 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,5 +19,7 @@ public interface LeaseTransactionRepo extends CrudRepository<LeaseTransaction, L
 
     List<LeaseTransaction> findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
 
-    List<LeaseTransaction> findAllByItemIsReturnedIsTrue();
+    List<LeaseTransaction> findAllByItemIdAndStartDateGreaterThan(Long id, LocalDate now);
+
+
 }
