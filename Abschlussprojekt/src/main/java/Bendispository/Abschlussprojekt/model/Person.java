@@ -28,6 +28,7 @@ public class Person {
 
     private String city;
 
+
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
     private List<Item> Items;
@@ -44,6 +45,9 @@ public class Person {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Rating> ratings;
 
+    public void addRating(Rating rating){
+        ratings.add(rating);
+    }
     public int getAverageRatings() {
         if(ratings.size() == 0){
             return -1;
