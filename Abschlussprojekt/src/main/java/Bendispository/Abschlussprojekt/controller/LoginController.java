@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,8 @@ public class LoginController {
 
     @Autowired
     PersonsRepo personRepo;
+
+    AuthenticationService authenticationService;
 
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
@@ -36,8 +39,15 @@ public class LoginController {
     public String loggedIn() {
         return "OverviewAllItems"; }
 
-    @GetMapping("/logoutTEST")
-    public String logout() {
-        return "logoutTEST";
+    @GetMapping("/loggedOut")
+    public String logout(){
+        return "loggedOut";
     }
+
+    @GetMapping("/trouble")
+    public String trouble(){
+        if(authenticationService.getCurrentUser().getUsername().equals("admin")) return "trouble";
+        else return "redirect:/";
+    }
+
 }
