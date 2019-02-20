@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:data="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
     <meta charset="UTF-8">
@@ -7,12 +7,14 @@
 </head>
 <body>
 <div class="projekt_container">
-    <div class="item_owner_description" th:text = "|from ${itemOwner?.username}|"></div>
+    <div class="item_owner_description" th:text = "|from ${itemProfile?.owner.username}|"></div>
         <h1 th:text = "${itemProfile?.name}"></h1>
             <tr><div th:text = "| Name: ${itemProfile?.name}|"></div></tr>
             <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>
             <tr><div th:text = "| Deposit: ${itemProfile?.deposit}|" ></div></tr>
             <tr><div th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></div></tr>
+            <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|" ></div></tr>
+            <img th:src="${pic} == null ? _ : @{'data:image/png;base64,'+${pic}}">
     <a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
 
 </div>

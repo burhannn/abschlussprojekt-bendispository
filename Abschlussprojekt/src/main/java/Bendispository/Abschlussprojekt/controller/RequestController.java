@@ -37,11 +37,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class RequestController {
 
     private final RequestRepo requestRepo;
-
     private final ItemRepo itemRepo;
-
     private final LeaseTransactionRepo leaseTransactionRepo;
-
     private final PersonsRepo personsRepo;
 
     private final TransactionService transactionService;
@@ -188,7 +185,6 @@ public class RequestController {
     public String returnItem(Model model,
                              Long id){
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
-        System.out.println(leaseTransaction.getLeaser().getUsername());
         transactionService.itemReturnedToLender(leaseTransaction);
         return "rentedItems";
     }

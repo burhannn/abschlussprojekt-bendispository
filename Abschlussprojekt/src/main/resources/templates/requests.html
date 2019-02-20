@@ -10,6 +10,17 @@
   <div th:each="request : ${myRequests}">
       <tr>
           <div th:text= "|Gegenstand: ${request.requestedItem.name} -Status: ${request.status}|"></div>
+          <div>
+              <form method="post">
+                  <input type="radio" name="rating" value="1">1
+                  <input type="radio" name="rating" value="2">2
+                  <input type="radio" name="rating" value="3">3
+                  <input type="radio" name="rating" value="4">4
+                  <input type="radio" name="rating" value="5">5
+                  <input type="hidden" value="0" th:value="${request.id}" name="requestID">
+                  <button type = "submit">submit</button>
+              </form>
+          </div>
       </tr>
   </div>
 </div>
@@ -19,8 +30,8 @@
         <table style="margin-top: 2%">
             <tr style="text-align: left !important;">
                 <td class="item_name" th:text= "|Item: ${request.requestedItem.name}|"></td>
+                <td class="item_name" th:text= "|Requested by: ${request.requester.username}|"></td>
             </tr>
-        <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
         <td th:text="|Status: ${request.status}|"></td>
         <td>
             <form method="post">

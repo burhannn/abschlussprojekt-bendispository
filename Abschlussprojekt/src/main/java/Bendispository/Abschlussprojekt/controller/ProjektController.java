@@ -36,7 +36,6 @@ public class ProjektController {
         this.authenticationService = authenticationService;
     }
 
-
     @GetMapping(path = "/addItem")
     public String addItemPage(){
         return "AddItem";
