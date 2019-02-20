@@ -14,8 +14,6 @@ public class LeaseController {
     @Autowired
     LeaseTransactionRepo leaseTransactionRepo;
 
-
-
     @PostMapping(path = "/profile/leaseTransaction{id}")
     public String addChangesLeaseTransaction(Model model,
                                              @PathVariable Long id,
@@ -24,5 +22,4 @@ public class LeaseController {
         leaseTransactionRepo.save(leaseTransaction);
         return "requests";
     }
-
 }

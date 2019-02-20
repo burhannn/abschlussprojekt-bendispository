@@ -20,6 +20,4 @@ public class AuthenticationService {
         MyUserPrincipal userDetails = (MyUserPrincipal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userDetails.getUser();
     }
-
-
 }

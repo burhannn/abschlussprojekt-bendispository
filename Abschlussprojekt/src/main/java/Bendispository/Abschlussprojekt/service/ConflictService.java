@@ -36,6 +36,4 @@ public class ConflictService {
         else
             transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction());
     }
-
-
 }

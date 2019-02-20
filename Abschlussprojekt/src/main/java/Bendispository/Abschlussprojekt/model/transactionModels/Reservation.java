@@ -7,5 +7,4 @@ public class Reservation {
 
     private int id;
     private double amount;
-
 }
