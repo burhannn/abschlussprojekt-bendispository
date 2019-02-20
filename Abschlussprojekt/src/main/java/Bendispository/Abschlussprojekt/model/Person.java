@@ -2,6 +2,8 @@ package Bendispository.Abschlussprojekt.model;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,8 +32,8 @@ public class Person {
                fetch = FetchType.EAGER)
     private List<Item> Items;
 
-    @OneToMany(cascade = CascadeType.ALL,
-               fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.TRUE)
     private List<LeaseTransaction> leaseTransactions;
 
     public void addLeaseTransaction(LeaseTransaction leaseTransaction){
@@ -39,6 +41,7 @@ public class Person {
     }
 
     @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Rating> ratings;
 
     public int getAverageRatings() {
