@@ -20,6 +20,4 @@ public interface LeaseTransactionRepo extends CrudRepository<LeaseTransaction, L
     List<LeaseTransaction> findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
 
     List<LeaseTransaction> findAllByItemIdAndStartDateGreaterThan(Long id, LocalDate now);
-
-
 }

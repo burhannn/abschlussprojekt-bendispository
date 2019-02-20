@@ -8,9 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 
-
-// eingeloggter User
-
 @Data
 public class MyUserPrincipal implements UserDetails {
     private final Person user;

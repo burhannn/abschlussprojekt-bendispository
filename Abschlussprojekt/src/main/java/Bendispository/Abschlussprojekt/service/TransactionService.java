@@ -168,5 +168,4 @@ public class TransactionService {
         conflictTransaction.setCommentary(commentary);
         conflictTransactionRepo.save(conflictTransaction);
     }
-
 }

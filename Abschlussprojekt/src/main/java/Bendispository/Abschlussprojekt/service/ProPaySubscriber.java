@@ -28,8 +28,6 @@ public class ProPaySubscriber {
         this.leaseTransactionRepo = leaseTransactionRepo;
     }
 
-
-
     public int makeDeposit(Request request){
         Reservation reservation = makeReservation(request.getRequester().getUsername(),
                                                   request.getRequestedItem().getOwner().getUsername(),

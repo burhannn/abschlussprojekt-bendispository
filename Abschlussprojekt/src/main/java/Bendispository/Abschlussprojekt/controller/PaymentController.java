@@ -28,10 +28,8 @@ public class PaymentController {
     @Autowired
     public PaymentController(PersonsRepo personsRepo,
                              LeaseTransactionRepo leaseTransactionRepo) {
-
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
-
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                 leaseTransactionRepo);
@@ -51,13 +49,9 @@ public class PaymentController {
     public String chargeAccount(Model model, double amount) {
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
-
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
-
         proPaySubscriber.chargeAccount(username, amount);
         model.addAttribute("success", "Account has been charged!");
-
         return "chargeAccount";
     }
-
 }

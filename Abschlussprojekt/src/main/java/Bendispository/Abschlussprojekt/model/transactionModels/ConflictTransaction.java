@@ -23,5 +23,4 @@ public class ConflictTransaction {
 
     @OneToOne(cascade = CascadeType.PERSIST)
     LeaseTransaction leaseTransaction;
-
 }

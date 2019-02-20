@@ -2,7 +2,6 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -11,7 +10,6 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
-
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +19,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDate;
 import java.time.Period;
-
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
-
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 @Controller
 public class RequestController {
@@ -40,14 +33,12 @@ public class RequestController {
     private final ItemRepo itemRepo;
     private final LeaseTransactionRepo leaseTransactionRepo;
     private final PersonsRepo personsRepo;
-
     private final TransactionService transactionService;
     private final PaymentTransactionRepo paymentTransactionRepo;
     private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
     private RatingRepo ratingRepo;
     private final ConflictTransactionRepo conflictTransactionRepo;
-
 
     @Autowired
     public RequestController(RequestRepo requestRepo,
@@ -73,16 +64,6 @@ public class RequestController {
                                                          paymentTransactionRepo,
                                                          conflictTransactionRepo);
     }
-
-
-
-
-
-
-
-
-
-
 
     @GetMapping(path = "/item{id}/requestItem")
     public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
@@ -114,7 +95,6 @@ public class RequestController {
                                      RedirectAttributes redirectAttributes
                                      //@RequestParam("startDay")
                                      ){
-
         LocalDate startdate, enddate;
         try{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -153,16 +133,13 @@ public class RequestController {
 
         if(proPaySubscriber.checkDeposit(item.getDeposit(), username)
                 && transactionService.itemIsAvailableOnTime(request)){
-
             //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
             requestRepo.save(request);
             itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
             redirectAttributes.addFlashAttribute("success", "Request has been sent!");
             return "redirect:/Item/{id}";
         }
-
         return "redirect:/item{id}/requestItem";
-
     }
 
     @GetMapping(path="/profile/requests")
@@ -177,7 +154,6 @@ public class RequestController {
                                         Long requestID,
                                         Integer requestMyItems,
                                         RedirectAttributes redirectAttributes){
-
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
 
@@ -200,10 +176,8 @@ public class RequestController {
     public String Rating(Model model,
                          int rating,
                          Long requestID){
-
         Request request = requestRepo.findById(requestID).orElse(null);
         Person owner = request.getRequestedItem().getOwner();
-
         //if (rating != -1){
             Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
             ratingRepo.save(rating1);
@@ -242,7 +216,6 @@ public class RequestController {
     public String stateOfItem(Model model,
                               Long transactionId,
                               Integer itemIntact){
-
         LeaseTransaction leaseTransaction = leaseTransactionRepo
                                                     .findById(transactionId)
                                                     .orElse(null);
@@ -280,7 +253,6 @@ public class RequestController {
         LeaseTransaction leaseTransaction = leaseTransactionRepo
                 .findById(id)
                 .orElse(null);
-
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
         return "returnedItems";
     }

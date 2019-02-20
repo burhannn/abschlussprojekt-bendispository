@@ -1,17 +1,13 @@
-
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.UploadFile;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -57,7 +52,6 @@ public class FileController {
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
         UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
         item.setUploadFile(uploadFile);
-
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("newItem", item);
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
@@ -65,7 +59,6 @@ public class FileController {
         List<Item> itemsOwner = new ArrayList<>();
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
-
         personRepo.save(loggedIn);
         return "addItem";
     }
@@ -73,7 +66,6 @@ public class FileController {
     @GetMapping(path = "/Item/{id}" )
     public String ItemProfile(Model model,
                               @PathVariable Long id) {
-
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
@@ -85,5 +77,4 @@ public class FileController {
         }
         return "itemProfile";
     }
-
 }
