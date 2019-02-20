@@ -26,9 +26,9 @@ public class Initializer implements ServletContextInitializer {
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
-        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcd");
-        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcd");
-		Person admin = mkPerson(0, "", "admin", "", "", "", "root");
+        Person dummy_1 = mkPerson(300000, "momo@gmail.com", "mandypandy", "mandy", "pandy", "Köln","abcdabcd");
+        Person dummy_2 = mkPerson(12345, "mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcdabcd");
+		Person admin = mkPerson(10, "admin@admin.de", "admin", "admin", "admin", "admin", "rootroot");
 
         Item dummyItem1 = mkItem(12, 300, "Ich bin ein stuhl", "stuhl", dummy_1);
         Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1);
