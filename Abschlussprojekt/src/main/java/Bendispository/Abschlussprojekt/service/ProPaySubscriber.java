@@ -91,7 +91,7 @@ public class ProPaySubscriber {
         return false;
     }
 
-    private <T> T getAccount(String username, Class<T> type) {
+    public <T> T getAccount(String username, Class<T> type) {
         final Mono<T> mono = WebClient
                         .create()
                         .get()

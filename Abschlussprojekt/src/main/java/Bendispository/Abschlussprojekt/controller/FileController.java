@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class FileController {
@@ -70,7 +69,6 @@ public class FileController {
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
-        model.addAttribute("loggedInPerson",authenticationService.getCurrentUser());
 
         if(item.getUploadFile() != null){
             model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
@@ -78,28 +76,5 @@ public class FileController {
             model.addAttribute("pic",null);
         }
         return "itemProfile";
-    }
-    @GetMapping(path = "/editItem/{id}")
-    public String editItem(Model model,
-                           @PathVariable Long id){
-        Optional<Item> item = itemRepo.findById(id);
-        model.addAttribute("Item", item.get());
-        /*if(PersonLoggedIn().getUsername() == item.getOwner()){
-            return "redirect:/";
-        }*/
-        return "editItem";
-    }
-
-    @PostMapping(path = "/editItem/{id}")
-    public String editItemInDatabase(Model model,
-                                     @PathVariable Long id, Item inpItem){
-        Optional <Item> item = itemRepo.findById(id);
-        model.addAttribute("Item", item.get());
-        Person loggedIn = authenticationService.getCurrentUser();
-        inpItem.setOwner(loggedIn);
-        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
-        loggedIn.setItems(itemsOwner);
-        itemRepo.save(inpItem);
-        return "redirect:/";
     }
 }

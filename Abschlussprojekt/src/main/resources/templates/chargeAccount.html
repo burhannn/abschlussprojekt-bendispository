@@ -10,12 +10,12 @@
     <div th:if="${success}">
         <div class="alert_success" th:text="${success}"></div>
     </div>
+    <div th:text="|${person.username}|"></div>
+    <div th:text="|Kontostand: ${account.amount}|"></div>
     <form method = "post">
-        <UL>
-            <LI>Amount: <input type ="number" name = "amount" th:value="${amount}" placeholder="100€">
-            </LI>
+            <div>Amount: <input type ="number" name = "amount" th:value="${amount}" placeholder="100€">
+            </div>
             <button type="submit">Charge Account</button>
-        </UL>
     </form>
 </div>
 <a href="/profile" class="back_button">Back</a>

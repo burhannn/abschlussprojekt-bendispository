@@ -2,10 +2,13 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +24,16 @@ public class ProfilController {
     ItemRepo itemRepo;
     PersonsRepo personRepo;
     RequestRepo requestRepo;
+    LeaseTransactionRepo leaseTransactionRepo;
     AuthenticationService authenticationService;
 
     @Autowired
-    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
+    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo,
+                            LeaseTransactionRepo leaseTransactionRepo, AuthenticationService authenticationService){
         this.itemRepo = itemRepo;
         this.personRepo = personsRepo;
         this.requestRepo = requestRepo;
+        this.leaseTransactionRepo = leaseTransactionRepo;
         this.authenticationService = authenticationService;
     }
 
@@ -44,6 +50,12 @@ public class ProfilController {
     public String profile(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person", loggedIn);
+
+        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
+
+        ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername(), ProPayAccount.class);
+        model.addAttribute("account", proPayAccount);
+        model.addAttribute("reservations", proPayAccount.getReservations());
         return "profile";
     }
 

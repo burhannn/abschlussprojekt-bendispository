@@ -22,7 +22,6 @@
             <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|" ></div></tr>
             <img th:src="${pic} == null ? _ : @{'data:image/png;base64,'+${pic}}">
     <a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a>
-    <a th:if = "${itemOwner?.username == loggedInPerson.username}" th:href="@{'/editItem/' + ${itemProfile?.id}}">Edit</a>
 
 </div>
 <a href="/" class="back_button">Back</a>
