@@ -176,14 +176,15 @@ public class RequestController {
     public String Rating(Model model,
                          int rating,
                          Long requestID){
+
         Request request = requestRepo.findById(requestID).orElse(null);
         Person owner = request.getRequestedItem().getOwner();
-        //if (rating != -1){
-            Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
+        Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
+        if (rating != -1){
             ratingRepo.save(rating1);
             owner.addRating(rating1);
             personsRepo.save(owner);
-        //}
+        }
         return "redirect:";
     }
 
