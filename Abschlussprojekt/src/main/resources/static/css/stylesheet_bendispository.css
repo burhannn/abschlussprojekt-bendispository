@@ -52,15 +52,6 @@ button:hover, a:hover {
 }
 body{
     color: black;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    background-image: url(http://i48.tinypic.com/2vn1e28.jpg);
-=======
-    /*background-image: url(http://i48.tinypic.com/2vn1e28.jpg);*/
->>>>>>> origin/benutzerverwaltung
-=======
-    /* background-image: url(http://i48.tinypic.com/2vn1e28.jpg); */
->>>>>>> origin/newTransactions
     font-family: Cambria !important;
     background-color: #ffffcc !important;
     margin: 4% !important;

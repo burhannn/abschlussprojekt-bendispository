@@ -74,16 +74,6 @@ public class RequestController {
                                                          conflictTransactionRepo);
     }
 
-
-
-
-
-
-
-
-
-
-
     @GetMapping(path = "/item{id}/requestItem")
     public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
