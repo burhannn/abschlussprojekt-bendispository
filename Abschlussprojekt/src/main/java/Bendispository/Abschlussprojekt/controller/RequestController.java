@@ -206,9 +206,10 @@ public class RequestController {
 
     @GetMapping(path= "/profile/returneditems")
     public String returnedItem(Model model){
+        Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
-                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
         return "returnedItems";
     }
@@ -228,7 +229,7 @@ public class RequestController {
         }
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
-                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
         transactionService.itemIsIntact(leaseTransaction);
         // Feld: iwie Bewertung /Clara
