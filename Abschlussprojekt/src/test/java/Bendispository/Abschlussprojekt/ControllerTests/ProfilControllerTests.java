@@ -165,11 +165,11 @@ public class ProfilControllerTests {
     public void retrieve() throws Exception {
 
         mvc.perform(get("/profilub")).andExpect(status().isOk());
-        mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
+/*        mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
         mvc.perform(get("/Item/{id}", 3L)).andExpect(status().isOk());
         mvc.perform(get("/addItem")).andExpect(status().isOk());
         mvc.perform(get("/registration")).andExpect(status().isOk());
-    }
+ */   }
 
     @Test
     public void checkOverviewItems() throws Exception {
