@@ -46,7 +46,7 @@ public class ConflictController {
     @PostMapping(path = "/conflicts")
     public String addChangesConflictTransaction(Model model,
                                                 Long conflictId,
-                                                int beneficiary){
+                                                Integer beneficiary){
         ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
         conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1);
         List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
