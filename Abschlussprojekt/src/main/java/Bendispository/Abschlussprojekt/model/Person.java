@@ -55,9 +55,8 @@ public class Person {
     private List<Rating> ratings;
 
     public void addRating(Rating rating){
-        ratings.addAll(Arrays.asList(rating));
+        ratings.add(rating);
     }
-
     public int getAverageRatings() {
         if(ratings.size() == 0){
             return -1;
