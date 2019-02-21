@@ -23,6 +23,8 @@ public class Item {
 
     private int costPerDay;
 
+    private String place;
+
     @ManyToOne(cascade = CascadeType.PERSIST,
                fetch = FetchType.EAGER)
     private Person owner;
