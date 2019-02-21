@@ -15,27 +15,27 @@
     <img th:src="@{img/star.png}" src="../static/img/star.png" height="100" width="100">
     <a href = "/editProfile">Edit Profile</a>
     <div class="my_rating">
-        <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person.getAverageRatings()}|">
-            <div th:each="i : ${#numbers.sequence( 1,person.getAverageRatings())}">
-                <img th:src="@{img/star.png}" src="../static/img/star.png" height="100" width="100">
+        <tr th:if="${person?.getAverageRatings()} != -1" th:text="|Rating: ${person?.getAverageRatings()}|">
+            <div th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}">
+                <img src="star.png">
             </div>
         </tr>
         <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
     </div>
     <div class="profil_information">
-        <tr><div th:text="|Last Name : ${person.lastName}|"></div></tr>
-        <tr><div th:text="|First Name: ${person.firstName}|"></div></tr>
-        <tr><div th:text="|Email: ${person.email}|"></div></tr>
-        <tr><div th:text="|City: ${person.city}|"></div></tr>
-        <tr><div th:text="|Username: ${person.username}|"></div></tr>
-        <tr><div th:text="|Kontostand: ${account.amount}|"></div></tr>
+        <tr><div th:text="|Last Name : ${person?.lastName}|"></div></tr>
+        <tr><div th:text="|First Name: ${person?.firstName}|"></div></tr>
+        <tr><div th:text="|Email: ${person?.email}|"></div></tr>
+        <tr><div th:text="|City: ${person?.city}|"></div></tr>
+        <tr><div th:text="|Username: ${person?.username}|"></div></tr>
+        <tr><div th:text="|Kontostand: ${account?.amount}|"></div></tr>
         <tr><div><a href="/chargeAccount">Charge account</a></div></tr>
         <div style="width:300px;height:150px;line-height:3em;overflow:auto;padding:5px;">
             <h4>Current reservations</h4>
             <div th:each="reservation : ${reservations}">
                 <tr>
-                    <div th:text="|Reservierungsbetrag: ${reservation.amount}|"></div>
-                    <div th:text="|ReservierungsID: ${reservation.id}|"></div>
+                    <div th:text="|Reservierungsbetrag: ${reservation?.amount}|"></div>
+                    <div th:text="|ReservierungsID: ${reservation?.id}|"></div>
                 </tr>
             </div>
         </div>

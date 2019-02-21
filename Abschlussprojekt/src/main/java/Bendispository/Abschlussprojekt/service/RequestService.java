@@ -1,15 +1,25 @@
 package Bendispository.Abschlussprojekt.service;
 
+import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.RequestStatus;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +32,44 @@ public class RequestService {
 
     RequestRepo requestRepo;
 
+    private final AuthenticationService authenticationService;
+
+    private final ItemRepo itemRepo;
+
+    private final LeaseTransactionRepo leaseTransactionRepo;
+
+    private final ProPaySubscriber proPaySubscriber;
+
+    private final TransactionService transactionService;
+
+    private final PaymentTransactionRepo paymentTransactionRepo;
+
+    private final ConflictTransactionRepo conflictTransactionRepo;
+
+
     @Autowired
-    public RequestService(PersonsRepo personsRepo, RequestRepo requestRepo){
+    public RequestService(PersonsRepo personsRepo,
+                          RequestRepo requestRepo,
+                          ItemRepo itemRepo,
+                          LeaseTransactionRepo leaseTransactionRepo,
+                          PaymentTransactionRepo paymentTransactionRepo,
+                          ConflictTransactionRepo conflictTransactionRepo,
+                          RatingRepo ratingRepo){
+        this.conflictTransactionRepo = conflictTransactionRepo;
+        this.leaseTransactionRepo = leaseTransactionRepo;
+        this.paymentTransactionRepo = paymentTransactionRepo;
         this.personsRepo = personsRepo;
         this.requestRepo = requestRepo;
+        this.itemRepo = itemRepo;
+        this.authenticationService = new AuthenticationService(personsRepo);
+        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
+                leaseTransactionRepo);
+        this.transactionService = new TransactionService(leaseTransactionRepo,
+                requestRepo,
+                proPaySubscriber,
+                paymentTransactionRepo,
+                conflictTransactionRepo,
+                ratingRepo);
     }
 
     public void showRequests(Model model,
@@ -48,5 +92,98 @@ public class RequestService {
             }
         }
         myRequests.removeAll(toRemove);
+    }
+
+    public boolean checkRequestedDate(String startDate,
+                                      String endDate,
+                                      RedirectAttributes redirectAttributes) {
+
+        LocalDate startdate, enddate;
+
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            startdate = LocalDate.parse(startDate, formatter);
+            enddate = LocalDate.parse(endDate, formatter);
+        } catch(DateTimeParseException e){
+            redirectAttributes.addFlashAttribute("message",
+                    "Invalid date!");
+            return false;
+        }
+
+        if (startdate.isAfter(enddate) || startdate.isEqual(enddate)) {
+            redirectAttributes.addFlashAttribute("message",
+                    "Invalid date!");
+            //return "redirect:/item{id}/requestItem";
+            return false;
+        }
+
+        if (startdate.isBefore(LocalDate.now())){
+            redirectAttributes.addFlashAttribute("message",
+                    "Start date can't be in the past!");
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean checkRequestedAvailability(RedirectAttributes redirectAttributes,
+                                              Request request) {
+
+        if (!transactionService.itemIsAvailableOnTime(request)) {
+            redirectAttributes.addFlashAttribute("message",
+                    "Item is not available during selected period!");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean checkRequesterDeposit(RedirectAttributes redirectAttributes,
+                                         Item item,
+                                         String username) {
+
+        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
+            redirectAttributes.addFlashAttribute("messageDeposit",
+                    "You don't have enough money for the deposit!");
+            return false;
+        }
+
+        return true;
+    }
+
+    public String addRequest(Model model,
+                           RedirectAttributes redirectAttributes,
+                           String startDate,
+                           String endDate,
+                           @PathVariable Long id) {
+
+        if (!checkRequestedDate(startDate, endDate, redirectAttributes))
+            return "redirect:/item{id}/requestItem";
+
+        LocalDate startdate, enddate;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        startdate = LocalDate.parse(startDate, formatter);
+        enddate = LocalDate.parse(endDate, formatter);
+
+        Person currentUser = authenticationService.getCurrentUser();
+        Item item = itemRepo.findById(id).orElse(null);
+
+        Request request = new Request();
+        request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
+        request.setStartDate(startdate);
+        request.setEndDate(enddate);
+        request.setDuration(Period.between(startdate, enddate).getDays());
+        request.setRequestedItem(item);
+        String username = currentUser.getUsername();
+
+        if (!checkRequestedAvailability(redirectAttributes, request) ||
+                !checkRequesterDeposit(redirectAttributes, item, username))
+            return "redirect:/item{id}/requestItem";
+
+        requestRepo.save(request);
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Request has been sent!");
+
+        return "redirect:/Item/{id}";
     }
 }

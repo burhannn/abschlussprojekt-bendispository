@@ -71,6 +71,9 @@ public class LoginRegistrationTests {
     @MockBean
     RequestService requestService;
 
+    @MockBean
+    ItemService itemService;
+
     Person dummy1;
 
     @Before

@@ -99,59 +99,9 @@ public class RequestController {
                                      Model model,
                                      @PathVariable Long id,
                                      RedirectAttributes redirectAttributes
-                                     //@RequestParam("startDay")
                                      ){
-        LocalDate startdate, enddate;
 
-        try{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            startdate = LocalDate.parse(startDate, formatter);
-            enddate = LocalDate.parse(endDate, formatter);
-        } catch(DateTimeParseException e){
-            redirectAttributes.addFlashAttribute("message", "Invalid date!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if (startdate.isBefore(LocalDate.now())){
-            redirectAttributes.addFlashAttribute("message", "Start date can't be in the past!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if (startdate.isAfter(enddate) && startdate.isEqual(enddate)) {
-            redirectAttributes.addFlashAttribute("message", "Invalid date!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        Person currentUser = authenticationService.getCurrentUser();
-        Item item = itemRepo.findById(id).orElse(null);
-
-        Request request = new Request();
-        request.setRequester(personsRepo.findByUsername(currentUser.getUsername())); ///// änderung
-        request.setStartDate(startdate);
-        request.setEndDate(enddate);
-        request.setDuration(Period.between(startdate, enddate).getDays());
-        request.setRequestedItem(item);
-        String username = currentUser.getUsername();
-
-        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
-            redirectAttributes.addFlashAttribute("messageDeposit", "You don't have enough money for the deposit!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if (!transactionService.itemIsAvailableOnTime(request)) {
-            redirectAttributes.addFlashAttribute("message", "Item is not available during selected period!");
-            return "redirect:/item{id}/requestItem";
-        }
-
-        if(proPaySubscriber.checkDeposit(item.getDeposit(), username)
-                && transactionService.itemIsAvailableOnTime(request)){
-            //Kaution reicht aus, wird "abgeschickt" (erstellt und gespeichert)
-            requestRepo.save(request);
-            itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-            redirectAttributes.addFlashAttribute("success", "Request has been sent!");
-            return "redirect:/Item/{id}";
-        }
-        return "redirect:/item{id}/requestItem";
+        return requestService.addRequest(model, redirectAttributes, startDate, endDate, id);
     }
 
     @GetMapping(path="/profile/requests")
