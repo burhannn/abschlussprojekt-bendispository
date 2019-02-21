@@ -245,11 +245,11 @@ public class RequestController {
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
+        transactionService.itemIsIntact(leaseTransaction);
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        transactionService.itemIsIntact(leaseTransaction);
         // Feld: iwie Bewertung /Clara
         return "returnedItems";
     }
