@@ -273,6 +273,7 @@ public class RequestController {
         LeaseTransaction leaseTransaction = leaseTransactionRepo
                 .findById(id)
                 .orElse(null);
+        leaseTransaction.setLeaseIsConcluded(true);
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
         List<LeaseTransaction> transactionList =
               leaseTransactionRepo

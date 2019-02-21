@@ -170,7 +170,7 @@ public class TransactionService {
             int timeViolation = period.getDays();
             leaseTransaction.setTimeframeViolation(true);
             leaseTransaction.setLengthOfTimeframeViolation(timeViolation);
-        return true;
+            return true;
         }
         return false;
     }
