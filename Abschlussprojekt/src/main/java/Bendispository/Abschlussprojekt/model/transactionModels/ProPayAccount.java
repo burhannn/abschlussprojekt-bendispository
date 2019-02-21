@@ -6,7 +6,7 @@ import lombok.Data;
 public class ProPayAccount {
 
     private String account;
-    private int amount;
+    private double amount;
     private Reservation[] reservations;
 
     public String toString(){
