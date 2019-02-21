@@ -7,6 +7,7 @@ import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,17 +29,23 @@ import java.util.Optional;
 @Controller
 public class FileController {
 
-    ItemRepo itemRepo;
-    PersonsRepo personRepo;
-    RequestRepo requestRepo;
-    AuthenticationService authenticationService;
+    private ItemRepo itemRepo;
+    private PersonsRepo personRepo;
+    private RequestRepo requestRepo;
+    private AuthenticationService authenticationService;
+    private ItemService itemService;
 
     @Autowired
-    public FileController(ItemRepo itemRepo, PersonsRepo personRepo, RequestRepo requestRepo, AuthenticationService authenticationService){
+    public FileController(ItemRepo itemRepo,
+                          PersonsRepo personRepo,
+                          RequestRepo requestRepo,
+                          AuthenticationService authenticationService,
+                          ItemService itemService){
         this.itemRepo = itemRepo;
         this.personRepo = personRepo;
         this.requestRepo = requestRepo;
         this.authenticationService = authenticationService;
+        this.itemService = itemService;
     }
 
     @GetMapping(path = "/addItem")
@@ -72,6 +79,7 @@ public class FileController {
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
+        model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
         if(item.getUploadFile() != null){
             model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
         }else{

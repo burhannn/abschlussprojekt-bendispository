@@ -110,7 +110,7 @@ public class TransactionService {
     }
 
     // Disclaimer: https://stackoverflow.com/a/17107966
-    private static boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
+    public static boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
         return (start1.isBefore(end2) && start2.isBefore(end1));
     }
 
@@ -189,7 +189,7 @@ public class TransactionService {
             int timeViolation = period.getDays();
             leaseTransaction.setTimeframeViolation(true);
             leaseTransaction.setLengthOfTimeframeViolation(timeViolation);
-        return true;
+            return true;
         }
         return false;
     }

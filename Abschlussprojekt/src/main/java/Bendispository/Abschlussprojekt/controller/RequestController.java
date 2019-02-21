@@ -84,9 +84,10 @@ public class RequestController {
                     "You cannot request the same item twice!");
             return "redirect:/Item/{id}";
         }
-        List<LeaseTransaction> list =
-                leaseTransactionRepo
-                        .findAllByItemIdAndStartDateGreaterThan(id, LocalDate.now());
+
+        List <LeaseTransaction> list = leaseTransactionRepo
+                                         .findAllByItemIdAndEndDateGreaterThan(id, LocalDate.now());
+
         Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);
         return "formRequest";
@@ -101,6 +102,7 @@ public class RequestController {
                                      //@RequestParam("startDay")
                                      ){
         LocalDate startdate, enddate;
+
         try{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             startdate = LocalDate.parse(startDate, formatter);
@@ -228,11 +230,11 @@ public class RequestController {
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
+        transactionService.itemIsIntact(leaseTransaction);
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        transactionService.itemIsIntact(leaseTransaction);
         // Feld: iwie Bewertung /Clara
         return "returnedItems";
     }
@@ -256,7 +258,12 @@ public class RequestController {
         LeaseTransaction leaseTransaction = leaseTransactionRepo
                 .findById(id)
                 .orElse(null);
+        leaseTransaction.setLeaseIsConcluded(true);
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
+        List<LeaseTransaction> transactionList =
+              leaseTransactionRepo
+                    .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
+        model.addAttribute("transactionList", transactionList);
         return "returnedItems";
     }
 }

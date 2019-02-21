@@ -39,7 +39,6 @@ public class Person {
 
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
-
     private List<Item> Items;
 
     @OneToMany(cascade = CascadeType.ALL)
