@@ -152,11 +152,16 @@ public class RequestController {
     @PostMapping(path="/profile/requests")
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
+                                        Integer delete,
                                         Integer requestMyItems,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
 
+        if(delete == -1){
+            requestRepo.deleteById(id);
+            return "requests";
+        }
         if(requestMyItems == -1){
             request.setStatus(RequestStatus.DENIED);
             requestRepo.save(request);
