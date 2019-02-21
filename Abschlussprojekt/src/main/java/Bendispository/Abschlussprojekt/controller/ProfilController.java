@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -80,5 +83,29 @@ public class ProfilController {
         Person deletePerson = personRepo.findByUsername(username);
         personRepo.delete(deletePerson);
         return "redirect:/profilub";
+    }
+    @GetMapping(path= "/editProfile")
+    public String editProfil(Model model){
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("person",loggedIn);
+
+        return "editProfile";
+    }
+    @PostMapping(path = "editProfile")
+    public String saveProfileInDatabase(
+            @RequestParam(value = "Firstname", required = true) String firstName,
+            @RequestParam(value = "Lastname", required = true) String lastName,
+            @RequestParam(value = "Password", required = true) String password,
+            @RequestParam(value = "Email", required = true) String email,
+            @RequestParam(value = "City", required = true) String city) {
+
+        Person loggedIn = authenticationService.getCurrentUser();
+        loggedIn.setFirstName(firstName);
+        loggedIn.setLastName(lastName);
+        loggedIn.setPassword(password);
+        loggedIn.setEmail(email);
+        loggedIn.setCity(city);
+        personRepo.save(loggedIn);
+        return "redirect:/profile";
     }
 }

@@ -12,6 +12,7 @@
         <a href = "/profile/returneditems">Returned To You</a>
         <a href="/chargeAccount">Charge account</a>
     </div>
+    <a href = "/editProfile">Edit Profile</a>
     <div class="my_rating">
         <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person.getAverageRatings()}|"></tr>
         <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
