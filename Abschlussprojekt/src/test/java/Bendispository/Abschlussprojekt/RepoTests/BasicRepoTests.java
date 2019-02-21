@@ -105,26 +105,25 @@ public class BasicRepoTests {
         dummy2.setPassword("ThomasMu");
         dummy2.setId(1L);
 
+        Person dummy4 =
         personsRepo.save(dummy2);
 
         Item dummyItem1 = new Item();
         dummyItem1.setName("Schlagbohrmaschine");
-        dummyItem1.setOwner(dummy2);
+        dummyItem1.setOwner(dummy4);
         dummyItem1.setDescription("Bohrt und schlägt!");
         dummyItem1.setDeposit(20);
         dummyItem1.setCostPerDay(4);
         dummyItem1.setId(20L);
 
-        itemRepo.save(dummyItem1);
+
+        Item dummyItem2 = itemRepo.save(dummyItem1);
         List<Item> testItems = itemRepo.findAll();
 
         List<Item> item = new ArrayList<Item>();
         item.addAll(Arrays.asList(dummyItem1));
-
-        System.out.print(item);
-
         dummy2.setItems(item);
-        personsRepo.save(dummy2);
+
 
         Person dummy3 = new Person();
         dummy3.setFirstName("Thomas");
@@ -144,7 +143,7 @@ public class BasicRepoTests {
         Request dummyRequest1 = new Request();
         dummyRequest1.setId(30L);
         dummyRequest1.setRequester(dummy3);
-        dummyRequest1.setRequestedItem(dummyItem1);
+        dummyRequest1.setRequestedItem(dummyItem2);
         dummyRequest1.setDuration(7);
         dummyRequest1.setEndDate(endDate);
         dummyRequest1.setStartDate(startDate);
@@ -154,8 +153,8 @@ public class BasicRepoTests {
         List<Request> testRequests = requestRepo.findAll();
 
         Assertions.assertThat(testRequests.get(0).getId().equals(30));
-        //Assertions.assertThat(testRequests.get(0).getRequester().equals(dummy1));
-        //Assertions.assertThat(testRequests.get(0).getRequestedItem().equals(dummyItem1));
+        Assertions.assertThat(testRequests.get(0).getRequester().equals(dummy3));
+        Assertions.assertThat(testRequests.get(0).getRequestedItem().equals(dummyItem1));
         Assertions.assertThat(testRequests.get(0).getDuration() == 7);
         Assertions.assertThat(testRequests.get(0).getEndDate().equals(endDate));
         Assertions.assertThat(testRequests.get(0).getStartDate().equals(startDate));
