@@ -19,7 +19,6 @@ public class Rating {
     private Person rater;
     private Integer ratingPoints;
 
-
     public Rating(){}
 
     public Rating(Request request, Person rater, Integer ratingPoints){

@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
@@ -28,22 +29,26 @@ public class PaymentController {
     @Autowired
     public PaymentController(PersonsRepo personsRepo,
                              LeaseTransactionRepo leaseTransactionRepo) {
-
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
-
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                 leaseTransactionRepo);
     }
 
     @GetMapping(path = "/profile/PaymentTransaction")
-    public String concludeTransaction(Model model){
+    public String concludeTransaction(){
         return "/";
     }
 
     @GetMapping(path = "/chargeAccount")
-    public String saveAccount(){
+    public String saveAccount(Model model){
+        Person currentUser = authenticationService.getCurrentUser();
+        String username = currentUser.getUsername();
+        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
+        ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
+        model.addAttribute("person", currentUser);
+        model.addAttribute("account", proPayAccount);
         return "chargeAccount";
     }
 
@@ -51,13 +56,13 @@ public class PaymentController {
     public String chargeAccount(Model model, double amount) {
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
-
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
-
         proPaySubscriber.chargeAccount(username, amount);
         model.addAttribute("success", "Account has been charged!");
 
+        ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
+        model.addAttribute("person", currentUser);
+        model.addAttribute("account", proPayAccount);
         return "chargeAccount";
     }
-
 }

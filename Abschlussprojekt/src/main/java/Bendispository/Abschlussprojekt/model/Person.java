@@ -4,12 +4,11 @@ import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
 import javax.persistence.*;
-import java.util.ArrayList;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -29,22 +28,18 @@ public class Person {
     @Column(nullable = false, unique = true)
     private String username;
 
-
 	@Pattern(regexp=".{8,}")
     private String password;
 
     @Email
     private String email;
 
-	@Digits(integer = 9, fraction = 0)
-    private int bankaccount;
-
     @Pattern(regexp="[a-zA-ZöäüÖÄÜß 0-9]+")
     private String city;
 
-
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
+
     private List<Item> Items;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -60,8 +55,9 @@ public class Person {
     private List<Rating> ratings;
 
     public void addRating(Rating rating){
-        ratings.add(rating);
+        ratings.addAll(Arrays.asList(rating));
     }
+
     public int getAverageRatings() {
         if(ratings.size() == 0){
             return -1;

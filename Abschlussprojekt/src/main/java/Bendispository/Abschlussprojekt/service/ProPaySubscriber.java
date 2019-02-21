@@ -28,8 +28,6 @@ public class ProPaySubscriber {
         this.leaseTransactionRepo = leaseTransactionRepo;
     }
 
-
-
     public int makeDeposit(Request request){
         Reservation reservation = makeReservation(request.getRequester().getUsername(),
                                                   request.getRequestedItem().getOwner().getUsername(),
@@ -93,7 +91,7 @@ public class ProPaySubscriber {
         return false;
     }
 
-    private <T> T getAccount(String username, Class<T> type) {
+    public <T> T getAccount(String username, Class<T> type) {
         final Mono<T> mono = WebClient
                         .create()
                         .get()
