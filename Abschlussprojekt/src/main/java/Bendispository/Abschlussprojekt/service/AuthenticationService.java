@@ -18,6 +18,6 @@ public class AuthenticationService {
 
     public Person getCurrentUser(){
         MyUserPrincipal userDetails = (MyUserPrincipal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userDetails.getUser();
+        return personsRepo.findByUsername(userDetails.getUsername());
     }
 }
