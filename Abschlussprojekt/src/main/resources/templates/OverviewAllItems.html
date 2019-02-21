@@ -14,6 +14,9 @@
 
 
     </div>
+    <div th:if="${message}">
+        <div class="alert_error" th:text="|${message} ${itemname}|"></div>
+    </div>
 <div class = "projekt_container" th:each="item,iterStart : ${OverviewAllItems}">
     <h1 class="header_container" th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
     <div>

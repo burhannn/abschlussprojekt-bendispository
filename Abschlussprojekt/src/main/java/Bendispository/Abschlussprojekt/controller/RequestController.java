@@ -109,6 +109,11 @@ public class RequestController {
             return "redirect:/item{id}/requestItem";
         }
 
+        if (startdate.isBefore(LocalDate.now())){
+            redirectAttributes.addFlashAttribute("message", "Start date can't be in the past!");
+            return "redirect:/item{id}/requestItem";
+        }
+
         if (startdate.isAfter(enddate) && startdate.isEqual(enddate)) {
             redirectAttributes.addFlashAttribute("message", "Invalid date!");
             return "redirect:/item{id}/requestItem";

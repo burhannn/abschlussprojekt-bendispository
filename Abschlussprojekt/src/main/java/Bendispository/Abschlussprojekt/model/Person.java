@@ -57,6 +57,7 @@ public class Person {
     public void addRating(Rating rating){
         ratings.add(rating);
     }
+
     public int getAverageRatings() {
         if(ratings.size() == 0){
             return -1;
