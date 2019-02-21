@@ -167,7 +167,6 @@ public class ProfilControllerTests {
 
 
     @Test
-    @Ignore
     public void retrieve() throws Exception {
 
         mvc.perform(get("/profilub")).andExpect(status().isOk());
@@ -178,7 +177,6 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @Ignore
     public void checkOverviewItems() throws Exception {
 
         Mockito.when(itemRepo.findAll())
@@ -213,7 +211,6 @@ public class ProfilControllerTests {
 
     //tests für profile anderer User
     @Test
-    @Ignore
     public void checkMyProfile() throws Exception {
 
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
@@ -233,7 +230,6 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @Ignore
     public void checkExistingUserProfilOther() throws Exception {
 
         mvc.perform(get("/profile/{id}", 1L))
@@ -260,14 +256,12 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @Ignore
     public void checkNONExistingUserProfilOther() throws Exception {
-        mvc.perform(get("/profile/{id}", 4L))
+        mvc.perform(get("/profile/{id}", 8L))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
     @Test
-    @Ignore
     public void checkUsersUebersicht() throws Exception {
 
         Mockito.when(personsRepo.findAll())
@@ -300,7 +294,6 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @Ignore
     public void checkAddItem() throws Exception {
 
         mvc.perform(post("/addItem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -359,7 +352,6 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @Ignore
     public void checkNONExistingItemProfile() throws Exception {
         mvc.perform(get("/item/{id}", 8L))
                 .andDo(print())

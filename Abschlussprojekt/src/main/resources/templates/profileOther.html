@@ -5,14 +5,14 @@
 </head>
 <body>
 <div class="projekt_container">
-    <h1 th:text="${person.username}"></h1>
+    <h1 th:text="${person?.username}"></h1>
     <div class="profil_information">
-        <tr><div th:text="|Email: ${person.email}|"></div></tr>
-        <tr><div th:text="|City: ${person.city}|"></div></tr>
+        <tr><div th:text="|Email: ${person?.email}|"></div></tr>
+        <tr><div th:text="|City: ${person?.city}|"></div></tr>
         <div class="my_items">Offered Items:
-            <div th:each="item : ${person.items}">
+            <div th:each="item : ${person?.items}">
                 <tr>
-                    <td><a th:href="@{'/Item/' + ${item.id}}" th:text="${item.name}"></a></td>
+                    <td><a th:href="@{'/Item/' + ${item?.id}}" th:text="${item?.name}"></a></td>
                 </tr>
             </div>
         </div>
