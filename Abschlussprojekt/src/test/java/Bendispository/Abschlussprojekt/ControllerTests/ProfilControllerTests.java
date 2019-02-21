@@ -87,7 +87,6 @@ public class ProfilControllerTests {
     @MockBean
     ConflictService conflictService;
 
-
     Person dummy1;
     Person dummy2;
 

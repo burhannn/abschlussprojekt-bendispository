@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +39,6 @@ public class ProfilController {
         this.requestRepo = requestRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.authenticationService = authenticationService;
-        this.leaseTransactionRepo = leaseTransactionRepo;
     }
 
     @GetMapping(path= "/")
@@ -65,6 +63,7 @@ public class ProfilController {
         return "profile";
     }
 
+
     @GetMapping(path = "/profile/history")
     public String history(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
@@ -78,6 +77,7 @@ public class ProfilController {
         model.addAttribute("lent", lent);
         return "historia";
     }
+
 
     @GetMapping(path= "/profile/{id}")
     public String profileOther(Model model,
@@ -94,8 +94,6 @@ public class ProfilController {
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
         return "profileDetails";
     }
-
-
 
     @GetMapping(value="deleteUser/{username}")
     public String deleteUser(@PathVariable String username){
