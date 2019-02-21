@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Item</title>
+</head>
+<body>
+
+<div class = "projekt_container">
+    <h1>Edit Item</h1>
+    <form method = "post">
+        <tr>Name:<div><input type ="text" name = "name" th:value="${Item?.name}"></div></tr>
+        <tr>Description:<div><input type ="text" name = "description" th:value="${Item?.description}"></div></tr>
+        <tr>Deposit:<div><input type ="text" name = "deposit" th:value="${Item?.deposit}"></div></tr>
+        <tr>CostPerDay:<div><input type ="text" name = "costPerDay" th:value="${Item?.costPerDay}"></div></tr>
+        <button type="submit" class="button" style="margin-top: 2%"> Save Changes</button>
+    </form>
+</div>
+<form action="/">
+    <button class="back_button" type="submit">Back</button>
+</form>
+
+
+</body>
+</html>
