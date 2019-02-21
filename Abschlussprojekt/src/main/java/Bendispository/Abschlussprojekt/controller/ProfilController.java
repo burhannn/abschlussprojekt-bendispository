@@ -163,9 +163,12 @@ public class ProfilController {
 
     @GetMapping(value="deleteUser/{username}")
     public String deleteUser(@PathVariable String username){
-        Person deletePerson = personRepo.findByUsername(username);
-        personRepo.delete(deletePerson);
-        return "redirect:/profilub";
+        if(authenticationService.getCurrentUser().getUsername().equals("admin")){
+            Person deletePerson = personRepo.findByUsername(username);
+            personRepo.delete(deletePerson);
+            return "redirect:/profilub";
+        }
+        return "redirect:/";
     }
     @GetMapping(path= "/editProfile")
     public String editProfil(Model model){
