@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -38,6 +39,7 @@ public class Person {
 
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
+
     private List<Item> Items;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -53,8 +55,9 @@ public class Person {
     private List<Rating> ratings;
 
     public void addRating(Rating rating){
-        ratings.add(rating);
+        ratings.addAll(Arrays.asList(rating));
     }
+
     public int getAverageRatings() {
         if(ratings.size() == 0){
             return -1;

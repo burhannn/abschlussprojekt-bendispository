@@ -2,7 +2,7 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.UploadFile;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -22,20 +23,24 @@ import java.util.Optional;
 @Controller
 public class ProfilController {
 
-    ItemRepo itemRepo;
-    PersonsRepo personRepo;
-    RequestRepo requestRepo;
-    LeaseTransactionRepo leaseTransactionRepo;
-    AuthenticationService authenticationService;
+    private ItemRepo itemRepo;
+    private PersonsRepo personRepo;
+    private RequestRepo requestRepo;
+    private LeaseTransactionRepo leaseTransactionRepo;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    public ProfilController(ItemRepo itemRepo, PersonsRepo personsRepo, RequestRepo requestRepo,
-                            LeaseTransactionRepo leaseTransactionRepo, AuthenticationService authenticationService){
+    public ProfilController(ItemRepo itemRepo,
+                            PersonsRepo personsRepo,
+                            RequestRepo requestRepo,
+                            LeaseTransactionRepo leaseTransactionRepo,
+                            AuthenticationService authenticationService){
         this.itemRepo = itemRepo;
         this.personRepo = personsRepo;
         this.requestRepo = requestRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.authenticationService = authenticationService;
+        this.leaseTransactionRepo = leaseTransactionRepo;
     }
 
     @GetMapping(path= "/")
@@ -60,6 +65,20 @@ public class ProfilController {
         return "profile";
     }
 
+    @GetMapping(path = "/profile/history")
+    public String history(Model model){
+        Person loggedIn = authenticationService.getCurrentUser();
+        List<LeaseTransaction> leased =
+                leaseTransactionRepo
+                        .findAllByLeaserAndLeaseIsConcludedIsTrue(loggedIn);
+        List<LeaseTransaction> lent =
+                leaseTransactionRepo
+                        .findAllByItemOwnerAndLeaseIsConcludedIsTrue(loggedIn);
+        model.addAttribute("leased", leased);
+        model.addAttribute("lent", lent);
+        return "historia";
+    }
+
     @GetMapping(path= "/profile/{id}")
     public String profileOther(Model model,
                                @PathVariable Long id){
@@ -75,6 +94,8 @@ public class ProfilController {
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
         return "profileDetails";
     }
+
+
 
     @GetMapping(value="deleteUser/{username}")
     public String deleteUser(@PathVariable String username){
