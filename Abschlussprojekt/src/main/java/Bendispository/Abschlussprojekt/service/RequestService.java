@@ -3,9 +3,9 @@ package Bendispository.Abschlussprojekt.service;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -53,7 +53,8 @@ public class RequestService {
                           ItemRepo itemRepo,
                           LeaseTransactionRepo leaseTransactionRepo,
                           PaymentTransactionRepo paymentTransactionRepo,
-                          ConflictTransactionRepo conflictTransactionRepo){
+                          ConflictTransactionRepo conflictTransactionRepo,
+                          RatingRepo ratingRepo){
         this.conflictTransactionRepo = conflictTransactionRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.paymentTransactionRepo = paymentTransactionRepo;
@@ -67,13 +68,14 @@ public class RequestService {
                 requestRepo,
                 proPaySubscriber,
                 paymentTransactionRepo,
-                conflictTransactionRepo);
+                conflictTransactionRepo,
+                ratingRepo);
     }
 
     public void showRequests(Model model,
                               Long id) {
         Person me = personsRepo.findById(id).orElse(null);
-        List<Request> myRequests = requestRepo.findByRequester(me);
+        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
         deleteObsoleteRequests(myRequests);
         model.addAttribute("myRequests", myRequests);
         List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
@@ -90,7 +92,6 @@ public class RequestService {
             }
         }
         myRequests.removeAll(toRemove);
-
     }
 
     public boolean checkRequestedDate(String startDate,
