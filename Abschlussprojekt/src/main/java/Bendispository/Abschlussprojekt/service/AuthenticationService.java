@@ -16,7 +16,7 @@ public class AuthenticationService {
         this.personsRepo = personsRepo;
     }
 
-    /////DONT TOUCH THIS FUNCTION
+    /////DONT TOUCH THIS FUNCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public Person getCurrentUser(){
         MyUserPrincipal userDetails = (MyUserPrincipal)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return personsRepo.findByUsername(userDetails.getUsername());
