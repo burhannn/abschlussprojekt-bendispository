@@ -8,10 +8,10 @@
 <div class="projekt_container">
 <h1>Rented Items by myself</h1>
     <div th:each="leaseTransaction : ${myRentedItems}">
-        <tr><div class="item_name" th:text= "|Item:|"></div></tr>
-        <a th:href="|@{'/Item/' + ${leaseTransaction.item.id}}|" th:text= "${leaseTransaction.item.name}"></a>
-        <tr><div th:text= "|Owner:|"></div></tr>
-        <a th:href = "@{'/profile/' + ${leaseTransaction.item.owner.id}}">Profil</a>
+        <tr> Item: <a th:href = "|@{'/Item/' + ${leaseTransaction.item.id}}|"
+                      th:text= "${leaseTransaction.item.name}"></a></tr><br>
+        <tr> Owner: <a th:href = "@{'/profile/' + ${leaseTransaction.item.owner.id}}|"
+                       th:text= "${leaseTransaction.item.owner.username}"></a></tr><br>
         <tr><div th:text="|Start date: ${#temporals.format(leaseTransaction.startDate, 'yyyy-MM-dd')}|"></div></tr>
         <tr><div th:text="|To be returned on: ${leaseTransaction.endDate}|"></div></tr>
             <form method="post">
