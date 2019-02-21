@@ -13,13 +13,19 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRe
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+<<<<<<< HEAD
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+=======
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+>>>>>>> 9cebede83c899b56463192414e696accedec0927
 
 import java.security.Principal;
 import java.util.List;
@@ -36,7 +42,8 @@ public class ProfilController {
     private final PaymentTransactionRepo paymentTransactionRepo;
     private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
-    private RatingRepo ratingRepo;
+    private final RequestService requestService;
+    private final RatingRepo ratingRepo;
     private final ConflictTransactionRepo conflictTransactionRepo;
 
     @Autowired
@@ -62,6 +69,7 @@ public class ProfilController {
                 proPaySubscriber,
                 paymentTransactionRepo,
                 conflictTransactionRepo);
+        this.requestService = requestService;
     }
 
     @GetMapping(path= "/")
@@ -93,6 +101,7 @@ public class ProfilController {
         return "profile";
     }
 
+
     @GetMapping(path = "/profile/history")
     public String history(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
@@ -106,6 +115,7 @@ public class ProfilController {
         model.addAttribute("lent", lent);
         return "historia";
     }
+
 
     @GetMapping(path= "/profile/{id}")
     public String profileOther(Model model,
@@ -123,12 +133,34 @@ public class ProfilController {
         return "profileDetails";
     }
 
-
-
     @GetMapping(value="deleteUser/{username}")
     public String deleteUser(@PathVariable String username){
         Person deletePerson = personRepo.findByUsername(username);
         personRepo.delete(deletePerson);
         return "redirect:/profilub";
+    }
+    @GetMapping(path= "/editProfile")
+    public String editProfil(Model model){
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("person",loggedIn);
+
+        return "editProfile";
+    }
+    @PostMapping(path = "editProfile")
+    public String saveProfileInDatabase(
+            @RequestParam(value = "Firstname", required = true) String firstName,
+            @RequestParam(value = "Lastname", required = true) String lastName,
+            @RequestParam(value = "Password", required = true) String password,
+            @RequestParam(value = "Email", required = true) String email,
+            @RequestParam(value = "City", required = true) String city) {
+
+        Person loggedIn = authenticationService.getCurrentUser();
+        loggedIn.setFirstName(firstName);
+        loggedIn.setLastName(lastName);
+        loggedIn.setPassword(password);
+        loggedIn.setEmail(email);
+        loggedIn.setCity(city);
+        personRepo.save(loggedIn);
+        return "redirect:/profile";
     }
 }

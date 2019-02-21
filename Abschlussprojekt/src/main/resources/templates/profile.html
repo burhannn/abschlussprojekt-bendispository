@@ -10,8 +10,9 @@
         <a href = "/profile/requests">Requests</a>
         <a href = "/profile/rentedItems">Rented Items</a>
         <a href = "/profile/returneditems">Returned To You</a>
-        <a href="/chargeAccount">Charge account</a>
+
     </div>
+    <a href = "/editProfile">Edit Profile</a>
     <div class="my_rating">
         <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person.getAverageRatings()}|"></tr>
         <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
@@ -23,6 +24,7 @@
         <tr><div th:text="|City: ${person.city}|"></div></tr>
         <tr><div th:text="|Username: ${person.username}|"></div></tr>
         <tr><div th:text="|Kontostand: ${account.amount}|"></div></tr>
+        <tr><div><a href="/chargeAccount">Charge account</a></div></tr>
         <div style="width:300px;height:150px;line-height:3em;overflow:auto;padding:5px;">
             <h4>Current reservations</h4>
             <div th:each="reservation : ${reservations}">

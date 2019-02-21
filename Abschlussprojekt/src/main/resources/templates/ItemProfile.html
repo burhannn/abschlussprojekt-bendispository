@@ -13,20 +13,19 @@
     <div th:if="${message}">
         <div class="alert_error" th:text="${message}"></div>
     </div>
-    <div class="item_owner_description" th:text = "|from ${itemOwner?.username}|"></div>
+    <div class="item_owner_description"></div>
 
         <h1 th:text = "${itemProfile?.name}"></h1>
             <tr><div th:text = "| Name: ${itemProfile?.name}|"></div></tr>
             <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>
             <tr><div th:text = "| Place: ${itemProfile?.place}|"></div></tr>
             <tr><div th:text = "| Deposit: ${itemProfile?.deposit}|" ></div></tr>
-            <tr><div th:text = "| CostPerDay: ${itemProfile?.costPerDay}|" ></div></tr>
-            <tr> Angaben zum Verleiher: <a th:href = "@{'/profile/' + ${itemOwner.id}}">Profil</a> </tr>
-
-    <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|" ></div></tr>
+            <tr><div th:text = "| Cost per day: ${itemProfile?.costPerDay}|" ></div></tr>
+            <tr> Angaben zum Verleiher: <a th:href = "@{'/profile/' + ${itemOwner.id}}">Profil</a> </tr><br>
+            <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|" ></div></tr>
             <img th:src="${pic} == null ? _ : @{'data:image/png;base64,'+${pic}}">
-    <tr><a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Anfrage verschicken</a></tr>
-
+    <a th:href = "@{'/item' + ${itemProfile.id} + '/requestItem'}">Send request</a><br>
+    <a th:if = "${itemOwner.username == loggedInPerson.username}" th:href="@{'/editItem/' + ${itemProfile?.id}}">Edit</a><br>
 </div>
 <a href = "/profile/requests">Requests</a>
 <a href="/" class="back_button">Back</a>

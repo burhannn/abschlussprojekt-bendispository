@@ -14,6 +14,7 @@
               <input type="radio" name="delete" value="-1">delete
               <input type="hidden" value="0" th:value="${request.id}" name="requestID">
               <button type = "submit">submit</button>
+          </form>
           <div th:if="${request.status.name() == 'APPROVED'}">
               <form method="post" action="/rating">
                   <td>Geben Sie Ihr Rating ab:</td>
