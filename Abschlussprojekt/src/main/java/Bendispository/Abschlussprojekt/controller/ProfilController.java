@@ -2,7 +2,6 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.UploadFile;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
