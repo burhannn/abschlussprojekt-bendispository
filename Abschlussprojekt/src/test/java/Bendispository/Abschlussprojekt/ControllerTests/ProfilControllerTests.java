@@ -1,15 +1,12 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
-import Bendispository.Abschlussprojekt.service.AuthenticationService;
-import Bendispository.Abschlussprojekt.service.ConflictService;
-import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
@@ -86,6 +83,9 @@ public class ProfilControllerTests {
 
     @MockBean
     ConflictService conflictService;
+
+    @MockBean
+    RequestService requestService;
 
     Person dummy1;
     Person dummy2;

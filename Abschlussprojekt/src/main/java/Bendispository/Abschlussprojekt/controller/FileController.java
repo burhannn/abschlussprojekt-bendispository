@@ -99,7 +99,7 @@ public class FileController {
         Optional<Item> item = itemRepo.findById(id);
         model.addAttribute("Item", item.get());
         Person loggedIn = authenticationService.getCurrentUser();
-        inpItem.setOwner(loggedIn);
+        inpItem.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
         loggedIn.setItems(itemsOwner);
         itemRepo.save(inpItem);

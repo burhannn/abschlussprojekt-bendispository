@@ -8,10 +8,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import Bendispository.Abschlussprojekt.service.AuthenticationService;
-import Bendispository.Abschlussprojekt.service.ConflictService;
-import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
-import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
+import Bendispository.Abschlussprojekt.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,6 +67,9 @@ public class LoginRegistrationTests {
 
     @MockBean
     RatingRepo ratingRepo;
+
+    @MockBean
+    RequestService requestService;
 
     Person dummy1;
 
