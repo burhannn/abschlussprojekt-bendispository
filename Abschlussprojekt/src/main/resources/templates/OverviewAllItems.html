@@ -11,8 +11,9 @@
         <a href="/profilub">Overview Users</a>
 		<a th:if="${loggedInPerson.username == 'admin'}" href="/conflicts">Conflicts</a>
 		<a href="/logout">Logout</a>
-
-
+    </div>
+    <div class="open_ratings">
+        <a href="/openRatings">Open Ratings</a>
     </div>
     <div th:if="${message}">
         <div class="alert_error" th:text="|${message} ${itemname}|"></div>

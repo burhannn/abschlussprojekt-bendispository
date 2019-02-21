@@ -65,7 +65,8 @@ public class RequestController {
                                                          requestRepo,
                                                          proPaySubscriber,
                                                          paymentTransactionRepo,
-                                                         conflictTransactionRepo);
+                                                         conflictTransactionRepo,
+                                                         ratingRepo);
         this.requestService = requestService;
     }
 
@@ -186,22 +187,6 @@ public class RequestController {
         requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
         return "redirect:/Item/{id}";
-    }
-
-    @PostMapping(path="/rating")
-    public String Rating(Model model,
-                         int rating,
-                         Long requestID){
-
-        Request request = requestRepo.findById(requestID).orElse(null);
-        Person owner = request.getRequestedItem().getOwner();
-        Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
-        if (rating != -1){
-            ratingRepo.save(rating1);
-            owner.addRating(rating1);
-            personsRepo.save(owner);
-        }
-        return "redirect:";
     }
 
     @GetMapping(path="/profile/rentedItems")

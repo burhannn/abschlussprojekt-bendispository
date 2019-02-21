@@ -1,9 +1,11 @@
 package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.*;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -26,6 +28,8 @@ public class TransactionService {
 
     private final ConflictTransactionRepo conflictTransactionRepo;
 
+    private RatingRepo ratingRepo;
+
     private ProPaySubscriber proPaySubscriber;
 
     @Autowired
@@ -33,13 +37,15 @@ public class TransactionService {
                               RequestRepo requestRepo,
                               ProPaySubscriber proPaySubscriber,
                               PaymentTransactionRepo paymentTransactionRepo,
-                              ConflictTransactionRepo conflictTransactionRepo) {
+                              ConflictTransactionRepo conflictTransactionRepo,
+                              RatingRepo ratingRepo) {
         super();
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.requestRepo = requestRepo;
         this.proPaySubscriber = proPaySubscriber;
         this.paymentTransactionRepo = paymentTransactionRepo;
         this.conflictTransactionRepo = conflictTransactionRepo;
+        this.ratingRepo = ratingRepo;
     }
 
     public boolean lenderApproved(Request request){
@@ -59,11 +65,24 @@ public class TransactionService {
 
             request.setLeaseTransaction(leaseTransaction);
             setRequestApproved(request);
+            createRating(request);
             requestRepo.save(request);
 
             return true;
         }
         return false;
+    }
+    private void createRating(Request request){
+        Rating rating1 = new Rating();
+        rating1.setRequest(request);
+        rating1.setRater(request.getRequester());
+
+        Rating rating2 = new Rating();
+        rating2.setRequest(request);
+        rating2.setRater(request.getRequestedItem().getOwner());
+
+        ratingRepo.save(rating1);
+        ratingRepo.save(rating2);
     }
 
     private void setRequestApproved(Request request){

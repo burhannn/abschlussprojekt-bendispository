@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.ConflictTransaction;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -15,15 +16,18 @@ public class ConflictService {
 
     private final TransactionService transactionService;
 
+    private RatingRepo ratingRepo;
+
     @Autowired
     public ConflictService(LeaseTransactionRepo leaseTransactionRepo,
                            RequestRepo requestRepo,
                            ProPaySubscriber proPaySubscriber,
                            PaymentTransactionRepo paymentTransactionRepo,
-                           ConflictTransactionRepo conflictTransactionRepo) {
+                           ConflictTransactionRepo conflictTransactionRepo,
+                           RatingRepo ratingRepo) {
         super();
         this.conflictTransactionRepo = conflictTransactionRepo;
-        this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo);
+        this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo);
     }
 
     public void resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){
