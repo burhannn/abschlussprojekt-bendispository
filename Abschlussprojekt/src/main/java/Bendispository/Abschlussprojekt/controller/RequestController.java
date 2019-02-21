@@ -11,6 +11,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRe
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +38,8 @@ public class RequestController {
     private final PaymentTransactionRepo paymentTransactionRepo;
     private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
-    private RatingRepo ratingRepo;
+    private final RequestService requestService;
+    private final RatingRepo ratingRepo;
     private final ConflictTransactionRepo conflictTransactionRepo;
 
     @Autowired
@@ -47,7 +49,8 @@ public class RequestController {
                              PersonsRepo personsRepo,
                              PaymentTransactionRepo paymentTransactionRepo,
                              RatingRepo ratingrepo,
-                             ConflictTransactionRepo conflictTransactionRepo) {
+                             ConflictTransactionRepo conflictTransactionRepo,
+                             RequestService requestService) {
         this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
@@ -63,6 +66,7 @@ public class RequestController {
                                                          proPaySubscriber,
                                                          paymentTransactionRepo,
                                                          conflictTransactionRepo);
+        this.requestService = requestService;
     }
 
     @GetMapping(path = "/item{id}/requestItem")
@@ -145,34 +149,36 @@ public class RequestController {
     @GetMapping(path="/profile/requests")
     public String Requests(Model model){
         Long id = authenticationService.getCurrentUser().getId();
-        showRequests(model,id);
+        requestService.showRequests(model,id);
         return "requests";
     }
 
     @PostMapping(path="/profile/requests")
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
-                                        Integer delete,
+                                        Optional<Integer> delete,
                                         Integer requestMyItems,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
 
-        if(delete == -1){
-            requestRepo.deleteById(id);
-            return "requests";
-        }
+        if(delete.isPresent())
+            if(delete.get() == -1){
+                requestRepo.deleteById(requestID);
+                return "requests";
+            }
+
         if(requestMyItems == -1){
             request.setStatus(RequestStatus.DENIED);
             requestRepo.save(request);
-            showRequests(model,id);
+            requestService.showRequests(model,id);
             return "requests";
         }
         if(transactionService.lenderApproved(request)){
-            showRequests(model,id);
+            requestService.showRequests(model,id);
             return "requests";
         }
-        showRequests(model,id);
+        requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
         return "redirect:/Item/{id}";
     }
@@ -211,9 +217,10 @@ public class RequestController {
 
     @GetMapping(path= "/profile/returneditems")
     public String returnedItem(Model model){
+        Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
-                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
         return "returnedItems";
     }
@@ -233,7 +240,7 @@ public class RequestController {
         }
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
-                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalse();
+                        .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
         transactionService.itemIsIntact(leaseTransaction);
         // Feld: iwie Bewertung /Clara
@@ -261,15 +268,6 @@ public class RequestController {
                 .orElse(null);
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
         return "returnedItems";
-    }
-
-    private void showRequests(Model model,
-                              Long id) {
-        Person me = personsRepo.findById(id).orElse(null);
-        List<Request> listMyRequests = requestRepo.findByRequester(me);
-        model.addAttribute("myRequests", listMyRequests);
-        List<Request> RequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
-        model.addAttribute("requestsMyItems", RequestsMyItems);
     }
 }
 
