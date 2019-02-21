@@ -274,6 +274,10 @@ public class RequestController {
                 .findById(id)
                 .orElse(null);
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
+        List<LeaseTransaction> transactionList =
+              leaseTransactionRepo
+                    .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
+        model.addAttribute("transactionList", transactionList);
         return "returnedItems";
     }
 }
