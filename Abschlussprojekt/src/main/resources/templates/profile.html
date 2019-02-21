@@ -12,11 +12,12 @@
         <a href = "/profile/returneditems">Returned To You</a>
         <a href = "/profile/history">Lease History</a>
     </div>
+    <img th:src="@{img/star.png}" src="../static/img/star.png" height="100" width="100">
     <a href = "/editProfile">Edit Profile</a>
     <div class="my_rating">
         <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person.getAverageRatings()}|">
             <div th:each="i : ${#numbers.sequence( 1,person.getAverageRatings())}">
-                <img src="star.png">
+                <img th:src="@{img/star.png}" src="../static/img/star.png" height="100" width="100">
             </div>
         </tr>
         <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
