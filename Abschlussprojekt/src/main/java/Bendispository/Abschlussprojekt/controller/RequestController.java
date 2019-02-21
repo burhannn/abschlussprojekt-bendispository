@@ -83,9 +83,10 @@ public class RequestController {
                     "You cannot request the same item twice!");
             return "redirect:/Item/{id}";
         }
-        List<LeaseTransaction> list =
-                leaseTransactionRepo
-                        .findAllByItemIdAndStartDateGreaterThan(id, LocalDate.now());
+
+        List <LeaseTransaction> list = leaseTransactionRepo
+                                         .findAllByItemIdAndEndDateGreaterThan(id, LocalDate.now());
+
         Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);
         return "formRequest";
@@ -100,6 +101,7 @@ public class RequestController {
                                      //@RequestParam("startDay")
                                      ){
         LocalDate startdate, enddate;
+
         try{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             startdate = LocalDate.parse(startDate, formatter);
