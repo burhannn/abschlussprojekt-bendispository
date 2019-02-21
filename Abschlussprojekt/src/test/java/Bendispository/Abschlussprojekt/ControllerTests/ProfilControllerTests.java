@@ -76,9 +76,6 @@ public class ProfilControllerTests {
     AuthenticationService authenticationService;
 
     @MockBean
-    MyUserPrincipal blablabla;
-
-    @MockBean
     RatingRepo ratingRepo;
 
     @MockBean
@@ -296,14 +293,17 @@ public class ProfilControllerTests {
         mvc.perform(post("/addItem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
+                .param("place", "köln")
                 .param("deposit", "69")
                 .param("costPerDay", "69")
+                .param("file", "file.jpg")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("AddItem"))
                 .andExpect(model().attribute("newItem", hasProperty("id")))
                 .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
                 .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
+                .andExpect(model().attribute("newItem", hasProperty("place", equalTo("köln"))))
                 .andExpect(model().attribute("newItem", hasProperty("deposit", equalTo(69))))
                 .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));
     }
