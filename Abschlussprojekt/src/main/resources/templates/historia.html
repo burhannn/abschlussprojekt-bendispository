@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="">
+<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<body>
+<div class="my_actions_profile">
+    <a href="/profile">My Profile</a>
+    <a href="/addItem">Add Item</a>
+    <a href="/profilub">Overview Users</a>
+    <a href="/logout">Logout</a>
+</div>
+<div class="projekt_container">
+    <h2>Leased By You</h2>
+    <div th:each="lease1 : ${leased}">
+        <h4 class="header_container">
+            <a th:href="|@{'/Item/' + ${lease1.item.id}}|" th:text= "${lease1.item.name}"></a>
+        </h4>
+        <div>
+            <div class ="item_description">
+                <a th:href="|@{'/profile/' + ${lease1.item.owner.id}}|" th:text="|Owner: ${lease1.item.owner.username}|"></a>
+            </div>
+            <div class ="item_description" th:text="|Date: ${#temporals.format(lease1.startDate, 'yyyy-MM-dd')} - ${#temporals.format(lease1.endDate, 'yyyy-MM-dd')}|"></div>
+            <div th:each="payment : ${lease1.payments}">
+                <div class ="item_description" th:text="|Type: ${payment.type} Amount: ${payment.amount}|"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="projekt_container">
+    <h2>Lent Away</h2>
+    <div th:each="lease2 : ${lent}">
+        <h3 class="header_container">
+           <a th:href="|@{'/Item/' + ${lease2.item.id}}|" th:text= "${lease2.item.name}"></a>
+        </h3>
+        <div>
+            <div class ="item_description">
+                <a th:href="|@{'/profile/' + ${lease2.leaser.id}}|" th:text="|Leaser: ${lease2.leaser.username}|"></a>
+            </div>
+            <div class ="item_description" th:text="|Date: ${#temporals.format(lease2.startDate, 'yyyy-MM-dd')} - ${#temporals.format(lease2.endDate, 'yyyy-MM-dd')}|"></div>
+            <div th:each="payment : ${lease2.payments}">
+                <div class ="item_description" th:text="|Type: ${payment.type} Amount: ${payment.amount}|"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

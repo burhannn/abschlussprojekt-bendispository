@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.ControllerTests;
 
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ConflictService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -82,6 +83,9 @@ public class ProfilControllerTests {
 
     @MockBean
     RatingRepo ratingRepo;
+
+    @MockBean
+    ConflictService conflictService;
 
 
     Person dummy1;

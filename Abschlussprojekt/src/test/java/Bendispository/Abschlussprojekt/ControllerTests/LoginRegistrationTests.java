@@ -9,6 +9,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ConflictService;
 import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.service.MyUserPrincipal;
 import org.junit.Before;
@@ -63,6 +64,9 @@ public class LoginRegistrationTests {
 
     @MockBean
     AuthenticationService authenticationService;
+
+    @MockBean
+    ConflictService conflictService;
 
     @MockBean
     RatingRepo ratingRepo;

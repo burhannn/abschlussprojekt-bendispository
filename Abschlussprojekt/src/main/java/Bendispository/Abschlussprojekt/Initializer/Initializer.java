@@ -37,9 +37,9 @@ public class Initializer implements ServletContextInitializer {
         Person dummy_2 = mkPerson("mimi@gmail.com", "pandycandy", "pandy", "candy", "Düsseldorf", "abcdabcd", ratings);
 		Person admin = mkPerson("admin@admin.de", "admin", "admin", "admin", "admin", "rootroot", ratings);
 
-        Item dummyItem1 = mkItem(12, 5, "Ich bin ein stuhl", "stuhl", dummy_1);
-        Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1);
-        Item dummyItem3 = mkItem(1, 12, "ich bin billig", "stift", dummy_2);
+        Item dummyItem1 = mkItem(12, 5, "Ich bin ein stuhl", "stuhl", dummy_1, "köln");
+        Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1, "düsseldorf");
+        Item dummyItem3 = mkItem(1, 12, "ich bin billig", "stift", dummy_2, "wuppertal");
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
@@ -65,13 +65,14 @@ public class Initializer implements ServletContextInitializer {
         return p;
     }
 
-    private Item mkItem(int cost, int deposit, String desc, String name, Person person){
+    private Item mkItem(int cost, int deposit, String desc, String name, Person person, String place){
         Item item = new Item();
         item.setCostPerDay(cost);
         item.setDeposit(deposit);
         item.setDescription(desc);
         item.setName(name);
         item.setOwner(person);
+        item.setPlace(place);
         return item;
     }
 

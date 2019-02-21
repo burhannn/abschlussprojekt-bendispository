@@ -152,11 +152,16 @@ public class RequestController {
     @PostMapping(path="/profile/requests")
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
+                                        Integer delete,
                                         Integer requestMyItems,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
 
+        if(delete == -1){
+            requestRepo.deleteById(id);
+            return "requests";
+        }
         if(requestMyItems == -1){
             request.setStatus(RequestStatus.DENIED);
             requestRepo.save(request);
@@ -176,14 +181,15 @@ public class RequestController {
     public String Rating(Model model,
                          int rating,
                          Long requestID){
+
         Request request = requestRepo.findById(requestID).orElse(null);
         Person owner = request.getRequestedItem().getOwner();
-        //if (rating != -1){
-            Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
+        Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
+        if (rating != -1){
             ratingRepo.save(rating1);
             owner.addRating(rating1);
             personsRepo.save(owner);
-        //}
+        }
         return "redirect:";
     }
 
