@@ -1,6 +1,5 @@
 package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
@@ -110,13 +109,8 @@ public class TransactionService {
     }
 
     private void isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
-        if(LocalDate.now().isAfter(leaseTransaction.getEndDate())){
-            Period period = Period.between(leaseTransaction.getEndDate(), LocalDate.now());
-            int timeViolation = period.getDays();
-            leaseTransaction.setTimeframeViolation(true);
-            leaseTransaction.setLengthOfTimeframeViolation(timeViolation);
-
-            double amount = leaseTransaction.getItem().getCostPerDay() * timeViolation;
+        if(isTimeViolation(leaseTransaction)){
+            double amount = leaseTransaction.getItem().getCostPerDay() * leaseTransaction.getLengthOfTimeframeViolation();
             PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
             leaseTransaction.addPaymentTransaction(payment);
         }
@@ -168,5 +162,16 @@ public class TransactionService {
         conflictTransaction.setLeaseTransaction(leaseTransaction);
         conflictTransaction.setCommentary(commentary);
         conflictTransactionRepo.save(conflictTransaction);
+    }
+
+    public boolean isTimeViolation(LeaseTransaction leaseTransaction) {
+        if(LocalDate.now().isAfter(leaseTransaction.getEndDate())) {
+            Period period = Period.between(leaseTransaction.getEndDate(), LocalDate.now());
+            int timeViolation = period.getDays();
+            leaseTransaction.setTimeframeViolation(true);
+            leaseTransaction.setLengthOfTimeframeViolation(timeViolation);
+        return true;
+        }
+        return false;
     }
 }

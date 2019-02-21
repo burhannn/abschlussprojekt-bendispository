@@ -6,15 +6,20 @@ import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,29 +28,52 @@ import java.util.Optional;
 @Controller
 public class ProfilController {
 
-    private ItemRepo itemRepo;
-    private PersonsRepo personRepo;
-    private RequestRepo requestRepo;
-    private LeaseTransactionRepo leaseTransactionRepo;
-    private AuthenticationService authenticationService;
+    private final RequestRepo requestRepo;
+    private final ItemRepo itemRepo;
+    private final LeaseTransactionRepo leaseTransactionRepo;
+    private final PersonsRepo personRepo;
+    private final TransactionService transactionService;
+    private final PaymentTransactionRepo paymentTransactionRepo;
+    private final ProPaySubscriber proPaySubscriber;
+    private final AuthenticationService authenticationService;
+    private RatingRepo ratingRepo;
+    private final ConflictTransactionRepo conflictTransactionRepo;
 
     @Autowired
-    public ProfilController(ItemRepo itemRepo,
-                            PersonsRepo personsRepo,
-                            RequestRepo requestRepo,
-                            LeaseTransactionRepo leaseTransactionRepo,
-                            AuthenticationService authenticationService){
-        this.itemRepo = itemRepo;
-        this.personRepo = personsRepo;
+    public ProfilController(RequestRepo requestRepo,
+                             ItemRepo itemRepo,
+                             LeaseTransactionRepo leaseTransactionRepo,
+                             PersonsRepo personRepo,
+                             PaymentTransactionRepo paymentTransactionRepo,
+                             RatingRepo ratingrepo,
+                             ConflictTransactionRepo conflictTransactionRepo) {
+        this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
+        this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
-        this.authenticationService = authenticationService;
-        this.leaseTransactionRepo = leaseTransactionRepo;
+        this.personRepo = personRepo;
+        this.paymentTransactionRepo = paymentTransactionRepo;
+        this.conflictTransactionRepo = conflictTransactionRepo;
+        this.authenticationService = new AuthenticationService(personRepo);
+        this.proPaySubscriber = new ProPaySubscriber(personRepo,
+                leaseTransactionRepo);
+        this.transactionService = new TransactionService(leaseTransactionRepo,
+                requestRepo,
+                proPaySubscriber,
+                paymentTransactionRepo,
+                conflictTransactionRepo);
     }
 
     @GetMapping(path= "/")
-    public String Overview(Principal principal, Model model){
+    public String Overview(Principal principal, Model model, RedirectAttributes redirectAttributes){
         Person loggedIn = authenticationService.getCurrentUser();
+        for(LeaseTransaction leaseTransaction : leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(loggedIn)){
+            if(transactionService.isTimeViolation(leaseTransaction)){
+                model.addAttribute("message",
+                        "You have to return");
+                model.addAttribute("itemname", leaseTransaction.getItem().getName());
+            }
+        }
         List<Item> allOtherItems = itemRepo.findByOwnerNot(personRepo.findByUsername(loggedIn.getUsername()));
         model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
