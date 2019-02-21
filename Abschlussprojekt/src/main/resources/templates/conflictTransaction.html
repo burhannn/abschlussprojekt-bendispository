@@ -18,8 +18,8 @@
             <td th:text="|Owner Commentary: ${conflict.commentary}|"></td>
             <td>
                 <form method="post">
-                    <input type="radio" name="benificiary" value="-1" th:text="${conflict.leaseTransaction.leaser.username}">
-                    <input type="radio" name="benificiary" value="1" th:text="${conflict.leaseTransaction.item.owner.username}">
+                    <input type="radio" name="beneficiary" value="-1" th:text="${conflict.leaseTransaction.leaser.username}">
+                    <input type="radio" name="beneficiary" value="1" th:text="${conflict.leaseTransaction.item.owner.username}">
                     <input type="hidden" value="0" th:value="${conflict.id}" name="conflictId">
                     <button type = "submit">submit</button>
                 </form>

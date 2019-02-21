@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class RequestService {
     public void showRequests(Model model,
                               Long id) {
         Person me = personsRepo.findById(id).orElse(null);
-        List<Request> myRequests = requestRepo.findByRequester(me);
+        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
         deleteObsoleteRequests(myRequests);
         model.addAttribute("myRequests", myRequests);
         List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
@@ -47,6 +48,5 @@ public class RequestService {
             }
         }
         myRequests.removeAll(toRemove);
-
     }
 }

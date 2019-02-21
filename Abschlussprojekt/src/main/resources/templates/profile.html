@@ -14,7 +14,11 @@
     </div>
     <a href = "/editProfile">Edit Profile</a>
     <div class="my_rating">
-        <tr th:if="${person.getAverageRatings()} != -1" th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
+        <tr th:if="${person?.getAverageRatings()} != -1" th:text="|Rating: ${person?.getAverageRatings()}|">
+            <div th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}">
+                <img src="star.png">
+            </div>
+        </tr>
         <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
     </div>
     <div class="profil_information">

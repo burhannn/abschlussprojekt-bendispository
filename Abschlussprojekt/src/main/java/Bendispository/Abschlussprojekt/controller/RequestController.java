@@ -65,7 +65,8 @@ public class RequestController {
                                                          requestRepo,
                                                          proPaySubscriber,
                                                          paymentTransactionRepo,
-                                                         conflictTransactionRepo);
+                                                         conflictTransactionRepo,
+                                                         ratingRepo);
         this.requestService = requestService;
     }
 
@@ -190,22 +191,6 @@ public class RequestController {
         return "redirect:/Item/{id}";
     }
 
-    @PostMapping(path="/rating")
-    public String Rating(Model model,
-                         int rating,
-                         Long requestID){
-
-        Request request = requestRepo.findById(requestID).orElse(null);
-        Person owner = request.getRequestedItem().getOwner();
-        Rating rating1 = new Rating(request,authenticationService.getCurrentUser(),2);
-        if (rating != -1){
-            ratingRepo.save(rating1);
-            owner.addRating(rating1);
-            personsRepo.save(owner);
-        }
-        return "redirect:";
-    }
-
     @GetMapping(path="/profile/rentedItems")
     public String rentedItems(Model model){
         Person me = authenticationService.getCurrentUser();
@@ -273,6 +258,7 @@ public class RequestController {
         LeaseTransaction leaseTransaction = leaseTransactionRepo
                 .findById(id)
                 .orElse(null);
+        leaseTransaction.setLeaseIsConcluded(true);
         transactionService.itemIsNotIntact(me, leaseTransaction, comment);
         List<LeaseTransaction> transactionList =
               leaseTransactionRepo

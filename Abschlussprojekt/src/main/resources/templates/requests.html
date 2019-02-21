@@ -15,19 +15,6 @@
               <input type="hidden" value="0" th:value="${request.id}" name="requestID">
               <button type = "submit">submit</button>
           </form>
-          <div th:if="${request.status.name() == 'APPROVED'}">
-              <form method="post" action="/rating">
-                  <td>Geben Sie Ihr Rating ab:</td>
-                  <input type="radio" name="rating" value="1">1
-                  <input type="radio" name="rating" value="2">2
-                  <input type="radio" name="rating" value="3">3
-                  <input type="radio" name="rating" value="4">4
-                  <input type="radio" name="rating" value="5">5
-                  <input type="hidden" name="rating" value="-1" checked>
-                  <input type="hidden" value="0" th:value="${request.id}" name="requestID">
-                  <button type = "submit">submit</button>
-              </form>
-          </div>
       </tr>
   </div>
 </div>
@@ -40,7 +27,6 @@
                 <td class="item_name" th:text= "|Requested by: ${request.requester.username}|"></td>
             </tr>
         <td th:text="|Status: ${request.status}|"></td>
-        <td>
             <div th:if="${request.status.name() == 'PENDING'}">
                 <form method="post">
                     <input type="radio" name="requestMyItems" value="-1">reject
@@ -50,24 +36,10 @@
                 </form>
             </div>
         </td>
-            <div th:if="${request.status.name() == 'APPROVED'}">
-                <form method="post" action="/rating">
-                    <td>Geben Sie Ihr Rating ab:</td>
-                    <input type="radio" name="rating" value="1">1
-                    <input type="radio" name="rating" value="2">2
-                    <input type="radio" name="rating" value="3">3
-                    <input type="radio" name="rating" value="4">4
-                    <input type="radio" name="rating" value="5">5
-                    <input type="hidden" name="rating" value="-1" checked>
-                    <input type="hidden" value="0" th:value="${request.id}" name="requestID">
-                    <button type = "submit">submit</button>
-                </form>
-            </div>
-        </td>
     </tr>
         </table>
 </div>
 </div>
-<a class="back_button" href="/profile">Back</a> <!-- ergänzt um person (login) -->
+<a class="back_button" href="/profile">Back</a>
 </body>
 </html>

@@ -2,6 +2,8 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -66,7 +68,8 @@ public class ProfilController {
                 requestRepo,
                 proPaySubscriber,
                 paymentTransactionRepo,
-                conflictTransactionRepo);
+                conflictTransactionRepo,
+                ratingRepo);
         this.requestService = requestService;
     }
 
@@ -98,7 +101,33 @@ public class ProfilController {
         model.addAttribute("reservations", proPayAccount.getReservations());
         return "profile";
     }
+    @GetMapping(path = "/openRatings")
+    public String openRatings(Model model){
+        Person loggedIn = authenticationService.getCurrentUser();
+        List<Rating> ratings = ratingRepo.findAllByRater(loggedIn);
+        model.addAttribute("openRatings", ratings);
+        return "openRatings";
+    }
 
+    @PostMapping(path="/rating")
+    public String Rating(Model model,
+                         int rating,
+                         Long ratingID){
+        if (rating != -1){
+        Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
+        rating1.setRatingPoints(rating);
+        ratingRepo.save(rating1);
+
+        if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+            rating1.getRequest().getRequester().addRating(rating1);
+            personRepo.save(rating1.getRequest().getRequester());
+        }else{
+            rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
+            personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
+        }
+        }
+        return "redirect:";
+    }
 
     @GetMapping(path = "/profile/history")
     public String history(Model model){
