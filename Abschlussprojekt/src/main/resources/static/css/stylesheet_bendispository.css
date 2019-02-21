@@ -5,7 +5,7 @@ button,a {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 12px;
+    font-size: 15px;
     border-radius: 5px;
     cursor: pointer;
     font-family: monospace;
@@ -14,7 +14,8 @@ button,a {
 }
 .back_button{
     float: right;
-    background-color: olive;
+    background-color: blue;
+    width: 100px;
 }
 .back_button:hover{
     background-color: cornflowerblue;
@@ -32,6 +33,7 @@ button:hover, a:hover {
     padding: 2%;
     width: 86%;
     text-align: center;
+    position: relative;
 }
 .header_container{
     text-align: center;
@@ -59,29 +61,29 @@ button:hover, a:hover {
 body{
     color: black;
     font-family: Cambria !important;
+    font-size: 19px !important;
     background-color: #ffffcc !important;
     margin: 4% !important;
 }
 h1{
     font-weight: 100;
-    font-size: 21px;
+    font-size: 23px;
 }
 .projekt_container tr{
     width: 86%;
 }
 .item_owner_description{
-    float: right;
-    position: absolute;
-    right: 11%;
+    margin: 11%;
 }
 .item_description{
     color: olive;
 }
 .profil_information{
     text-align: left !important;
+    margin-top: 8%;
 }
 .my_items{
-    margin-top: 5%;
+    margin-top: 11%;
 }
 .item_name{
     font-weight: 600;
@@ -101,4 +103,26 @@ h1{
     background-color: #DFF2BF;
     color: #4F8A10;
     margin: auto;
+}
+.my_profile_administration{
+    float: right;
+    position: absolute;
+    right: 20px;
+    top: 17px;
+    display: grid;
+}
+.item_owner_description img{
+    max-height: 145px;
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+.current_reservations{
+    height: 133px;
+    line-height: 1.5em;
+    overflow: auto;
+    padding: 0% 0% 0% 4%;
+    background-color: ghostwhite;
+    box-shadow: inset 0 0 10px gray;
+    margin: 6% 0%;
+    font-size: 17px;
 }

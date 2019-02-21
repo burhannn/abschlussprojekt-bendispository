@@ -4,23 +4,28 @@
 <head>
 </head>
 <body>
+<div class="my_actions_profile">
+    <a href = "/profile/requests">Requests</a>
+    <a href = "/profile/rentedItems">Rented Items</a>
+    <a href = "/profile/returneditems">Returned To You</a>
+    <a href = "/profile/history">Lease History</a>
+</div>
 <div class="projekt_container">
-<h1>My Profile</h1>
-    <div class="my_actions_profile">
-        <a href = "/profile/requests">Requests</a>
-        <a href = "/profile/rentedItems">Rented Items</a>
-        <a href = "/profile/returneditems">Returned To You</a>
-        <a href = "/profile/history">Lease History</a>
+    <h1>My Profile</h1>
+    <div class="my_profile_administration">
+        <a href = "/editProfile">Edit Profile</a>
+        <a href="/chargeAccount">Charge account</a>
     </div>
-    <img th:src="@{img/star.png}" src="../static/img/star.png" height="100" width="100">
-    <a href = "/editProfile">Edit Profile</a>
-    <div class="my_rating">
-        <tr th:if="${person?.getAverageRatings()} != -1" th:text="|Rating: ${person?.getAverageRatings()}|">
-            <div th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}">
-                <img src="star.png">
+    <div class="my_rating" th:if="${person?.getAverageRatings()} != -1">
+        <tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
+        <tr>
+            <div>
+                <img th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{img/star.png}" src="../static/img/star.png" height="50" width="50">
             </div>
         </tr>
-        <tr th:if="${person.getAverageRatings()} == -1">Rating: No rating existing yet</tr>
+    </div>
+    <div class="my_rating" th:if="${person.getAverageRatings()} == -1">
+        <tr>Rating: No rating existing yet</tr>
     </div>
     <div class="profil_information">
         <tr><div th:text="|Last Name : ${person?.lastName}|"></div></tr>
@@ -29,8 +34,7 @@
         <tr><div th:text="|City: ${person?.city}|"></div></tr>
         <tr><div th:text="|Username: ${person?.username}|"></div></tr>
         <tr><div th:text="|Kontostand: ${account?.amount}|"></div></tr>
-        <tr><div><a href="/chargeAccount">Charge account</a></div></tr>
-        <div style="width:300px;height:150px;line-height:3em;overflow:auto;padding:5px;">
+        <div class="current_reservations">
             <h4>Current reservations</h4>
             <div th:each="reservation : ${reservations}">
                 <tr>
