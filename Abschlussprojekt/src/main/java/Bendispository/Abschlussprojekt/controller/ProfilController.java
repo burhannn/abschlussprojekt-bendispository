@@ -20,12 +20,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-<<<<<<< HEAD
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-=======
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
->>>>>>> 9cebede83c899b56463192414e696accedec0927
 
 import java.security.Principal;
 import java.util.List;
@@ -53,7 +50,8 @@ public class ProfilController {
                              PersonsRepo personRepo,
                              PaymentTransactionRepo paymentTransactionRepo,
                              RatingRepo ratingrepo,
-                             ConflictTransactionRepo conflictTransactionRepo) {
+                             ConflictTransactionRepo conflictTransactionRepo,
+                             RequestService requestService) {
         this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
