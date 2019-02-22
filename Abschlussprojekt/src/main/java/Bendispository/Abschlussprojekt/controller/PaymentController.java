@@ -46,7 +46,7 @@ public class PaymentController {
         }
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 
     @PostMapping(path = "/chargeaccount")
@@ -77,7 +77,7 @@ public class PaymentController {
         model.addAttribute("success", "Account has been charged!");
         model.addAttribute("person", currentUser);
         model.addAttribute("account", account);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 
 }

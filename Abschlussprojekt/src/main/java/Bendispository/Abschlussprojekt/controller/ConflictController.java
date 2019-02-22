@@ -37,7 +37,7 @@ public class ConflictController {
         Person loggedin = authenticationService.getCurrentUser();
         if(loggedin.getUsername().equals("admin")){
             showConflicts(model);
-            return "conflictTransaction";
+            return "rentsTmpl/conflictTransaction";
         }
         return "redirect:/";
     }
@@ -54,7 +54,7 @@ public class ConflictController {
             return "redirect:/conflicts";
         }
         showConflicts(model);
-        return "conflictTransaction";
+        return "rentsTmpl/conflictTransaction";
     }
 
     public void showConflicts(Model model){

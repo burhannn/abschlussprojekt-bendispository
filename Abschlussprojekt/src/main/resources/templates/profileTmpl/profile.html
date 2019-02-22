@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
 </head>
 <body>
@@ -23,7 +23,7 @@
         <tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
         <tr>
             <div>
-                <img th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{img/star.png}" src="../static/img/star.png" height="50" width="50">
+                <img th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{img/star.png}" src="../../static/img/star.png" height="50" width="50">
             </div>
         </tr>
     </div>

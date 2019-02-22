@@ -90,7 +90,7 @@ public class RequestController {
 
         Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);
-        return "formRequest";
+        return "rentsTmpl/formRequest";
     }
 
     @PostMapping(path = "/item/{id}/requestitem")
@@ -108,8 +108,9 @@ public class RequestController {
     public String Requests(Model model){
         Long id = authenticationService.getCurrentUser().getId();
         requestService.showRequests(model,id);
-        return "requests";
+        return "rentsTmpl/requests";
     }
+
     @PostMapping(path = "/profile/deleterequest/{id}")
     public String deleteRequest(@PathVariable Long id){
         requestRepo.deleteById(id);
@@ -128,11 +129,11 @@ public class RequestController {
             request.setStatus(RequestStatus.DENIED);
             requestRepo.save(request);
             requestService.showRequests(model,id);
-            return "requests";
+            return "rentsTmpl/requests";
         }
         if(transactionService.lenderApproved(request)){
             requestService.showRequests(model,id);
-            return "requests";
+            return "rentsTmpl/requests";
         }
         requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
@@ -142,7 +143,7 @@ public class RequestController {
     @GetMapping(path="/profile/renteditems")
     public String rentedItems(Model model){
         showRentedAndLeasedItems(model);
-        return "rentedItems";
+        return "itemTmpl/rentedItems";
     }
 
     public void showRentedAndLeasedItems(Model model){
@@ -151,6 +152,7 @@ public class RequestController {
         model.addAttribute("myRentedItems", myRentedItems);
         List<LeaseTransaction> myLeasedItems = leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(me);
         model.addAttribute("myLeasedItems", myLeasedItems);
+        //return "itemTmpl/rentedItems";
     }
 
     @PostMapping(path = "/profile/renteditems")
@@ -164,7 +166,7 @@ public class RequestController {
             return "redirect:/profile/renteditems";
         }
         showRentedAndLeasedItems(model);
-        return "rentedItems";
+        return "itemTmpl/rentedItems";
     }
 
     @GetMapping(path= "/profile/returneditems")
@@ -174,7 +176,7 @@ public class RequestController {
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 
     @PostMapping(path= "/profile/returneditems")
@@ -188,7 +190,6 @@ public class RequestController {
         Long id = authenticationService.getCurrentUser().getId();
         Person me = personsRepo.findById(id).orElse(null);
         if(itemIntact == -1){
-            // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
         if(!(transactionService.itemIsIntact(leaseTransaction))){
@@ -200,8 +201,7 @@ public class RequestController {
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        // Feld: iwie Bewertung /Clara
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 
     @GetMapping(path= "/profile/returneditems/{transactionId}/issue")
@@ -229,7 +229,7 @@ public class RequestController {
               leaseTransactionRepo
                     .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 }
 
