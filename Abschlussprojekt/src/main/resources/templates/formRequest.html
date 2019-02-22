@@ -29,6 +29,9 @@
             <p th:text="|${#temporals.format(lease.startDate, 'yyyy.MM.dd')} - ${#temporals.format(lease.endDate, 'yyyy.MM.dd')}|"></p>
         </div>
     </div>
+    <div th:unless="${!leases.isEmpty()}">
+        <h4>Currently no future reservations for this item.</h4>
+    </div>
 
 </div>
 
