@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 
 @Controller
@@ -34,10 +36,7 @@ public class ConflictController {
     public String listAllConflictTransaction(Model model){
         Person loggedin = authenticationService.getCurrentUser();
         if(loggedin.getUsername().equals("admin")){
-            List<ConflictTransaction> allConflicts =
-                    conflictTransactionRepo
-                            .findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
-            model.addAttribute("allConflicts", allConflicts);
+            showConflicts(model);
             return "conflictTransaction";
         }
         return "redirect:/";
@@ -46,11 +45,20 @@ public class ConflictController {
     @PostMapping(path = "/conflicts")
     public String addChangesConflictTransaction(Model model,
                                                 Long conflictId,
-                                                Integer beneficiary){
+                                                Integer beneficiary,
+                                                RedirectAttributes redirectAttributes){
         ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
-        conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1);
+        if(!conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1)){
+            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+            showConflicts(model);
+            return "redirect:/conflicts";
+        }
+        showConflicts(model);
+        return "conflictTransaction";
+    }
+
+    public void showConflicts(Model model){
         List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
         model.addAttribute("allConflicts", allConflicts);
-        return "conflictTransaction";
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Component
 public class TransactionService {
@@ -55,6 +56,9 @@ public class TransactionService {
         if(proPaySubscriber.checkDeposit(deposit,
                                          requester.getUsername())) {
             int depositId = proPaySubscriber.makeDeposit(request);
+            if(depositId == -1){
+                return false;
+            }
             LeaseTransaction leaseTransaction = new LeaseTransaction();
             leaseTransaction.addLeaseTransaction(request, depositId);
 
@@ -72,6 +76,7 @@ public class TransactionService {
         }
         return false;
     }
+
     private void createRating(Request request){
         Rating rating1 = new Rating();
         rating1.setRequest(request);
@@ -114,43 +119,55 @@ public class TransactionService {
         return (start1.isBefore(end2) && start2.isBefore(end1));
     }
 
-    public void itemReturnedToLender(LeaseTransaction leaseTransaction){
+    public boolean itemReturnedToLender(LeaseTransaction leaseTransaction){
         Person leaser = leaseTransaction.getLeaser();
         Person lender = leaseTransaction.getItem().getOwner();
-        leaseTransaction.setItemIsReturned(true);
 
         double amount = (double) leaseTransaction.getDuration() * leaseTransaction.getItem().getCostPerDay();
+        if( !(proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount))) {
+            return false;
+        }
+        leaseTransaction.setItemIsReturned(true);
         PaymentTransaction payment = makePayment(leaser, lender, amount,
                                                  leaseTransaction, PaymentType.RENTPRICE);
-        proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
         leaseTransaction.addPaymentTransaction(payment);
         isReturnedInTime(leaseTransaction, leaser, lender);
         leaseTransactionRepo.save(leaseTransaction);
+        return true;
     }
 
-    private void isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
+    private boolean isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
         if(isTimeViolation(leaseTransaction)){
             double amount = leaseTransaction.getItem().getCostPerDay() * leaseTransaction.getLengthOfTimeframeViolation();
             PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
-            proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+            if( !(proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount))){
+                return false;
+            }
             leaseTransaction.addPaymentTransaction(payment);
         }
+        return true;
     }
 
-    public void itemIsIntact(LeaseTransaction leaseTransaction){
-        proPaySubscriber
+    public boolean itemIsIntact(LeaseTransaction leaseTransaction){
+        ProPayAccount account = proPaySubscriber
                 .releaseReservation(
                         leaseTransaction.getLeaser().getUsername(),
                         leaseTransaction.getDepositId());
+        if(account == null)
+            return false;
         conclude(leaseTransaction);
+        return true;
     }
 
-    public void itemIsNotIntactConclusion(LeaseTransaction leaseTransaction) {
-        proPaySubscriber
+    public boolean itemIsNotIntactConclusion(LeaseTransaction leaseTransaction) {
+        ProPayAccount account = proPaySubscriber
                 .releaseReservationAndPunishUser(
                         leaseTransaction.getLeaser().getUsername(),
                         leaseTransaction.getDepositId());
+        if(account == null)
+            return false;
         conclude(leaseTransaction);
+        return true;
     }
 
     private void conclude(LeaseTransaction leaseTransaction){
@@ -172,7 +189,6 @@ public class TransactionService {
         paymentTransaction.setLeaseTransaction(leaseTransaction);
         paymentTransaction.setPaymentIsConcluded(true);
         paymentTransactionRepo.save(paymentTransaction);
-        //proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
         return paymentTransaction;
     }
 

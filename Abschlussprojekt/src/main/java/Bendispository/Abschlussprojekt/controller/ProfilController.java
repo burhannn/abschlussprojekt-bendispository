@@ -94,13 +94,17 @@ public class ProfilController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person", loggedIn);
 
-        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
+        ProPayAccount account = proPaySubscriber.getAccount(loggedIn.getUsername());
+        if(account == null){
+            account = new ProPayAccount();
+            model.addAttribute("message", "Something went wrong with ProPay!");
+        }
 
-        ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername());
-        model.addAttribute("account", proPayAccount);
-        model.addAttribute("reservations", proPayAccount.getReservations());
+        model.addAttribute("account", account);
+        model.addAttribute("reservations", account.getReservations());
         return "profile";
     }
+
     @GetMapping(path = "/openratings")
     public String openRatings(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
@@ -114,17 +118,17 @@ public class ProfilController {
                          int rating,
                          Long ratingID){
         if (rating != -1){
-        Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
-        rating1.setRatingPoints(rating);
-        ratingRepo.save(rating1);
+            Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
+            rating1.setRatingPoints(rating);
+            ratingRepo.save(rating1);
 
-        if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
-            rating1.getRequest().getRequester().addRating(rating1);
-            personRepo.save(rating1.getRequest().getRequester());
-        }else{
-            rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
-            personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
-        }
+            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+                rating1.getRequest().getRequester().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequester());
+            }else{
+                rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
+            }
         }
         return "redirect:/";
     }

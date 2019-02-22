@@ -35,16 +35,21 @@ public class PaymentController {
     }
 
     @GetMapping(path = "/chargeaccount")
-    public String saveAccount(Model model){
+    public String saveAccount(Model model,
+                              RedirectAttributes redirectAttributes){
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(username);
+        if(proPayAccount == null) {
+            proPayAccount = new ProPayAccount();
+            model.addAttribute("message", "Something went wrong with ProPay!");
+        }
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
         return "chargeAccount";
     }
 
-    @PostMapping(path="/chargeaccount")
+    @PostMapping(path = "/chargeaccount")
     public String chargeAccount(Model model,
                                 RedirectAttributes redirectAttributes,
                                 double amount) {
@@ -56,12 +61,23 @@ public class PaymentController {
 
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
-        proPaySubscriber.chargeAccount(username, amount);
-        model.addAttribute("success", "Account has been charged!");
+        ProPayAccount account = proPaySubscriber.chargeAccount(username, amount);
+        if(account == null){
+            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+            model.addAttribute("person", currentUser);
+            return "redirect:/chargeaccount";
+        }
 
-        ProPayAccount proPayAccount = proPaySubscriber.getAccount(username);
+        account = proPaySubscriber.getAccount(username);
+        if(account == null){
+            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+            model.addAttribute("person", currentUser);
+            return "redirect:/chargeaccount";
+        }
+        model.addAttribute("success", "Account has been charged!");
         model.addAttribute("person", currentUser);
-        model.addAttribute("account", proPayAccount);
+        model.addAttribute("account", account);
         return "chargeAccount";
     }
+
 }

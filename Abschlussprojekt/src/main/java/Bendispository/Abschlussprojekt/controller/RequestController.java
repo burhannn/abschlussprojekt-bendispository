@@ -135,25 +135,35 @@ public class RequestController {
             return "requests";
         }
         requestService.showRequests(model,id);
-        redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
+        redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
         return "redirect:/item/{id}";
     }
 
     @GetMapping(path="/profile/renteditems")
     public String rentedItems(Model model){
+        showRentedAndLeasedItems(model);
+        return "rentedItems";
+    }
+
+    public void showRentedAndLeasedItems(Model model){
         Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
         model.addAttribute("myRentedItems", myRentedItems);
         List<LeaseTransaction> myLeasedItems = leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(me);
         model.addAttribute("myLeasedItems", myLeasedItems);
-        return "rentedItems";
     }
 
     @PostMapping(path = "/profile/renteditems")
     public String returnItem(Model model,
-                             Long id){
+                             Long id,
+                             RedirectAttributes redirectAttributes){
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
-        transactionService.itemReturnedToLender(leaseTransaction);
+        if( !(transactionService.itemReturnedToLender(leaseTransaction))){
+            redirectAttributes.addFlashAttribute("message", "Something wrong with ProPay!");
+            showRentedAndLeasedItems(model);
+            return "redirect:/profile/renteditems";
+        }
+        showRentedAndLeasedItems(model);
         return "rentedItems";
     }
 
@@ -170,7 +180,8 @@ public class RequestController {
     @PostMapping(path= "/profile/returneditems")
     public String stateOfItem(Model model,
                               Long transactionId,
-                              Integer itemIntact){
+                              Integer itemIntact,
+                              RedirectAttributes redirectAttributes){
         LeaseTransaction leaseTransaction = leaseTransactionRepo
                                                     .findById(transactionId)
                                                     .orElse(null);
@@ -180,7 +191,11 @@ public class RequestController {
             // Anliegen bleibt in returnedItems(?) => Oder eher offene Anliegen?
             return "redirect:/profile/returneditems/" + transactionId + "/issue";
         }
-        transactionService.itemIsIntact(leaseTransaction);
+        if(!(transactionService.itemIsIntact(leaseTransaction))){
+            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+            model.addAttribute("transactionList", leaseTransactionRepo.findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me));
+            return "redirect:/profile/returneditems";
+        }
         List<LeaseTransaction> transactionList =
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);

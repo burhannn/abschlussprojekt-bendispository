@@ -6,6 +6,7 @@ import Bendispository.Abschlussprojekt.model.transactionModels.Reservation;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientResponse;
 
 import java.net.URI;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -146,10 +148,10 @@ public class ProPaySubscriber {
     }
 
     public boolean transferMoney(String leaserName, String lenderName, double amount){
-        return !(executeTransfer(leaserName, lenderName, amount) == null);
+        return executeTransfer(leaserName, lenderName, amount);
     }
 
-    private HttpClientResponse executeTransfer(String leaserName, String lenderName, double value) {
+    private boolean executeTransfer(String leaserName, String lenderName, double value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
@@ -159,16 +161,17 @@ public class ProPaySubscriber {
                 .build()
                 .toUri();
         try {
-            final Mono<HttpClientResponse> mono = WebClient
+            final Mono<HttpHeaders> mono = WebClient
                   .create()
                   .post()
                   .uri(uri)
                   .accept(MediaType.APPLICATION_JSON_UTF8)
                   .retrieve()
-                  .bodyToMono(HttpClientResponse.class);
-            return mono.block();
+                  .bodyToMono(HttpHeaders.class);
+            mono.block();
+            return true;
         } catch(Exception e){
-            return null;
+            return false;
         }
     }
 }
