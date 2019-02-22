@@ -87,6 +87,7 @@ public class FileController {
         }
         return "itemTmpl/itemProfile";
     }
+
     @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
     public String deleteItem(@PathVariable("id") Long id,
                              Model model) {
