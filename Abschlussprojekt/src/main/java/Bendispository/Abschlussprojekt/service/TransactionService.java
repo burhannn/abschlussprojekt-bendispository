@@ -122,6 +122,7 @@ public class TransactionService {
         double amount = (double) leaseTransaction.getDuration() * leaseTransaction.getItem().getCostPerDay();
         PaymentTransaction payment = makePayment(leaser, lender, amount,
                                                  leaseTransaction, PaymentType.RENTPRICE);
+        proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
         leaseTransaction.addPaymentTransaction(payment);
         isReturnedInTime(leaseTransaction, leaser, lender);
         leaseTransactionRepo.save(leaseTransaction);
@@ -131,6 +132,7 @@ public class TransactionService {
         if(isTimeViolation(leaseTransaction)){
             double amount = leaseTransaction.getItem().getCostPerDay() * leaseTransaction.getLengthOfTimeframeViolation();
             PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
+            proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
             leaseTransaction.addPaymentTransaction(payment);
         }
     }
@@ -172,7 +174,7 @@ public class TransactionService {
         paymentTransaction.setLeaseTransaction(leaseTransaction);
         paymentTransaction.setPaymentIsConcluded(true);
         paymentTransactionRepo.save(paymentTransaction);
-        proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
+        //proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount);
         return paymentTransaction;
     }
 
