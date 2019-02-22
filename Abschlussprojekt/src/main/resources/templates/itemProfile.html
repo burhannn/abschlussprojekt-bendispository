@@ -25,7 +25,7 @@
         <!-- <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|"></div></tr>-->
     </div>
         <div> Owner: <a th:href = "@{'/profile/' + ${itemOwner?.id}}">Profil</a> </div>
-        <a th:href = "@{'/item/' + ${itemProfile?.id} + '/requestitem'}">Request this item</a><br>
+        <a th:unless = "${itemOwner?.username == loggedInPerson?.username}" th:href = "@{'/item/' + ${itemProfile?.id} + '/requestitem'}">Request this item</a><br>
         <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/edititem/' + ${itemProfile?.id}}">Edit Item</a><br>
         <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/deleteitem/' + ${itemProfile?.id}}">Delete Item</a>
     </div>
