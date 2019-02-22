@@ -9,7 +9,7 @@
 <h1>My Requests</h1>
   <div th:each="request : ${myRequests}">
       <tr>
-          <div th:text= "|Gegenstand: ${request.requestedItem.name} -Status: ${request.status} -von: ${request.requestedItem.owner.username}|"></div>
+          <div th:text= "|Item: ${request.requestedItem.name} -Status: ${request.status} -von: ${request.requestedItem.owner.username}|"></div>
           <form method="post" th:action="'/profile/deleterequest/' + ${request.id}">
               <button type = "submit">delete</button>
           </form>

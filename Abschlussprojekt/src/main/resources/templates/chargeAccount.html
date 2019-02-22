@@ -11,7 +11,7 @@
         <div class="alert_success" th:text="${success}"></div>
     </div>
     <div th:text="|${person?.username}|"></div>
-    <div th:text="|Kontostand: ${account?.amount}|"></div>
+    <div th:text="|Propay account balance: ${account?.amount}|"></div>
     <form method = "post">
             <div>Amount: <input type ="number" name = "amount" th:value="${amount}" placeholder="100€">
             </div>
