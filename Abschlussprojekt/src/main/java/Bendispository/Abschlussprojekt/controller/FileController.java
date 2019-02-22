@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -86,6 +83,16 @@ public class FileController {
             model.addAttribute("pic",null);
         }
         return "itemProfile";
+    }
+    @RequestMapping(method=RequestMethod.GET, value="/delete/{id}")
+    public String deleteItem(@PathVariable("id") Long id,
+                             Model model) {
+        Item item = itemRepo.findById(id).orElse(null);
+        Person person = item.getOwner();
+        itemRepo.deleteById(id);
+        person.deleteItem(item);
+        personRepo.save(person);
+        return "redirect:/";
     }
 
     @GetMapping(path = "/editItem/{id}")
