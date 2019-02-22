@@ -12,7 +12,7 @@
         <div class="my_items">Offered Items:
             <div th:each="item : ${person?.items}">
                 <tr>
-                    <td><a th:href="@{'/Item/' + ${item?.id}}" th:text="${item?.name}"></a></td>
+                    <td><a th:href="@{'/item/' + ${item?.id}}" th:text="${item?.name}"></a></td>
                 </tr>
             </div>
         </div>

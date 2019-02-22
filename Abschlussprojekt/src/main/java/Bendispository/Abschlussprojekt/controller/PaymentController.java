@@ -36,12 +36,12 @@ public class PaymentController {
                 leaseTransactionRepo);
     }
 
-    @GetMapping(path = "/profile/PaymentTransaction")
+    @GetMapping(path = "/profile/paymenttransaction")
     public String concludeTransaction(){
         return "/";
     }
 
-    @GetMapping(path = "/chargeAccount")
+    @GetMapping(path = "/chargeaccount")
     public String saveAccount(Model model){
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
@@ -52,7 +52,7 @@ public class PaymentController {
         return "chargeAccount";
     }
 
-    @PostMapping(path="/chargeAccount")
+    @PostMapping(path="/chargeaccount")
     public String chargeAccount(Model model, double amount) {
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();

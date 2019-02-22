@@ -70,19 +70,19 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @GetMapping(path = "/item{id}/requestItem")
+    @GetMapping(path = "/item/{id}/requestitem")
     public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         if (itemRepo.findById(id).get().getOwner().getUsername()
                 .equals(authenticationService.getCurrentUser().getUsername())){
-            return "redirect:/Item/{id}"; // soll auf editieren gehen
+            return "redirect:/item/{id}"; // soll auf editieren gehen
         }
         List<Request> requests = requestRepo.findByRequesterAndAndRequestedItemAndStatus
                 (authenticationService.getCurrentUser(), itemRepo.findById(id).get(), RequestStatus.PENDING);
         if (!(requests.isEmpty())) {
             redirectAttributes.addFlashAttribute("message",
                     "You cannot request the same item twice!");
-            return "redirect:/Item/{id}";
+            return "redirect:/item/{id}";
         }
 
         List <LeaseTransaction> list = leaseTransactionRepo
@@ -93,7 +93,7 @@ public class RequestController {
         return "formRequest";
     }
 
-    @PostMapping(path = "/item{id}/requestItem")
+    @PostMapping(path = "/item/{id}/requestitem")
     public String addRequestToLender(String startDate,
                                      String endDate,
                                      Model model,
@@ -138,10 +138,10 @@ public class RequestController {
         }
         requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
-        return "redirect:/Item/{id}";
+        return "redirect:/item/{id}";
     }
 
-    @GetMapping(path="/profile/rentedItems")
+    @GetMapping(path="/profile/renteditems")
     public String rentedItems(Model model){
         Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
@@ -149,7 +149,7 @@ public class RequestController {
         return "rentedItems";
     }
 
-    @PostMapping(path = "/profile/rentedItems")
+    @PostMapping(path = "/profile/renteditems")
     public String returnItem(Model model,
                              Long id){
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);

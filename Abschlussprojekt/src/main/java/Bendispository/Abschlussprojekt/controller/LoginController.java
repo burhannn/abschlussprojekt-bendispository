@@ -35,7 +35,7 @@ public class LoginController {
     public String loggedIn() {
         return "OverviewAllItems"; }
 
-    @GetMapping("/loggedOut")
+    @GetMapping("/loggedout")
     public String logout(){
         return "loggedOut";
     }

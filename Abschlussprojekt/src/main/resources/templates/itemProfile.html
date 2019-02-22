@@ -23,8 +23,8 @@
         <!-- <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|"></div></tr>-->
     </div>
         <div> Angaben zum Verleiher: <a th:href = "@{'/profile/' + ${itemOwner?.id}}">Profil</a> </div>
-        <a th:href = "@{'/item' + ${itemProfile?.id} + '/requestItem'}">Request this item</a><br>
-        <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/editItem/' + ${itemProfile?.id}}">Edit Item</a><br>
+        <a th:href = "@{'/item/' + ${itemProfile?.id} + '/requestitem'}">Request this item</a><br>
+        <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/edititem/' + ${itemProfile?.id}}">Edit Item</a><br>
     </div>
 <a href = "/profile/requests">Requests</a>
 <a href="/" class="back_button">Back</a>

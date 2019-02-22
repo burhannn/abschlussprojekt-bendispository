@@ -157,7 +157,7 @@ public class RequestService {
                            @PathVariable Long id) {
 
         if (!checkRequestedDate(startDate, endDate, redirectAttributes))
-            return "redirect:/item{id}/requestItem";
+            return "redirect:/item/{id}/requestitem";
 
         LocalDate startdate, enddate;
 
@@ -178,12 +178,12 @@ public class RequestService {
 
         if (!checkRequestedAvailability(redirectAttributes, request) ||
                 !checkRequesterDeposit(redirectAttributes, item, username))
-            return "redirect:/item{id}/requestItem";
+            return "redirect:/item/{id}/requestitem";
 
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         redirectAttributes.addFlashAttribute("success", "Request has been sent!");
 
-        return "redirect:/Item/{id}";
+        return "redirect:/item/{id}";
     }
 }
