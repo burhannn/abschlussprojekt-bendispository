@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PaymentController {
@@ -53,7 +54,15 @@ public class PaymentController {
     }
 
     @PostMapping(path="/chargeaccount")
-    public String chargeAccount(Model model, double amount) {
+    public String chargeAccount(Model model,
+                                RedirectAttributes redirectAttributes,
+                                double amount) {
+
+        if (amount < 0) {
+            redirectAttributes.addFlashAttribute("message", "Amount can't be negative!");
+            return "redirect:/chargeaccount";
+        }
+
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);

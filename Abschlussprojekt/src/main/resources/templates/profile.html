@@ -33,7 +33,7 @@
         <tr><div th:text="|Email: ${person?.email}|"></div></tr>
         <tr><div th:text="|City: ${person?.city}|"></div></tr>
         <tr><div th:text="|Username: ${person?.username}|"></div></tr>
-        <tr><div th:text="|Kontostand: ${account?.amount}|"></div></tr>
+        <tr><div th:text="|Propay account balance: ${account?.amount}|"></div></tr>
         <div class="current_reservations">
             <h4>Current reservations</h4>
             <div th:each="reservation : ${reservations}">

@@ -110,21 +110,19 @@ public class RequestController {
         requestService.showRequests(model,id);
         return "requests";
     }
+    @PostMapping(path = "/profile/deleterequest/{id}")
+    public String deleteRequest(@PathVariable Long id){
+        requestRepo.deleteById(id);
+        return "redirect:/";
+    }
 
     @PostMapping(path="/profile/requests")
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
-                                        Optional<Integer> delete,
                                         Integer requestMyItems,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
-
-        if(delete.isPresent())
-            if(delete.get() == -1){
-                requestRepo.deleteById(requestID);
-                return "requests";
-            }
 
         if(requestMyItems == -1){
             request.setStatus(RequestStatus.DENIED);
