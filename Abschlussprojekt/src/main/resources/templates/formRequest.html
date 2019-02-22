@@ -2,6 +2,9 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <meta charset="UTF-8">
     <title>Request Item</title>
 </head>
@@ -32,10 +35,27 @@
     <div th:unless="${!leases.isEmpty()}">
         <h4>Currently no future reservations for this item.</h4>
     </div>
-
+    <div class="row justify-content-center">
+        <div class="input-daterange input-group" data-date-format="yyyy-mm-dd"
+             id="datepicker">
+            <input class="input-sm form-control" name="startDatumString"
+                   placeholder="From date"
+                   type="date"/>
+            <span class="input-group-text" id="">to</span>
+            <input class="input-sm form-control" name="endDatumString"
+                   placeholder="To date"
+                   type="date"/>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#datepicker").datepicker({
+                autoclose: true,
+                todayHighlight: true
+            }).datepicker('getDate', new Date());
+        });
+    </script>
 </div>
-
 <a href="/" class="back_button">Back</a>
-
 </body>
 </html>
