@@ -20,6 +20,6 @@ public class LeaseController {
                                              LeaseTransaction leaseTransaction){
         model.addAttribute("changeLease", leaseTransaction);
         leaseTransactionRepo.save(leaseTransaction);
-        return "requests";
+        return "rentsTmpl/requests";
     }
 }

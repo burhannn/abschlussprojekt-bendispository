@@ -47,7 +47,7 @@ public class FileController {
 
     @GetMapping(path = "/additem")
     public String addItemPage(){
-        return "AddItem";
+        return "itemTmpl/AddItem";
     }
 
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
@@ -82,7 +82,7 @@ public class FileController {
         }else{
             model.addAttribute("pic",null);
         }
-        return "itemProfile";
+        return "itemTmpl/itemProfile";
     }
     @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
     public String deleteItem(@PathVariable("id") Long id,
@@ -102,7 +102,7 @@ public class FileController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("Item", item.get());
         if(loggedIn.getUsername().equals(item.get().getOwner().getUsername())){
-            return "editItem";
+            return "itemTmpl/editItem";
         }
 
         return "redirect:/";

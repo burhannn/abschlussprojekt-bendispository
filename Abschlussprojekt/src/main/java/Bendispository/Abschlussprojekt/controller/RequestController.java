@@ -90,7 +90,7 @@ public class RequestController {
 
         Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);
-        return "formRequest";
+        return "rentsTmpl/formRequest";
     }
 
     @PostMapping(path = "/item/{id}/requestitem")
@@ -146,7 +146,7 @@ public class RequestController {
         model.addAttribute("myRentedItems", myRentedItems);
         List<LeaseTransaction> myLeasedItems = leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(me);
         model.addAttribute("myLeasedItems", myLeasedItems);
-        return "rentedItems";
+        return "itemTmpl/rentedItems";
     }
 
     @PostMapping(path = "/profile/renteditems")
@@ -154,7 +154,7 @@ public class RequestController {
                              Long id){
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
         transactionService.itemReturnedToLender(leaseTransaction);
-        return "rentedItems";
+        return "itemTmpl/rentedItems";
     }
 
     @GetMapping(path= "/profile/returneditems")
@@ -164,7 +164,7 @@ public class RequestController {
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 
     @PostMapping(path= "/profile/returneditems")
@@ -186,7 +186,7 @@ public class RequestController {
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
         // Feld: iwie Bewertung /Clara
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 
     @GetMapping(path= "/profile/returneditems/{transactionId}/issue")
@@ -214,7 +214,7 @@ public class RequestController {
               leaseTransactionRepo
                     .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 }
 

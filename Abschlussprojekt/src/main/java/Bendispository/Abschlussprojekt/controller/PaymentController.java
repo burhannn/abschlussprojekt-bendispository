@@ -50,7 +50,7 @@ public class PaymentController {
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 
     @PostMapping(path="/chargeaccount")
@@ -60,7 +60,7 @@ public class PaymentController {
 
         if (amount < 0) {
             redirectAttributes.addFlashAttribute("message", "Amount can't be negative!");
-            return "redirect:/chargeaccount";
+            return "redirect:/rentsTmpl/chargeAccount";
         }
 
         Person currentUser = authenticationService.getCurrentUser();
@@ -72,6 +72,6 @@ public class PaymentController {
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 }

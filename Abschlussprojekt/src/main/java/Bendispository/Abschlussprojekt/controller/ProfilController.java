@@ -99,14 +99,14 @@ public class ProfilController {
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername(), ProPayAccount.class);
         model.addAttribute("account", proPayAccount);
         model.addAttribute("reservations", proPayAccount.getReservations());
-        return "profile";
+        return "profileTmpl/profile";
     }
     @GetMapping(path = "/openratings")
     public String openRatings(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         List<Rating> ratings = ratingRepo.findAllByRater(loggedIn);
         model.addAttribute("openRatings", ratings);
-        return "openRatings";
+        return "profileTmpl/openRatings";
     }
 
     @PostMapping(path="/rating")
@@ -149,7 +149,7 @@ public class ProfilController {
                                @PathVariable Long id){
         Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
-        return "profileOther";
+        return "profileTmpl/profileOther";
     }
 
     @GetMapping(path= "/profilub")
@@ -158,7 +158,7 @@ public class ProfilController {
                                 authenticationService.getCurrentUser().getUsername(),"admin");
         model.addAttribute("personen", all);
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        return "profileDetails";
+        return "profileTmpl/profileDetails";
     }
 
     @GetMapping(value="deleteuser/{username}")
@@ -175,7 +175,7 @@ public class ProfilController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person",loggedIn);
 
-        return "editProfile";
+        return "profileTmpl/editProfile";
     }
     @PostMapping(path = "editprofile")
     public String saveProfileInDatabase(
