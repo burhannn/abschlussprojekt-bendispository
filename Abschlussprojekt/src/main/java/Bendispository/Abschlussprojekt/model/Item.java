@@ -25,7 +25,6 @@ public class Item {
 
     private String place;
 
-    @ManyToOne(cascade = CascadeType.PERSIST,
-               fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Person owner;
 }

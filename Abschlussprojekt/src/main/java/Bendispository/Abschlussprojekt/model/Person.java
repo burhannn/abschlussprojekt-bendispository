@@ -39,7 +39,11 @@ public class Person {
 
     @OneToMany(cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
-    private List<Item> Items;
+    private List<Item> items;
+
+    public void deleteItem(Item item){
+        this.items.remove(item);
+    }
 
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.TRUE)
