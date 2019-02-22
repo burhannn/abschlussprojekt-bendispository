@@ -69,7 +69,7 @@ public class FileController {
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
         personRepo.save(loggedIn);
-        return "AddItem";
+        return "redirect:/item/" + item.getId() + "";
     }
 
     @GetMapping(path = "/item/{id}" )
