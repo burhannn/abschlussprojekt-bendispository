@@ -10,8 +10,8 @@
 <div class = "projekt_container">
     <h1>Edit Profile</h1>
     <form method = "post">
-        <tr>Firstname:<div><input type ="text" pattern="[a-zA-ZöäüÖÄÜß]+" required name = "Firstname" th:value="${person?.firstName}"></div></tr>
-        <tr>Lastname:<div><input type ="text" pattern="[a-zA-ZöäüÖÄÜß]+" required name = "Lastname" th:value="${person?.lastName}"></div></tr>
+        <tr>First name:<div><input type ="text" pattern="[a-zA-ZöäüÖÄÜß]+" required name = "Firstname" th:value="${person?.firstName}"></div></tr>
+        <tr>Last name:<div><input type ="text" pattern="[a-zA-ZöäüÖÄÜß]+" required name = "Lastname" th:value="${person?.lastName}"></div></tr>
         <tr>Password:<div><input type ="text" pattern=".{8,}" required name = "Password" th:value="${person?.password}"></div></tr>
         <tr>Email:<div><input type ="text" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required name = "Email" th:value="${person?.email}"></div></tr>
         <tr>City:<div><input type ="text" required pattern="[a-zA-ZöäüÖÄÜß 0-9]+" name = "City" th:value="${person?.city}"></div></tr>
