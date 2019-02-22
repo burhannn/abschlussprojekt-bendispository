@@ -23,6 +23,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
 @Component
@@ -76,6 +77,7 @@ public class RequestService {
                               Long id) {
         Person me = personsRepo.findById(id).orElse(null);
         List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
+        myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
         deleteObsoleteRequests(myRequests);
         model.addAttribute("myRequests", myRequests);
         List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
