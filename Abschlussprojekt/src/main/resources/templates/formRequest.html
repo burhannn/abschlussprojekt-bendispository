@@ -2,9 +2,23 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script type='text/javascript' src='//code.jquery.com/jquery-1.8.3.js'></script>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
+    <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
+    <script type='text/javascript'>
+        $(function(){
+            $('.input-daterange').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: 'yyyy-mm-dd',
+                startDate: new Date(),
+                weekStart: 1
+            });
+        });
+    </script>
     <meta charset="UTF-8">
     <title>Request Item</title>
 </head>
@@ -22,9 +36,14 @@
     </div>
     <h1 th:text="|Request for ${thisItem.name}|"></h1>
     <form method = "post">
-            <tr>Start Date:<input type ="text" name = "startDate" th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd"></tr>
-            <tr>End Date:<input type ="text" name = "endDate" th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd"></tr>
-            <button type="submit">Send request</button>
+        <div class="input-daterange input-group" id="datepicker">
+            Start date: <input type="text" autocomplete="off" class="input-sm form-control" name="startDate"
+                                   th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd"/><span class="input-group-addon">to</span>
+
+            End date:<input type="text" autocomplete="off" class="input-sm form-control" name="endDate"
+                                th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd"/>
+        </div>
+        <button type="submit">Send request</button>
     </form>
     <div th:if="${!leases.isEmpty()}" style="width:300px;height:150px;line-height:3em;overflow:auto;padding:5px;">
         <h4>Future Reservations</h4>
@@ -35,26 +54,6 @@
     <div th:unless="${!leases.isEmpty()}">
         <h4>Currently no future reservations for this item.</h4>
     </div>
-    <div class="row justify-content-center">
-        <div class="input-daterange input-group" data-date-format="yyyy-mm-dd"
-             id="datepicker">
-            <input class="input-sm form-control" name="startDatumString"
-                   placeholder="From date"
-                   type="date"/>
-            <span class="input-group-text" id="">to</span>
-            <input class="input-sm form-control" name="endDatumString"
-                   placeholder="To date"
-                   type="date"/>
-        </div>
-    </div>
-    <script type="text/javascript">
-        $(function () {
-            $("#datepicker").datepicker({
-                autoclose: true,
-                todayHighlight: true
-            }).datepicker('getDate', new Date());
-        });
-    </script>
 </div>
 <a href="/" class="back_button">Back</a>
 </body>
