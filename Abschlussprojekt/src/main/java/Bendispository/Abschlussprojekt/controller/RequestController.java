@@ -146,6 +146,8 @@ public class RequestController {
         Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
         model.addAttribute("myRentedItems", myRentedItems);
+        List<LeaseTransaction> myLeasedItems = leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(me);
+        model.addAttribute("myLeasedItems", myLeasedItems);
         return "rentedItems";
     }
 

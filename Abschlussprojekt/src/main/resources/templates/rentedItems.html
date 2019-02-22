@@ -6,17 +6,28 @@
 </head>
 <body>
 <div class="projekt_container">
-<h1>Rented Items by myself</h1>
-    <div th:each="leaseTransaction : ${myRentedItems}">
-        <tr> Item: <a th:href = "|@{'/Item/' + ${leaseTransaction.item.id}}|"
-                      th:text= "${leaseTransaction.item.name}"></a></tr><br>
-        <tr> Owner: <a th:href = "@{'/profile/' + ${leaseTransaction.item.owner.id}}|"
-                       th:text= "${leaseTransaction.item.owner.username}"></a></tr><br>
-        <tr><div th:text="|Start date: ${#temporals.format(leaseTransaction.startDate, 'yyyy-MM-dd')}|"></div></tr>
-        <tr><div th:text="|To be returned on: ${leaseTransaction.endDate}|"></div></tr>
-            <form method="post">
-                <button type = "submit" th:value="${leaseTransaction.id}" name="id">return</button>
-            </form>
+    <h1>My rented Items</h1>
+    <div th:each="lease : ${myRentedItems}">
+        <tr> Item: <a th:href = "|@{'/Item/' + ${lease.item.id}}|"
+                      th:text= "${lease.item.name}"></a></tr><br>
+        <tr> Owner: <a th:href = "@{'/profile/' + ${lease.item.owner.id}}|"
+                       th:text= "${lease.item.owner.username}"></a></tr><br>
+        <tr><div th:text="|Start date: ${#temporals.format(lease.startDate, 'yyyy-MM-dd')}|"></div></tr>
+        <tr><div th:text="|To be returned on: ${lease.endDate}|"></div></tr>
+        <form method="post">
+            <button type = "submit" th:value="${lease.id}" name="id">return</button>
+        </form>
+    </div>
+</div>
+<div class="projekt_container">
+    <h1>My leased Items</h1>
+    <div th:each="lease : ${myLeasedItems}">
+        <tr> Item: <a th:href = "|@{'/Item/' + ${lease.item.id}}|"
+                      th:text= "${lease.item.name}"></a></tr><br>
+        <tr> Owner: <a th:href = "@{'/profile/' + ${lease.leaser.id}}|"
+                       th:text= "${lease.leaser.username}"></a></tr><br>
+        <tr><div th:text="|Start date: ${#temporals.format(lease.startDate, 'yyyy-MM-dd')}|"></div></tr>
+        <tr><div th:text="|To be returned on: ${lease.endDate}|"></div></tr>
     </div>
 </div>
 <a class="back_button" href="/profile">Back</a> <!-- ergänzt um person (login) -->
