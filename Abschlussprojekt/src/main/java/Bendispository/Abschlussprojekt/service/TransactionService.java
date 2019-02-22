@@ -141,8 +141,7 @@ public class TransactionService {
         proPaySubscriber
                 .releaseReservation(
                         leaseTransaction.getLeaser().getUsername(),
-                        leaseTransaction.getDepositId(),
-                        ProPayAccount.class);
+                        leaseTransaction.getDepositId());
         conclude(leaseTransaction);
     }
 
@@ -150,8 +149,7 @@ public class TransactionService {
         proPaySubscriber
                 .releaseReservationAndPunishUser(
                         leaseTransaction.getLeaser().getUsername(),
-                        leaseTransaction.getDepositId(),
-                        ProPayAccount.class);
+                        leaseTransaction.getDepositId());
         conclude(leaseTransaction);
     }
 

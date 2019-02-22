@@ -96,7 +96,7 @@ public class ProfilController {
 
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
 
-        ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername(), ProPayAccount.class);
+        ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername());
         model.addAttribute("account", proPayAccount);
         model.addAttribute("reservations", proPayAccount.getReservations());
         return "profile";
