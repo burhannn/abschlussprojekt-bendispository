@@ -10,6 +10,9 @@
     <div th:if="${success}">
         <div class="alert_success" th:text="${success}"></div>
     </div>
+    <div th:if="${message}">
+        <div class="alert_error" th:text="${message}"></div>
+    </div>
     <div th:text="|${person?.username}|"></div>
     <div th:text="|Propay account balance: ${account?.amount}|"></div>
     <form method = "post">
