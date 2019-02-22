@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -35,8 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
 @WithMockUser(username = "momo", password = "abcd")
+@WebMvcTest(controllers = RequestController.class)
 public class RequestControllerTest {
 
 
@@ -161,11 +162,10 @@ public class RequestControllerTest {
 
 
     @Test
-    @Ignore
     public void retrieve() throws Exception {
-        mvc.perform(get("/item3/requestItem")).andExpect(status().isOk());
-        mvc.perform(get("/profile/requests", 1L)).andExpect(status().isOk());
-        mvc.perform(get("/profile/rentedItems", 3L)).andExpect(status().isOk());
+        mvc.perform(get("/profile/returneditems")).andExpect(status().isOk());
+        mvc.perform(get("/profile/requests")).andExpect(status().isOk());
+        mvc.perform(get("/profile/rentedItems")).andExpect(status().isOk());
     }
 
     @Test
@@ -184,7 +184,6 @@ public class RequestControllerTest {
     }
 
     @Test
-    @Ignore
     public void checkRequestOverview() throws  Exception {
         mvc.perform(get("/profile/requests", 3L))
                 .andDo(print())

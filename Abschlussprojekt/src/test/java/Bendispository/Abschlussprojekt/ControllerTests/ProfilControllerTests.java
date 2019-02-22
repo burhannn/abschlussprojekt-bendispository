@@ -19,28 +19,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,10 +35,8 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -171,20 +155,14 @@ public class ProfilControllerTests {
 
         List<Item> items1 = new ArrayList<Item>();
 
-        //items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
-        items1.add(dummyItem1);
-        items1.add(dummyItem2);
+        items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         dummy1.setItems(items1);
 
         List<Item> items2 = new ArrayList<Item>();
-        //items2.addAll(Arrays.asList(dummyItem3));
-        items2.add(dummyItem3);
+        items2.addAll(Arrays.asList(dummyItem3));
         dummy2.setItems(items2);
 
-        itemRepo.save(dummyItem1);
-        itemRepo.save(dummyItem2);
-        itemRepo.save(dummyItem3);
-        //itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
+        itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
         personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
 
 
@@ -201,7 +179,8 @@ public class ProfilControllerTests {
         Mockito.when(personsRepo.findById(6L))
                 .thenReturn(Optional.ofNullable(dummy3));
 
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(personsRepo.findByUsername("momo")).thenReturn(dummy1);
     }
 
     @After
@@ -212,35 +191,23 @@ public class ProfilControllerTests {
 
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(username = "momo", password = "abcdabcd", roles = "USER")
     public void retrieve() throws Exception{
-        //Mockito.when(personsRepo.findByUsername("momo")).thenReturn(dummy1);
 
-    // UsernamePasswordAuthenticationToken principal = new
-    // UsernamePasswordAuthenticationToken("momo", "abcdabcd");
-    // customUserDetailsService.loadUserByUsername("momo");
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-        //mvc.perform(post("/login").
-        /*mvc.perform(formLogin().user(loggedIn.getUsername()).password(loggedIn.getPassword()))
-                .andExpect(status().isFound())
+        mvc.perform(formLogin().user("momo").password("abcdacd"))
+                .andExpect(status().isOk())
                 .andExpect(redirectedUrl("/"));
-            //    .andExpect(status().isOk());
-        //mvc.perform(get("/profilub").principal(principal)).andExpect(status().isOk());*/
-       mvc.perform(get("/")).andExpect(status().isOk());
-        //mvc.perform(get("/openRatings").principal(principal));
-       /* mvc.perform(get("/profile/{id}", 1L).principal(principal)).andExpect(status().isOk());
-        mvc.perform(get("/Item/{id}", 3L).principal(principal)).andExpect(status().isOk());
-        mvc.perform(get("/addItem").principal(principal)).andExpect(status().isOk());
+        mvc.perform(get("/profilub")).andExpect(status().isOk());
+        mvc.perform(get("/openRatings")).andExpect(status().isOk());
+        mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
         mvc.perform(get("/registration")).andExpect(status().isOk());
-        mvc.perform(get("/login")).andExpect(status().isOk());*/
+        mvc.perform(get("/login")).andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(roles = "USER")
     public void checkOverviewItems() throws Exception {
 
-        /*UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken("claraaa", "abcdabcd");
-        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);*/
         Mockito.when(itemRepo.findAll())
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
@@ -276,8 +243,6 @@ public class ProfilControllerTests {
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkMyProfile() throws Exception {
 
-        //UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken("momo", "abcdabcd");
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
         mvc.perform(get("/profile"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -300,7 +265,7 @@ public class ProfilControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profileOther"))
+                .andExpect(view().name("profileTmpl/profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
@@ -311,7 +276,7 @@ public class ProfilControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profileOther"))
+                .andExpect(view().name("profileTmpl/profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(2L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("nini"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("nini@gmail.com"))))
@@ -322,7 +287,7 @@ public class ProfilControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profileOther"))
+                .andExpect(view().name("profileTmpl/profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(6L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("claraaa"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("clara@gmail.com"))))
@@ -341,10 +306,8 @@ public class ProfilControllerTests {
     @WithMockUser(roles = "USER")
     public void checkUsersUebersicht() throws Exception {
 
-        //UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken("momo", "abcdabcd");
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-        //Mockito.when(personsRepo.findAll())
-        //       .thenReturn(Arrays.asList(dummy1, dummy2, dummy3));
+        Mockito.when(personsRepo.findAll())
+               .thenReturn(Arrays.asList(dummy1, dummy2, dummy3));
 
         mvc.perform(get("/profilub"))
                 .andExpect(status().isOk());

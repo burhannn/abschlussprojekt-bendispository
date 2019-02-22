@@ -72,6 +72,9 @@ public class FileController {
     @GetMapping(path = "/item/{id}" )
     public String ItemProfile(Model model,
                               @PathVariable Long id) {
+        if(itemRepo.findById(id).orElse(null) == null){
+            return "redirect:/";
+        }
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());

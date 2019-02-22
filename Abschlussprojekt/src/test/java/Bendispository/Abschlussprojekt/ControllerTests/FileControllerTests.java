@@ -207,38 +207,11 @@ public class FileControllerTests {
         itemRepo.deleteAll();
     }
 
-
-    @Test
-    @WithMockUser(roles = "USER")
-    public void retrieve() throws Exception{
-        //Mockito.when(personsRepo.findByUsername("momo")).thenReturn(dummy1);
-
-        // UsernamePasswordAuthenticationToken principal = new
-        // UsernamePasswordAuthenticationToken("momo", "abcdabcd");
-        // customUserDetailsService.loadUserByUsername("momo");
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-        //mvc.perform(post("/login").
-        /*mvc.perform(formLogin().user(loggedIn.getUsername()).password(loggedIn.getPassword()))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/"));
-            //    .andExpect(status().isOk());
-        //mvc.perform(get("/profilub").principal(principal)).andExpect(status().isOk());*/
-        mvc.perform(get("/")).andExpect(status().isOk());
-        //mvc.perform(get("/openRatings").principal(principal));
-       /* mvc.perform(get("/profile/{id}", 1L).principal(principal)).andExpect(status().isOk());
-        mvc.perform(get("/Item/{id}", 3L).principal(principal)).andExpect(status().isOk());
-        mvc.perform(get("/addItem").principal(principal)).andExpect(status().isOk());
-        mvc.perform(get("/registration")).andExpect(status().isOk());
-        mvc.perform(get("/login")).andExpect(status().isOk());*/
-    }
-
     @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkAddItem() throws Exception {
 
-       // UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken("momo", "abcdabcd");
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-        mvc.perform(get("/addItem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mvc.perform(get("/additem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
                 .param("place", "köln")
@@ -247,7 +220,7 @@ public class FileControllerTests {
                 .param("file", "file.jpg")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("addItem"))
+                .andExpect(view().name("itemTmpl/AddItem"));/*
                 .andExpect(model().attribute("newItem", hasProperty("name", is("lasso"))));
               /*  .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
                 .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
@@ -260,33 +233,33 @@ public class FileControllerTests {
     @WithMockUser(username = "claraaa", password = "abcdabcd")
     public void checkItemProfiles() throws Exception {
 
-        mvc.perform(get("/Item/{id}", 3L))
+        mvc.perform(get("/item/{id}", 3L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("itemProfile"))
-                .andExpect(view().name("itemProfile"))
+                .andExpect(view().name("itemTmpl/itemProfile"))
                 .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(3L))))
                 .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("stuhl"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(40))))
                 .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("bin billig"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(10))));
 
-        mvc.perform(get("/Item/{id}", 4L))
+        mvc.perform(get("/item/{id}", 4L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("itemProfile"))
-                .andExpect(view().name("itemProfile"))
+                .andExpect(view().name("itemTmpl/itemProfile"))
                 .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(4L))))
                 .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("playstation"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(250))))
                 .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("bin teuer"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(120))));
 
-        mvc.perform(get("/Item/{id}", 5L))
+        mvc.perform(get("/item/{id}", 5L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("itemProfile"))
-                .andExpect(view().name("itemProfile"))
+                .andExpect(view().name("itemTmpl/itemProfile"))
                 .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(5L))))
                 .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("Kulli"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(5))))
@@ -296,10 +269,26 @@ public class FileControllerTests {
 
     @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
+    public void ckeckEditItem() throws Exception{
+        mvc.perform(get("/edititem/{id}", 3L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("Item"))
+                .andExpect(view().name("itemTmpl/editItem"))
+                .andExpect(model().attribute("Item", hasProperty("id", equalTo(3L))))
+                .andExpect(model().attribute("Item", hasProperty("name", equalTo("stuhl"))))
+                .andExpect(model().attribute("Item", hasProperty("deposit", equalTo(40))))
+                .andExpect(model().attribute("Item", hasProperty("description", equalTo("bin billig"))))
+                .andExpect(model().attribute("Item", hasProperty("costPerDay", equalTo(10))));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
     public void checkNONExistingItemProfile() throws Exception {
         mvc.perform(get("/item/{id}", 8L))
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(view().name("redirect:/"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
     }
 
 }
