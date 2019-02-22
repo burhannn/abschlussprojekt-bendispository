@@ -45,12 +45,12 @@ public class FileController {
         this.itemService = itemService;
     }
 
-    @GetMapping(path = "/addItem")
+    @GetMapping(path = "/additem")
     public String addItemPage(){
-        return "addItem";
+        return "AddItem";
     }
 
-    @PostMapping(path = "/addItem", consumes = {"multipart/form-data"})
+    @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
                                      @Valid @RequestParam("file") MultipartFile multipart,
                                      Item item) throws IOException, SQLException {
@@ -66,10 +66,10 @@ public class FileController {
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
         personRepo.save(loggedIn);
-        return "addItem";
+        return "redirect:/item/" + item.getId() + "";
     }
 
-    @GetMapping(path = "/Item/{id}" )
+    @GetMapping(path = "/item/{id}" )
     public String ItemProfile(Model model,
                               @PathVariable Long id) {
         Item item = itemRepo.findById(id).orElse(null);
@@ -84,7 +84,7 @@ public class FileController {
         }
         return "itemProfile";
     }
-    @RequestMapping(method=RequestMethod.GET, value="/delete/{id}")
+    @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
     public String deleteItem(@PathVariable("id") Long id,
                              Model model) {
         Item item = itemRepo.findById(id).orElse(null);
@@ -95,7 +95,7 @@ public class FileController {
         return "redirect:/";
     }
 
-    @GetMapping(path = "/editItem/{id}")
+    @GetMapping(path = "/edititem/{id}")
     public String editItem(Model model,
                            @PathVariable Long id){
         Optional<Item> item = itemRepo.findById(id);
@@ -108,7 +108,7 @@ public class FileController {
         return "redirect:/";
     }
 
-    @PostMapping(path = "/editItem/{id}")
+    @PostMapping(path = "/edititem/{id}")
     public String editItemInDatabase(Model model,
                                      @PathVariable Long id, Item inpItem){
         Optional<Item> item = itemRepo.findById(id);
