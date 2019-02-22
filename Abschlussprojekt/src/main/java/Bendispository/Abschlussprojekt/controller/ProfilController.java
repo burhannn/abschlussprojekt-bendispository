@@ -86,7 +86,7 @@ public class ProfilController {
         List<Item> allOtherItems = itemRepo.findByOwnerNot(personRepo.findByUsername(loggedIn.getUsername()));
         model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
-        return "overviewAllItems";
+        return "OverviewAllItems";
     }
 
     @GetMapping(path= "/profile")
@@ -99,14 +99,14 @@ public class ProfilController {
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername(), ProPayAccount.class);
         model.addAttribute("account", proPayAccount);
         model.addAttribute("reservations", proPayAccount.getReservations());
-        return "profile";
+        return "profileTmpl/profile";
     }
-    @GetMapping(path = "/openRatings")
+    @GetMapping(path = "/openratings")
     public String openRatings(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         List<Rating> ratings = ratingRepo.findAllByRater(loggedIn);
         model.addAttribute("openRatings", ratings);
-        return "openRatings";
+        return "profileTmpl/openRatings";
     }
 
     @PostMapping(path="/rating")
@@ -126,7 +126,7 @@ public class ProfilController {
             personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
         }
         }
-        return "redirect:";
+        return "redirect:/";
     }
 
     @GetMapping(path = "/profile/history")
@@ -149,7 +149,7 @@ public class ProfilController {
                                @PathVariable Long id){
         Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
-        return "profileOther";
+        return "profileTmpl/profileOther";
     }
 
     @GetMapping(path= "/profilub")
@@ -158,10 +158,10 @@ public class ProfilController {
                                 authenticationService.getCurrentUser().getUsername(),"admin");
         model.addAttribute("personen", all);
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        return "profileDetails";
+        return "profileTmpl/profileDetails";
     }
 
-    @GetMapping(value="deleteUser/{username}")
+    @GetMapping(value="deleteuser/{username}")
     public String deleteUser(@PathVariable String username){
         if(authenticationService.getCurrentUser().getUsername().equals("admin")){
             Person deletePerson = personRepo.findByUsername(username);
@@ -170,14 +170,14 @@ public class ProfilController {
         }
         return "redirect:/";
     }
-    @GetMapping(path= "/editProfile")
+    @GetMapping(path= "/editprofile")
     public String editProfil(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person",loggedIn);
 
-        return "editProfile";
+        return "profileTmpl/editProfile";
     }
-    @PostMapping(path = "editProfile")
+    @PostMapping(path = "editprofile")
     public String saveProfileInDatabase(
             @RequestParam(value = "Firstname", required = true) String firstName,
             @RequestParam(value = "Lastname", required = true) String lastName,

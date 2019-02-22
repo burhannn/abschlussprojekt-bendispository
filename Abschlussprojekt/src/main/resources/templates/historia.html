@@ -4,15 +4,15 @@
 <body>
 <div class="my_actions_profile">
     <a href="/profile">My Profile</a>
-    <a href="/addItem">Add Item</a>
+    <a href="/additem">Add Item</a>
     <a href="/profilub">Overview Users</a>
-    <a href="/logout">Logout</a>
+    <a href="/loggedout">Logout</a>
 </div>
 <div class="projekt_container">
     <h2>Leased By You</h2>
     <div th:each="lease1 : ${leased}">
         <h4 class="header_container">
-            <a th:href="|@{'/Item/' + ${lease1.item.id}}|" th:text= "${lease1.item.name}"></a>
+            <a th:href="|@{'/item/' + ${lease1.item.id}}|" th:text= "${lease1.item.name}"></a>
         </h4>
         <div>
             <div class ="item_description">
@@ -30,7 +30,7 @@
     <h2>Lent Away</h2>
     <div th:each="lease2 : ${lent}">
         <h3 class="header_container">
-           <a th:href="|@{'/Item/' + ${lease2.item.id}}|" th:text= "${lease2.item.name}"></a>
+           <a th:href="|@{'/item/' + ${lease2.item.id}}|" th:text= "${lease2.item.name}"></a>
         </h3>
         <div>
             <div class ="item_description">
@@ -43,5 +43,6 @@
         </div>
     </div>
 </div>
+<a href="/profile" class="back_button">Back</a>
 </body>
 </html>

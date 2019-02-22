@@ -7,13 +7,13 @@
     </div>
     <div class="my_actions_profile">
         <a href="/profile">My Profile</a>
-        <a href="/addItem">Add Item</a>
+        <a href="/additem">Add Item</a>
         <a href="/profilub">Overview Users</a>
 		<a th:if="${loggedInPerson.username == 'admin'}" href="/conflicts">Conflicts</a>
-		<a href="/logout">Logout</a>
+		<a href="/loggedout">Logout</a>
     </div>
     <div class="open_ratings">
-        <a href="/openRatings">Open Ratings</a>
+        <a href="/openratings">Open Ratings</a>
     </div>
     <div th:if="${message}">
         <div class="alert_error" th:text="|${message} ${itemname}|"></div>
@@ -23,7 +23,7 @@
     <div>
         <div class ="item_description" th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
     </div>
-    <a th:href="@{'/Item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
+    <a th:href="@{'/item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
 </div>
 </body>
 </html>

@@ -70,19 +70,19 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @GetMapping(path = "/item{id}/requestItem")
+    @GetMapping(path = "/item/{id}/requestitem")
     public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         if (itemRepo.findById(id).get().getOwner().getUsername()
                 .equals(authenticationService.getCurrentUser().getUsername())){
-            return "redirect:/Item/{id}"; // soll auf editieren gehen
+            return "redirect:/item/{id}"; // soll auf editieren gehen
         }
         List<Request> requests = requestRepo.findByRequesterAndAndRequestedItemAndStatus
                 (authenticationService.getCurrentUser(), itemRepo.findById(id).get(), RequestStatus.PENDING);
         if (!(requests.isEmpty())) {
             redirectAttributes.addFlashAttribute("message",
                     "You cannot request the same item twice!");
-            return "redirect:/Item/{id}";
+            return "redirect:/item/{id}";
         }
 
         List <LeaseTransaction> list = leaseTransactionRepo
@@ -90,10 +90,10 @@ public class RequestController {
 
         Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);
-        return "formRequest";
+        return "rentsTmpl/formRequest";
     }
 
-    @PostMapping(path = "/item{id}/requestItem")
+    @PostMapping(path = "/item/{id}/requestitem")
     public String addRequestToLender(String startDate,
                                      String endDate,
                                      Model model,
@@ -110,21 +110,19 @@ public class RequestController {
         requestService.showRequests(model,id);
         return "requests";
     }
+    @PostMapping(path = "/profile/deleterequest/{id}")
+    public String deleteRequest(@PathVariable Long id){
+        requestRepo.deleteById(id);
+        return "redirect:/";
+    }
 
     @PostMapping(path="/profile/requests")
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
-                                        Optional<Integer> delete,
                                         Integer requestMyItems,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
-
-        if(delete.isPresent())
-            if(delete.get() == -1){
-                requestRepo.deleteById(requestID);
-                return "requests";
-            }
 
         if(requestMyItems == -1){
             request.setStatus(RequestStatus.DENIED);
@@ -138,23 +136,25 @@ public class RequestController {
         }
         requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Hopeful Leaser does not have the funds for making a deposit!");
-        return "redirect:/Item/{id}";
+        return "redirect:/item/{id}";
     }
 
-    @GetMapping(path="/profile/rentedItems")
+    @GetMapping(path="/profile/renteditems")
     public String rentedItems(Model model){
         Person me = authenticationService.getCurrentUser();
         List<LeaseTransaction> myRentedItems = leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(me);
         model.addAttribute("myRentedItems", myRentedItems);
-        return "rentedItems";
+        List<LeaseTransaction> myLeasedItems = leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(me);
+        model.addAttribute("myLeasedItems", myLeasedItems);
+        return "itemTmpl/rentedItems";
     }
 
-    @PostMapping(path = "/profile/rentedItems")
+    @PostMapping(path = "/profile/renteditems")
     public String returnItem(Model model,
                              Long id){
         LeaseTransaction leaseTransaction = leaseTransactionRepo.findById(id).orElse(null);
         transactionService.itemReturnedToLender(leaseTransaction);
-        return "rentedItems";
+        return "itemTmpl/rentedItems";
     }
 
     @GetMapping(path= "/profile/returneditems")
@@ -164,7 +164,7 @@ public class RequestController {
                 leaseTransactionRepo
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 
     @PostMapping(path= "/profile/returneditems")
@@ -186,7 +186,7 @@ public class RequestController {
                         .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
         // Feld: iwie Bewertung /Clara
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 
     @GetMapping(path= "/profile/returneditems/{transactionId}/issue")
@@ -214,7 +214,7 @@ public class RequestController {
               leaseTransactionRepo
                     .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
         model.addAttribute("transactionList", transactionList);
-        return "returnedItems";
+        return "itemTmpl/returnedItems";
     }
 }
 

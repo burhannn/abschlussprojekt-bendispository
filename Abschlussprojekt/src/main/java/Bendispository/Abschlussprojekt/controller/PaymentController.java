@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PaymentController {
@@ -36,12 +37,12 @@ public class PaymentController {
                 leaseTransactionRepo);
     }
 
-    @GetMapping(path = "/profile/PaymentTransaction")
+    @GetMapping(path = "/profile/paymenttransaction")
     public String concludeTransaction(){
         return "/";
     }
 
-    @GetMapping(path = "/chargeAccount")
+    @GetMapping(path = "/chargeaccount")
     public String saveAccount(Model model){
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
@@ -49,11 +50,19 @@ public class PaymentController {
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 
-    @PostMapping(path="/chargeAccount")
-    public String chargeAccount(Model model, double amount) {
+    @PostMapping(path="/chargeaccount")
+    public String chargeAccount(Model model,
+                                RedirectAttributes redirectAttributes,
+                                double amount) {
+
+        if (amount < 0) {
+            redirectAttributes.addFlashAttribute("message", "Amount can't be negative!");
+            return "redirect:/rentsTmpl/chargeAccount";
+        }
+
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
@@ -63,6 +72,6 @@ public class PaymentController {
         ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 }

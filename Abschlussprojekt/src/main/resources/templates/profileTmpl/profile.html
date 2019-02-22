@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
 </head>
 <body>
 <div class="my_actions_profile">
     <a href = "/profile/requests">Requests</a>
-    <a href = "/profile/rentedItems">Rented Items</a>
+    <a href = "/profile/renteditems">Rented Items</a>
     <a href = "/profile/returneditems">Returned To You</a>
     <a href = "/profile/history">Lease History</a>
 </div>
 <div class="projekt_container">
     <h1>My Profile</h1>
     <div class="my_profile_administration">
-        <a href = "/editProfile">Edit Profile</a>
-        <a href="/chargeAccount">Charge account</a>
+        <a href = "/editprofile">Edit Profile</a>
+        <a href="/chargeaccount">Charge account</a>
     </div>
     <div class="my_rating" th:if="${person?.getAverageRatings()} != -1">
         <tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
         <tr>
             <div>
-                <img th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{img/star.png}" src="../static/img/star.png" height="50" width="50">
+                <img th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{img/star.png}" src="../../static/img/star.png" height="50" width="50">
             </div>
         </tr>
     </div>
@@ -33,7 +33,7 @@
         <tr><div th:text="|Email: ${person?.email}|"></div></tr>
         <tr><div th:text="|City: ${person?.city}|"></div></tr>
         <tr><div th:text="|Username: ${person?.username}|"></div></tr>
-        <tr><div th:text="|Kontostand: ${account?.amount}|"></div></tr>
+        <tr><div th:text="|Propay account balance: ${account?.amount}|"></div></tr>
         <div class="current_reservations">
             <h4>Current reservations</h4>
             <div th:each="reservation : ${reservations}">
@@ -46,7 +46,7 @@
         <div class="my_items">My Items:
                 <div th:each="item : ${person.items}">
                     <tr>
-                        <td><a th:href="@{'/Item/' + ${item.id}}" th:text="${item.name}"></a></td>
+                        <td><a th:href="@{'/item/' + ${item.id}}" th:text="${item.name}"></a></td>
                     </tr>
                 </div>
         </div>

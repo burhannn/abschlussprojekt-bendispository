@@ -15,28 +15,32 @@ public class LoginController {
 
     @GetMapping(path="/registration")
     public String SaveRegistration(Model model){
-        return "registration";
+        return "authTmpl/registration";
     }
 
     @PostMapping(path = "/registration")
     public String Registration(Model model,
                                Person person) {
         model.addAttribute("newPerson", person);
-        personRepo.save(person);
-        return "login";
+        if(personRepo.findByUsername(person.getUsername())== null) {
+            personRepo.save(person);
+            return "authTmpl/login";
+        } else {
+            return "authTmpl/registrationError";
+        }
     }
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "authTmpl/login";
     }
 
     @PostMapping("/login")
     public String loggedIn() {
         return "OverviewAllItems"; }
 
-    @GetMapping("/loggedOut")
+    @GetMapping("/loggedout")
     public String logout(){
-        return "loggedOut";
+        return "authTmpl/loggedOut";
     }
 }

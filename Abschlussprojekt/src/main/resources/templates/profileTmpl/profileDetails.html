@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -15,8 +15,8 @@
     </tr>
     <tr th:each = "person : ${personen}">
         <td>
-            <a th:href = "@{'/profile/' + ${person?.id}}">Profil</a>
-            <a th:if="${loggedInPerson.username == 'admin' and person.username != 'admin'}" th:href = "@{'/deleteUser/' + ${person?.username}}" type="submit">User löschen</a>
+            <a th:href = "@{'/profile/' + ${person?.id}}">Profile</a>
+            <a th:if="${loggedInPerson.username == 'admin' and person.username != 'admin'}" th:href = "@{'/deleteuser/' + ${person?.username}}" type="submit">Delese user</a>
 
         </td>
         <td th:text = "|${person?.firstName}, ${person?.lastName}|"></td>

@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -48,12 +45,12 @@ public class FileController {
         this.itemService = itemService;
     }
 
-    @GetMapping(path = "/addItem")
+    @GetMapping(path = "/additem")
     public String addItemPage(){
-        return "addItem";
+        return "itemTmpl/AddItem";
     }
 
-    @PostMapping(path = "/addItem", consumes = {"multipart/form-data"})
+    @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
                                      @Valid @RequestParam("file") MultipartFile multipart,
                                      Item item) throws IOException, SQLException {
@@ -69,10 +66,10 @@ public class FileController {
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
         personRepo.save(loggedIn);
-        return "addItem";
+        return "redirect:/item/" + item.getId() + "";
     }
 
-    @GetMapping(path = "/Item/{id}" )
+    @GetMapping(path = "/item/{id}" )
     public String ItemProfile(Model model,
                               @PathVariable Long id) {
         Item item = itemRepo.findById(id).orElse(null);
@@ -85,23 +82,33 @@ public class FileController {
         }else{
             model.addAttribute("pic",null);
         }
-        return "itemProfile";
+        return "itemTmpl/itemProfile";
+    }
+    @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
+    public String deleteItem(@PathVariable("id") Long id,
+                             Model model) {
+        Item item = itemRepo.findById(id).orElse(null);
+        Person person = item.getOwner();
+        itemRepo.deleteById(id);
+        person.deleteItem(item);
+        personRepo.save(person);
+        return "redirect:/";
     }
 
-    @GetMapping(path = "/editItem/{id}")
+    @GetMapping(path = "/edititem/{id}")
     public String editItem(Model model,
                            @PathVariable Long id){
         Optional<Item> item = itemRepo.findById(id);
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("Item", item.get());
         if(loggedIn.getUsername().equals(item.get().getOwner().getUsername())){
-            return "editItem";
+            return "itemTmpl/editItem";
         }
 
         return "redirect:/";
     }
 
-    @PostMapping(path = "/editItem/{id}")
+    @PostMapping(path = "/edititem/{id}")
     public String editItemInDatabase(Model model,
                                      @PathVariable Long id, Item inpItem){
         Optional<Item> item = itemRepo.findById(id);

@@ -38,7 +38,7 @@ public class ConflictController {
                     conflictTransactionRepo
                             .findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
             model.addAttribute("allConflicts", allConflicts);
-            return "conflictTransaction";
+            return "rentsTmpl/conflictTransaction";
         }
         return "redirect:/";
     }
@@ -51,6 +51,6 @@ public class ConflictController {
         conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1);
         List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
         model.addAttribute("allConflicts", allConflicts);
-        return "conflictTransaction";
+        return "rentsTmpl/conflictTransaction";
     }
 }
