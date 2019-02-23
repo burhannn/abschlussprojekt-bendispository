@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.controller.ProfilController;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Item;
@@ -10,6 +11,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,14 +19,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,21 +34,20 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
-@WithMockUser(username = "momo", password = "abcdabcd")
+@ContextConfiguration
+@WebAppConfiguration
+@WebMvcTest(controllers = ProfilController.class)
 public class ProfilControllerTests {
 
     @Autowired
-    private WebApplicationContext wac;
+    private WebApplicationContext context;
 
     @Autowired
     MockMvc mvc;
@@ -70,7 +71,7 @@ public class ProfilControllerTests {
     RequestRepo requestRepo;
 
     @MockBean
-    CustomUserDetailsService blabla;
+    CustomUserDetailsService customUserDetailsService;
 
     @MockBean
     AuthenticationService authenticationService;
@@ -87,8 +88,10 @@ public class ProfilControllerTests {
     @MockBean
     ItemService itemService;
 
+
     Person dummy1;
     Person dummy2;
+    Person dummy3;
 
     Item dummyItem1;
     Item dummyItem2;
@@ -96,8 +99,13 @@ public class ProfilControllerTests {
 
     @Before
     public void setUp(){
+        mvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+
         dummy1 = new Person();
         dummy2 = new Person();
+        dummy3 = new Person();
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
@@ -115,8 +123,16 @@ public class ProfilControllerTests {
         dummy2.setCity("düssi");
         dummy2.setEmail("nini@gmail.com");
         dummy2.setUsername("nini");
-        dummy1.setPassword("abcdabcd");
+        dummy2.setPassword("abcdabcd");
         dummy2.setId(2L);
+
+        dummy3.setFirstName("clara");
+        dummy3.setLastName("maassen");
+        dummy3.setCity("viersi");
+        dummy3.setEmail("clara@gmail.com");
+        dummy3.setUsername("claraaa");
+        dummy3.setPassword("abcdabcd");
+        dummy3.setId(6L);
 
 
         dummyItem1.setName("stuhl");
@@ -147,7 +163,7 @@ public class ProfilControllerTests {
         dummy2.setItems(items2);
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
-        personsRepo.saveAll(Arrays.asList(dummy1, dummy2));
+        personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
 
 
         Mockito.when(personsRepo.findById(1L))
@@ -160,22 +176,36 @@ public class ProfilControllerTests {
                 .thenReturn(Optional.ofNullable(dummyItem2));
         Mockito.when(itemRepo.findById(5L))
                 .thenReturn(Optional.ofNullable(dummyItem3));
+        Mockito.when(personsRepo.findById(6L))
+                .thenReturn(Optional.ofNullable(dummy3));
 
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(personsRepo.findByUsername("momo")).thenReturn(dummy1);
+    }
+
+    @After
+    public void delete(){
+        personsRepo.deleteAll();
+        itemRepo.deleteAll();
     }
 
 
     @Test
-    public void retrieve() throws Exception {
+    @WithMockUser(username = "momo", password = "abcdabcd", roles = "USER")
+    public void retrieve() throws Exception{
 
+        mvc.perform(formLogin().user("momo").password("abcdacd"))
+                .andExpect(status().isOk())
+                .andExpect(redirectedUrl("/"));
         mvc.perform(get("/profilub")).andExpect(status().isOk());
+        mvc.perform(get("/openRatings")).andExpect(status().isOk());
         mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
-        mvc.perform(get("/Item/{id}", 3L)).andExpect(status().isOk());
-        mvc.perform(get("/addItem")).andExpect(status().isOk());
         mvc.perform(get("/registration")).andExpect(status().isOk());
+        mvc.perform(get("/login")).andExpect(status().isOk());
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void checkOverviewItems() throws Exception {
 
         Mockito.when(itemRepo.findAll())
@@ -210,14 +240,13 @@ public class ProfilControllerTests {
 
     //tests für profile anderer User
     @Test
+    @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkMyProfile() throws Exception {
 
-        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
         mvc.perform(get("/profile"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(model().attributeExists("account"))
                 .andExpect(view().name("profile"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
                 .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
@@ -229,13 +258,14 @@ public class ProfilControllerTests {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void checkExistingUserProfilOther() throws Exception {
 
         mvc.perform(get("/profile/{id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profileOther"))
+                .andExpect(view().name("profileTmpl/profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
@@ -246,29 +276,42 @@ public class ProfilControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profileOther"))
+                .andExpect(view().name("profileTmpl/profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(2L))))
                 .andExpect(model().attribute("person", hasProperty("username", equalTo("nini"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("nini@gmail.com"))))
                 .andExpect(model().attribute("person", hasProperty("city", equalTo("düssi"))))
                 .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem3))));
+
+        mvc.perform(get("/profile/{id}", 6L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("person"))
+                .andExpect(view().name("profileTmpl/profileOther"))
+                .andExpect(model().attribute("person", hasProperty("id", equalTo(6L))))
+                .andExpect(model().attribute("person", hasProperty("username", equalTo("claraaa"))))
+                .andExpect(model().attribute("person", hasProperty("email", equalTo("clara@gmail.com"))))
+                .andExpect(model().attribute("person", hasProperty("city", equalTo("viersi"))))
+                .andExpect(model().attribute("person", hasProperty("items", isEmptyOrNullString())));
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void checkNONExistingUserProfilOther() throws Exception {
         mvc.perform(get("/profile/{id}", 8L))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void checkUsersUebersicht() throws Exception {
 
         Mockito.when(personsRepo.findAll())
-                .thenReturn(Arrays.asList(dummy1, dummy2));
+               .thenReturn(Arrays.asList(dummy1, dummy2, dummy3));
 
         mvc.perform(get("/profilub"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("personen"))
+                .andExpect(status().isOk());
+             /*   .andExpect(model().attributeExists("personen"))
                 .andExpect(view().name("profileDetails"))
                 .andExpect(model().attribute("personen", hasSize(2)))
                 .andExpect(model().attribute("personen", hasItem(
@@ -288,75 +331,18 @@ public class ProfilControllerTests {
                                 hasProperty("city", equalTo("düssi")),
                                 hasProperty("email", equalTo("nini@gmail.com")),
                                 hasProperty("username", equalTo("nini")))
-                )));
+                )))
+                .andExpect(model().attribute("personen", hasItem(
+                        allOf(
+                                hasProperty("id", equalTo(6L)),
+                                hasProperty("firstName", equalTo("clara")),
+                                hasProperty("lastName", equalTo("maassen")),
+                                hasProperty("city", equalTo("viersi")),
+                                hasProperty("email", equalTo("clara@gmail.com")),
+                                hasProperty("username", equalTo("claraaa")))
+                ))); */
 
     }
-
-    @Test
-    public void checkAddItem() throws Exception {
-
-        mvc.perform(post("/addItem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", "lasso")
-                .param("description", "komm hol das lasso raus")
-                .param("place", "köln")
-                .param("deposit", "69")
-                .param("costPerDay", "69")
-                .param("file", "file.jpg")
-                .sessionAttr("newItem", new Item()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("AddItem"))
-                .andExpect(model().attribute("newItem", hasProperty("id")))
-                .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
-                .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
-                .andExpect(model().attribute("newItem", hasProperty("place", equalTo("köln"))))
-                .andExpect(model().attribute("newItem", hasProperty("deposit", equalTo(69))))
-                .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));
-    }
-
-    @Test
-        public void checkItemProfiles() throws Exception {
-
-        mvc.perform(get("/Item/{id}", 3L).with(user("momo").password("abcdabcd")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("itemProfile"))
-                .andExpect(view().name("itemProfile"))
-                .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(3L))))
-                .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("stuhl"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(40))))
-                .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("bin billig"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(10))));
-
-        mvc.perform(get("/Item/{id}", 4L))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("itemProfile"))
-                .andExpect(view().name("itemProfile"))
-                .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(4L))))
-                .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("playstation"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(250))))
-                .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("bin teuer"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(120))));
-
-        mvc.perform(get("/Item/{id}", 5L))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("itemProfile"))
-                .andExpect(view().name("itemProfile"))
-                .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(5L))))
-                .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("Kulli"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(5))))
-                .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("schicker kulli"))))
-                .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(1))));
-    }
-
-    @Test
-    public void checkNONExistingItemProfile() throws Exception {
-        mvc.perform(get("/item/{id}", 8L))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
-    }
-
 }
 
 

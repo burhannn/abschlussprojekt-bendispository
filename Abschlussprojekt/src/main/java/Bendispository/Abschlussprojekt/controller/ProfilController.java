@@ -79,7 +79,7 @@ public class ProfilController {
         for(LeaseTransaction leaseTransaction : leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(loggedIn)){
             if(transactionService.isTimeViolation(leaseTransaction)){
                 model.addAttribute("message",
-                        "You have to return");
+                        "You have to return an Item!");
                 model.addAttribute("itemname", leaseTransaction.getItem().getName());
             }
         }
@@ -94,19 +94,22 @@ public class ProfilController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person", loggedIn);
 
-        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
-
-        ProPayAccount proPayAccount = proPaySubscriber.getAccount(loggedIn.getUsername(), ProPayAccount.class);
-        model.addAttribute("account", proPayAccount);
-        model.addAttribute("reservations", proPayAccount.getReservations());
-        return "profile";
+        ProPayAccount account = proPaySubscriber.getAccount(loggedIn.getUsername());
+        if(account == null){
+            account = new ProPayAccount();
+            model.addAttribute("message", "Something went wrong with ProPay!");
+        }
+        model.addAttribute("account", account);
+        model.addAttribute("reservations", account.getReservations());
+        return "profileTmpl/profile";
     }
+
     @GetMapping(path = "/openratings")
     public String openRatings(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         List<Rating> ratings = ratingRepo.findAllByRater(loggedIn);
         model.addAttribute("openRatings", ratings);
-        return "openRatings";
+        return "profileTmpl/openRatings";
     }
 
     @PostMapping(path="/rating")
@@ -114,17 +117,17 @@ public class ProfilController {
                          int rating,
                          Long ratingID){
         if (rating != -1){
-        Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
-        rating1.setRatingPoints(rating);
-        ratingRepo.save(rating1);
+            Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
+            rating1.setRatingPoints(rating);
+            ratingRepo.save(rating1);
 
-        if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
-            rating1.getRequest().getRequester().addRating(rating1);
-            personRepo.save(rating1.getRequest().getRequester());
-        }else{
-            rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
-            personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
-        }
+            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+                rating1.getRequest().getRequester().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequester());
+            }else{
+                rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
+            }
         }
         return "redirect:/";
     }
@@ -149,7 +152,7 @@ public class ProfilController {
                                @PathVariable Long id){
         Optional<Person> person = personRepo.findById(id);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
-        return "profileOther";
+        return "profileTmpl/profileOther";
     }
 
     @GetMapping(path= "/profilub")
@@ -158,7 +161,7 @@ public class ProfilController {
                                 authenticationService.getCurrentUser().getUsername(),"admin");
         model.addAttribute("personen", all);
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        return "profileDetails";
+        return "profileTmpl/profileDetails";
     }
 
     @GetMapping(value="deleteuser/{username}")
@@ -170,13 +173,15 @@ public class ProfilController {
         }
         return "redirect:/";
     }
+
     @GetMapping(path= "/editprofile")
     public String editProfil(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("person",loggedIn);
 
-        return "editProfile";
+        return "profileTmpl/editProfile";
     }
+
     @PostMapping(path = "editprofile")
     public String saveProfileInDatabase(
             @RequestParam(value = "Firstname", required = true) String firstName,

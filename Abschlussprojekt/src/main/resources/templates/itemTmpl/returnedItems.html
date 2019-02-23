@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
     <meta charset="UTF-8">
 </head>
 <body>
 <div class="projekt_container">
+    <div th:if="${message}">
+        <div class="alert_error" th:text="${message}"></div>
+    </div>
     <h1>Recently returned Items</h1>
     <div th:each="transaction : ${transactionList}">
         <table style="margin-top: 2%">

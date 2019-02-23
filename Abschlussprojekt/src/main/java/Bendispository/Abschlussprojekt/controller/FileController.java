@@ -47,7 +47,7 @@ public class FileController {
 
     @GetMapping(path = "/additem")
     public String addItemPage(){
-        return "AddItem";
+        return "itemTmpl/AddItem";
     }
 
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
@@ -72,6 +72,9 @@ public class FileController {
     @GetMapping(path = "/item/{id}" )
     public String ItemProfile(Model model,
                               @PathVariable Long id) {
+        if(itemRepo.findById(id).orElse(null) == null){
+            return "redirect:/";
+        }
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
@@ -82,8 +85,9 @@ public class FileController {
         }else{
             model.addAttribute("pic",null);
         }
-        return "itemProfile";
+        return "itemTmpl/itemProfile";
     }
+
     @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
     public String deleteItem(@PathVariable("id") Long id,
                              Model model) {
@@ -102,7 +106,7 @@ public class FileController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("Item", item.get());
         if(loggedIn.getUsername().equals(item.get().getOwner().getUsername())){
-            return "editItem";
+            return "itemTmpl/editItem";
         }
 
         return "redirect:/";

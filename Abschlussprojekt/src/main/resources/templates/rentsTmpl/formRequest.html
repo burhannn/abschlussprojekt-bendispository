@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <head>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
@@ -37,11 +37,11 @@
     <h1 th:text="|Request for ${thisItem.name}|"></h1>
     <form method = "post">
         <div class="input-daterange input-group" id="datepicker">
-            Start date: <input type="text" autocomplete="off" class="input-sm form-control" name="startDate"
-                                   th:value="${newRequest?.startDate}" placeholder="yyyy-mm-dd"/><span class="input-group-addon">to</span>
-
-            End date:<input type="text" autocomplete="off" class="input-sm form-control" name="endDate"
-                                th:value="${newRequest?.endDate}" placeholder="yyyy-mm-dd"/>
+            <input type="text" autocomplete="off" class="input-sm form-control" name="startDate"
+                                   th:value="${newRequest?.startDate}" placeholder="Start Date"/>
+            <span class="input-group-addon">to</span>
+            <input type="text" autocomplete="off" class="input-sm form-control" name="endDate"
+                                th:value="${newRequest?.endDate}" placeholder="End Date"/>
         </div>
         <button type="submit">Send request</button>
     </form>

@@ -17,21 +17,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class PaymentController {
 
-    private PaymentTransactionRepo paymentTransactionRepo;
-
     private AuthenticationService authenticationService;
-
-    private LeaseTransactionRepo leaseTransactionRepo;
-
-    private PersonsRepo personsRepo;
 
     private ProPaySubscriber proPaySubscriber;
 
     @Autowired
     public PaymentController(PersonsRepo personsRepo,
                              LeaseTransactionRepo leaseTransactionRepo) {
-        this.leaseTransactionRepo = leaseTransactionRepo;
-        this.personsRepo = personsRepo;
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                 leaseTransactionRepo);
@@ -43,17 +35,21 @@ public class PaymentController {
     }
 
     @GetMapping(path = "/chargeaccount")
-    public String saveAccount(Model model){
+    public String saveAccount(Model model,
+                              RedirectAttributes redirectAttributes){
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
-        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
-        ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
+        ProPayAccount proPayAccount = proPaySubscriber.getAccount(username);
+        if(proPayAccount == null) {
+            proPayAccount = new ProPayAccount();
+            model.addAttribute("message", "Something went wrong with ProPay!");
+        }
         model.addAttribute("person", currentUser);
         model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        return "rentsTmpl/chargeAccount";
     }
 
-    @PostMapping(path="/chargeaccount")
+    @PostMapping(path = "/chargeaccount")
     public String chargeAccount(Model model,
                                 RedirectAttributes redirectAttributes,
                                 double amount) {
@@ -65,13 +61,23 @@ public class PaymentController {
 
         Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
-        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
-        proPaySubscriber.chargeAccount(username, amount);
-        model.addAttribute("success", "Account has been charged!");
+        ProPayAccount account = proPaySubscriber.chargeAccount(username, amount);
+        if(account == null){
+            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+            model.addAttribute("person", currentUser);
+            return "redirect:/chargeaccount";
+        }
 
-        ProPayAccount proPayAccount = proPaySubscriber.getAccount(username, ProPayAccount.class);
+        account = proPaySubscriber.getAccount(username);
+        if(account == null){
+            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+            model.addAttribute("person", currentUser);
+            return "redirect:/chargeaccount";
+        }
+        model.addAttribute("success", "Account has been charged!");
         model.addAttribute("person", currentUser);
-        model.addAttribute("account", proPayAccount);
-        return "chargeAccount";
+        model.addAttribute("account", account);
+        return "rentsTmpl/chargeAccount";
     }
+
 }

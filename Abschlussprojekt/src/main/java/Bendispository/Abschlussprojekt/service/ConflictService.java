@@ -30,14 +30,14 @@ public class ConflictService {
         this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo);
     }
 
-    public void resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){
+    public boolean resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){
         conflict.setLeaserAccepted(true);
         conflict.setLenderAccepted(true);
         conflict.setLeaserGotTheDepositBack(depositBackToLeaser);
         conflictTransactionRepo.save(conflict);
         if(depositBackToLeaser)
-            transactionService.itemIsIntact(conflict.getLeaseTransaction());
+            return transactionService.itemIsIntact(conflict.getLeaseTransaction());
         else
-            transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction());
+            return transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction());
     }
 }

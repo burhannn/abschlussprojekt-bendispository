@@ -9,6 +9,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.*;
+import org.hibernate.mapping.Array;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
@@ -93,6 +96,23 @@ public class LoginRegistrationTests {
         Mockito.when(personsRepo.findByUsername("momo")).thenReturn(dummy1);
     }
 
+    @Test
+    public void checkLoginFail() throws Exception {
+        mvc.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("username", "")
+                .param("password", ""))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @WithMockUser(username = "momo", password = "abcd", roles = "USER")
+    public void checkLogin() throws Exception {
+        mvc.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("username", "momo")
+                .param("password", "abcd"))
+                .andExpect(view().name("OverviewAllItems"))
+                .andExpect(status().isOk());
+    }
 
     @Test
     @WithMockUser(username = "momo", password = "abcd", roles = "USER")
@@ -107,7 +127,7 @@ public class LoginRegistrationTests {
                 .param("city", "Düsseldorf")
                 .sessionAttr("newPerson", new Person()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("login"))
+                .andExpect(view().name("authTmpl/login"))
                 .andExpect(model().attribute("newPerson", hasProperty("id")))
                 .andExpect(model().attribute("newPerson", hasProperty("firstName", equalTo("clara"))))
                 .andExpect(model().attribute("newPerson", hasProperty("lastName", equalTo("soft"))))
@@ -131,7 +151,7 @@ public class LoginRegistrationTests {
                 .param("city", "Düsseldorf")
                 .param("password", "abcd")
                 .sessionAttr("newPerson", new Person()))
-                .andExpect(view().name("login"))
+                .andExpect(view().name("authTmpl/registrationError"))
                 .andExpect(status().isOk());
 
         //Mockito.verify(personsRepo).save(any(Person.class));
