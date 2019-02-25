@@ -34,9 +34,11 @@ public class ProPaySubscriber {
     }
 
     public int makeDeposit(Request request){
-        Reservation reservation = makeReservation(request.getRequester().getUsername(),
-                                                  request.getRequestedItem().getOwner().getUsername(),
-                                                  (double) request.getRequestedItem().getDeposit());
+        Reservation reservation =
+                makeReservation(
+                        request.getRequester().getUsername(),
+                        request.getRequestedItem().getOwner().getUsername(),
+                        (double) request.getRequestedItem().getDeposit());
         if(reservation == null) return -1;
         return reservation.getId();
     }
