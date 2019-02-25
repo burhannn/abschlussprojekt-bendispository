@@ -74,7 +74,7 @@ public class ProfilController {
     }
 
     @GetMapping(path= "/")
-    public String Overview(Principal principal, Model model, RedirectAttributes redirectAttributes){
+    public String Overview(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
         for(LeaseTransaction leaseTransaction : leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(loggedIn)){
             if(transactionService.isTimeViolation(leaseTransaction)){
@@ -83,7 +83,7 @@ public class ProfilController {
                 model.addAttribute("itemname", leaseTransaction.getItem().getName());
             }
         }
-        List<Item> allOtherItems = itemRepo.findByOwnerNot(personRepo.findByUsername(loggedIn.getUsername()));
+        List<Item> allOtherItems = itemRepo.findByOwnerNot(loggedIn);
         model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
         return "OverviewAllItems";

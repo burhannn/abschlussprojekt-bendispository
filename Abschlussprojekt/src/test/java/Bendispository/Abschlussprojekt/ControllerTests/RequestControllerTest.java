@@ -72,9 +72,6 @@ public class RequestControllerTest {
     AuthenticationService authenticationService;
 
     @MockBean
-    MyUserPrincipal blablabla;
-
-    @MockBean
     RatingRepo ratingRepo;
 
     @MockBean

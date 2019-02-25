@@ -166,39 +166,43 @@ public class FileControllerTests {
 
         List<Item> items1 = new ArrayList<Item>();
 
-        //items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
+        items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         items1.add(dummyItem1);
         items1.add(dummyItem2);
         dummy1.setItems(items1);
 
         List<Item> items2 = new ArrayList<Item>();
-        //items2.addAll(Arrays.asList(dummyItem3));
+        items2.addAll(Arrays.asList(dummyItem3));
         items2.add(dummyItem3);
         dummy2.setItems(items2);
 
         itemRepo.save(dummyItem1);
         itemRepo.save(dummyItem2);
         itemRepo.save(dummyItem3);
-        //itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
+        itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
         personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
 
 
         Mockito.when(personsRepo.findById(1L))
                 .thenReturn(Optional.ofNullable(dummy1));
+
         Mockito.when(personsRepo.findById(2L))
                 .thenReturn(Optional.ofNullable(dummy2));
+
         Mockito.when(itemRepo.findById(3L))
                 .thenReturn(Optional.ofNullable(dummyItem1));
+
         Mockito.when(itemRepo.findById(4L))
                 .thenReturn(Optional.ofNullable(dummyItem2));
+
         Mockito.when(itemRepo.findById(5L))
                 .thenReturn(Optional.ofNullable(dummyItem3));
+
         Mockito.when(personsRepo.findById(6L))
                 .thenReturn(Optional.ofNullable(dummy3));
-
-
+        
         //loggedIn = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
     }
 
     @After
@@ -220,13 +224,12 @@ public class FileControllerTests {
                 .param("file", "file.jpg")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("itemTmpl/AddItem"));/*
-                .andExpect(model().attribute("newItem", hasProperty("name", is("lasso"))));
-              /*  .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
+                .andExpect(view().name("itemTmpl/AddItem"))
+                .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
                 .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
                 .andExpect(model().attribute("newItem", hasProperty("place", equalTo("köln"))))
                 .andExpect(model().attribute("newItem", hasProperty("deposit", equalTo(69))))
-                .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));*/
+                .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));
     }
 
     @Test
