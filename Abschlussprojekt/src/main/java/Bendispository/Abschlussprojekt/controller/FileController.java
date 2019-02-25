@@ -121,6 +121,9 @@ public class FileController {
         inpItem.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
         loggedIn.setItems(itemsOwner);
+        if(item.get().getUploadFile() != null) {
+            inpItem.setUploadFile(item.get().getUploadFile());
+        }
         itemRepo.save(inpItem);
         return "redirect:/";
     }
