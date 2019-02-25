@@ -60,9 +60,6 @@ public class LoginRegistrationTests {
     CustomUserDetailsService blabla;
 
     @MockBean
-    MyUserPrincipal blablabla;
-
-    @MockBean
     AuthenticationService authenticationService;
 
     @MockBean

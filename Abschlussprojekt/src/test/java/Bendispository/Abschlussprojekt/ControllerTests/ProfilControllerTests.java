@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -114,7 +115,7 @@ public class ProfilControllerTests {
         dummy1.setLastName("moraru");
         dummy1.setCity("kölle");
         dummy1.setEmail("momo@gmail.com");
-        dummy1.setUsername("momo");
+        dummy1.setUsername("user");
         dummy1.setPassword("abcdabcd");
         dummy1.setId(1L);
 
@@ -179,8 +180,9 @@ public class ProfilControllerTests {
         Mockito.when(personsRepo.findById(6L))
                 .thenReturn(Optional.ofNullable(dummy3));
 
+
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-        Mockito.when(personsRepo.findByUsername("momo")).thenReturn(dummy1);
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
     }
 
     @After
@@ -191,12 +193,9 @@ public class ProfilControllerTests {
 
 
     @Test
-    @WithMockUser(username = "momo", password = "abcdabcd", roles = "USER")
+    @WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
     public void retrieve() throws Exception{
 
-        mvc.perform(formLogin().user("momo").password("abcdacd"))
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl("/"));
         mvc.perform(get("/profilub")).andExpect(status().isOk());
         mvc.perform(get("/openRatings")).andExpect(status().isOk());
         mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
@@ -205,7 +204,8 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+
+    @WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
     public void checkOverviewItems() throws Exception {
 
         Mockito.when(itemRepo.findAll())
@@ -215,8 +215,7 @@ public class ProfilControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("OverviewAllItems"))
                 .andExpect(model().attributeExists("loggedInPerson"))
-                .andExpect(view().name("overviewAllItems"))
-                //.andExpect(model().attribute("OverviewAllItems", hasSize(3)))  (änderung im controller --> nur items von anderen leuten sind sichtbar)
+                .andExpect(view().name("OverviewAllItems"))
                 .andExpect(model().attribute("OverviewAllItems", hasItem(
                         allOf(
                                 hasProperty("id", equalTo(3L)),
@@ -240,11 +239,10 @@ public class ProfilControllerTests {
 
     //tests für profile anderer User
     @Test
-    @WithMockUser(username = "momo", password = "abcdabcd")
+    @WithMockUser(username = "user", password = "abcdabcd")
     public void checkMyProfile() throws Exception {
 
         mvc.perform(get("/profile"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
                 .andExpect(view().name("profile"))
@@ -267,7 +265,7 @@ public class ProfilControllerTests {
                 .andExpect(model().attributeExists("person"))
                 .andExpect(view().name("profileTmpl/profileOther"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
-                .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
+                .andExpect(model().attribute("person", hasProperty("username", equalTo("user"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
                 .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
                 .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem2, dummyItem1))));
