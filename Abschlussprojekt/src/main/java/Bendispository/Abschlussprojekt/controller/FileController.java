@@ -106,10 +106,13 @@ public class FileController {
     @GetMapping(path = "/edititem/{id}")
     public String editItem(Model model,
                            @PathVariable Long id){
-        Optional<Item> item = itemRepo.findById(id);
+        if(itemRepo.findById(id).orElse(null) == null){
+            return "redirect:/";
+        }
+        Item item = itemRepo.findById(id).orElse(null);
         Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("Item", item.get());
-        if(loggedIn.getUsername().equals(item.get().getOwner().getUsername())){
+        model.addAttribute("Item", item);
+        if(loggedIn.getUsername().equals(item.getOwner().getUsername())){
             return "itemTmpl/editItem";
         }
 

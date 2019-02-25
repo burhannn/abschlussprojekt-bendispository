@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.model;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity
+@ToString(exclude = "items")
 @Data
 public class Person {
     @Id

@@ -151,29 +151,29 @@ public class FileControllerTests {
         dummyItem1.setDescription("bin billig");
         dummyItem1.setCostPerDay(10);
         dummyItem1.setId(3L);
+        dummyItem1.setOwner(dummy1);
 
         dummyItem2.setName("playstation");
         dummyItem2.setDeposit(250);
         dummyItem2.setDescription("bin teuer");
         dummyItem2.setCostPerDay(120);
         dummyItem2.setId(4L);
+        dummyItem2.setOwner(dummy2);
 
         dummyItem3.setName("Kulli");
         dummyItem3.setDeposit(5);
         dummyItem3.setDescription("schicker kulli");
         dummyItem3.setCostPerDay(1);
         dummyItem3.setId(5L);
+        dummyItem3.setOwner(dummy3);
 
         List<Item> items1 = new ArrayList<Item>();
 
         items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
-        items1.add(dummyItem1);
-        items1.add(dummyItem2);
         dummy1.setItems(items1);
 
         List<Item> items2 = new ArrayList<Item>();
         items2.addAll(Arrays.asList(dummyItem3));
-        items2.add(dummyItem3);
         dummy2.setItems(items2);
 
         itemRepo.save(dummyItem1);
@@ -200,7 +200,7 @@ public class FileControllerTests {
 
         Mockito.when(personsRepo.findById(6L))
                 .thenReturn(Optional.ofNullable(dummy3));
-        
+
         //loggedIn = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
     }
@@ -215,13 +215,13 @@ public class FileControllerTests {
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkAddItem() throws Exception {
 
-        mvc.perform(get("/additem").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mvc.perform(post("/additem").contentType(MediaType.MULTIPART_FORM_DATA)
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
                 .param("place", "köln")
                 .param("deposit", "69")
                 .param("costPerDay", "69")
-                .param("file", "file.jpg")
+                .param("file", "")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("itemTmpl/AddItem"))
