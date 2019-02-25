@@ -16,6 +16,10 @@ public class Item {
 
     private String description;
 
+    private boolean leaseOrSell;
+
+    private double retailPrice;
+
     private int deposit;
 
     @Embedded

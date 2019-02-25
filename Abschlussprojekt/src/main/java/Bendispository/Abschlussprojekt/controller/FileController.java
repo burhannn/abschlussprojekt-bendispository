@@ -53,13 +53,17 @@ public class FileController {
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
                                      @Valid @RequestParam("file") MultipartFile multipart,
-                                     Item item) throws IOException, SQLException {
+                                     Item item,
+                                     boolean leaseOrSell) throws IOException, SQLException {
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
         UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
         item.setUploadFile(uploadFile);
+
         Person loggedIn = authenticationService.getCurrentUser();
+
         model.addAttribute("newItem", item);
+
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         itemRepo.save(item);
         List<Item> itemsOwner = new ArrayList<>();
