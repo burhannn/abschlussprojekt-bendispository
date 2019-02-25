@@ -139,12 +139,12 @@ public class RequestService {
         return true;
     }
 
-    public boolean checkRequesterDeposit(RedirectAttributes redirectAttributes,
+    public boolean checkRequesterBalance(RedirectAttributes redirectAttributes,
                                          Item item,
                                          String username) {
         if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
-            redirectAttributes.addFlashAttribute("messageDeposit",
-                    "You don't have enough money for the deposit!");
+            redirectAttributes.addFlashAttribute("messageBalance",
+                    "You don't have enough funds for this transaction!");
             return false;
         }
         return true;
@@ -165,6 +165,9 @@ public class RequestService {
         request.setRequestedItem(item);
 
         String username = currentUser.getUsername();
+
+        if (!checkRequesterBalance(redirectAttributes, item, username))
+            return "redirect:/item/{id}";
 
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
@@ -201,7 +204,7 @@ public class RequestService {
         String username = currentUser.getUsername();
 
         if (!checkRequestedAvailability(redirectAttributes, request) ||
-                !checkRequesterDeposit(redirectAttributes, item, username))
+                !checkRequesterBalance(redirectAttributes, item, username))
             return "redirect:/item/{id}/requestitem";
 
         requestRepo.save(request);

@@ -8,35 +8,36 @@
 <body>
 <div class="projekt_container">
     <div th:if="${success}">
-    <div class="alert_success" th:text="${success}"></div>
-    </div>
+        <div class="alert_success" th:text="${success}"></div></div>
     <div th:if="${message}">
-        <div class="alert_error" th:text="${message}"></div>
-    </div>
+        <div class="alert_error" th:text="${message}"></div></div>
+    <div th:if="${messageBalance}">
+        <div class="alert_error" th:text="${messageBalance}"></div>
+        <a href="/chargeaccount">Charge account?</a></div>
     <div class="item_owner_description">
         <h1 th:text = "${itemProfile?.name}"></h1>
         <div th:if="${pic} != null">
-            <img th:src="@{'data:image/png;base64,'+${pic}}">
-        </div>
+            <img th:src="@{'data:image/png;base64,'+${pic}}"></div>
         <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>
         <tr><div th:text = "| Place: ${itemProfile?.place}|"></div></tr>
-        <tr><div th:if = "${itemProfile?.leaseOrSell} == false" th:text = "| Deposit: ${itemProfile?.deposit}€|" ></div></tr>
-        <tr><div th:if = "${itemProfile?.leaseOrSell} == false" th:text = "| Cost per day: ${itemProfile?.costPerDay}€|" ></div></tr>
-        <tr><div th:unless = "${itemProfile?.leaseOrSell} == false" th:text = "| Retail Price: ${itemProfile?.retailPrice}€|" ></div></tr>
+        <tr><div th:if = "${itemProfile?.leaseOrSell} == false"
+                 th:text = "| Deposit: ${itemProfile?.deposit}€|" ></div></tr>
+        <tr><div th:if = "${itemProfile?.leaseOrSell} == false"
+                 th:text = "| Cost per day: ${itemProfile?.costPerDay}€|" ></div></tr>
+        <tr><div th:unless = "${itemProfile?.leaseOrSell} == false"
+                 th:text = "| Retail Price: ${itemProfile?.retailPrice}€|" ></div></tr>
         <!-- <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|"></div></tr>-->
     </div>
-        <div> Owner: <a th:href = "@{'/profile/' + ${itemOwner?.id}}">Profile</a> </div>
-
-    <!--LINK for buy request-->
-        <form method = "post">
-            <button type = "submit" th:if = "${itemProfile?.leaseOrSell} == true"
+    <div> Owner: <a th:href = "@{'/profile/' + ${itemOwner?.id}}">Profile</a> </div>
+    <form method = "post">
+        <button type = "submit" th:if = "${itemProfile?.leaseOrSell} == true"
                     th:unless = "${itemOwner?.username == loggedInPerson?.username}">Request to buy</button></form><br>
-        <a th:if = "${itemProfile?.leaseOrSell} == false"
-           th:unless = "${itemOwner?.username == loggedInPerson?.username}"
-           th:href = "@{'/item/' + ${itemProfile?.id} + '/requestitem'}">Request to lend</a><br>
-        <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/edititem/' + ${itemProfile?.id}}">Edit item</a><br>
-        <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/deleteitem/' + ${itemProfile?.id}}">Delete item</a>
-    </div>
+    <a th:if = "${itemProfile?.leaseOrSell} == false"
+       th:unless = "${itemOwner?.username == loggedInPerson?.username}"
+       th:href = "@{'/item/' + ${itemProfile?.id} + '/requestitem'}">Request to lend</a><br>
+    <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/edititem/' + ${itemProfile?.id}}">Edit item</a><br>
+    <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/deleteitem/' + ${itemProfile?.id}}">Delete item</a>
+</div>
 <a href = "/profile/requests">Requests</a>
 <a href="/" class="back_button">Back</a>
 </body>
