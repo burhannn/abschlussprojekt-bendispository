@@ -97,8 +97,9 @@ public class FileController {
                              Model model) {
         Item item = itemRepo.findById(id).orElse(null);
         Person person = item.getOwner();
-        itemRepo.deleteById(id);
+        item.setOwner(null);
         person.deleteItem(item);
+        itemRepo.deleteById(id);
         personRepo.save(person);
         return "redirect:/";
     }
