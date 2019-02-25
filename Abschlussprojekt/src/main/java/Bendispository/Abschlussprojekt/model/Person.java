@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity
-@ToString(exclude = "items")
+@ToString(exclude = {"items", "ratings"})
 @Data
 public class Person {
     @Id

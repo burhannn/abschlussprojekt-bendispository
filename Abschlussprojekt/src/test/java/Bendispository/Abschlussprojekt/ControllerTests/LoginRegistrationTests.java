@@ -103,16 +103,6 @@ public class LoginRegistrationTests {
 
     @Test
     @WithMockUser(username = "momo", password = "abcd", roles = "USER")
-    public void checkLogin() throws Exception {
-        mvc.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("username", "momo")
-                .param("password", "abcd"))
-                .andExpect(view().name("OverviewAllItems"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser(username = "momo", password = "abcd", roles = "USER")
     public void checkRegistration() throws Exception {
 
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -150,7 +140,5 @@ public class LoginRegistrationTests {
                 .sessionAttr("newPerson", new Person()))
                 .andExpect(view().name("authTmpl/registrationError"))
                 .andExpect(status().isOk());
-
-        //Mockito.verify(personsRepo).save(any(Person.class));
     }
 }

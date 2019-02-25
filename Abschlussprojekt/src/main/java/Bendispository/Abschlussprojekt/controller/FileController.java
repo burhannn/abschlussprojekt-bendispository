@@ -63,11 +63,11 @@ public class FileController {
                                      boolean leaseOrSell) throws IOException, SQLException {
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-        item.setUploadFile(uploadFile);
-
+        if(!fileName.isEmpty()){
+            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
+            item.setUploadFile(uploadFile);
+        }
         Person loggedIn = authenticationService.getCurrentUser();
-
         model.addAttribute("newItem", item);
 
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
@@ -112,8 +112,9 @@ public class FileController {
                              Model model) {
         Item item = itemRepo.findById(id).orElse(null);
         Person person = item.getOwner();
-        itemRepo.deleteById(id);
+        item.setOwner(null);
         person.deleteItem(item);
+        itemRepo.deleteById(id);
         personRepo.save(person);
         return "redirect:/";
     }

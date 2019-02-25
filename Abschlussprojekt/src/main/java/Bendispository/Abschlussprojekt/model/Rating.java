@@ -1,10 +1,12 @@
 package Bendispository.Abschlussprojekt.model;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
+@ToString(exclude = "rater")
 @Data
 public class Rating {
 
