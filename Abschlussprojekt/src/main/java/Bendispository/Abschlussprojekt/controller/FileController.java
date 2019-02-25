@@ -8,12 +8,15 @@ import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ItemService;
+import Bendispository.Abschlussprojekt.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -31,18 +34,21 @@ public class FileController {
     private RequestRepo requestRepo;
     private AuthenticationService authenticationService;
     private ItemService itemService;
+    private RequestService requestService;
 
     @Autowired
     public FileController(ItemRepo itemRepo,
                           PersonsRepo personRepo,
                           RequestRepo requestRepo,
                           AuthenticationService authenticationService,
-                          ItemService itemService){
+                          ItemService itemService,
+                          RequestService requestService){
         this.itemRepo = itemRepo;
         this.personRepo = personRepo;
         this.requestRepo = requestRepo;
         this.authenticationService = authenticationService;
         this.itemService = itemService;
+        this.requestService = requestService;
     }
 
     @GetMapping(path = "/additem")
@@ -53,13 +59,17 @@ public class FileController {
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
                                      @Valid @RequestParam("file") MultipartFile multipart,
-                                     Item item) throws IOException, SQLException {
+                                     Item item,
+                                     boolean leaseOrSell) throws IOException, SQLException {
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-        item.setUploadFile(uploadFile);
+        if(!fileName.isEmpty()){
+            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
+            item.setUploadFile(uploadFile);
+        }
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("newItem", item);
+
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         itemRepo.save(item);
         List<Item> itemsOwner = new ArrayList<>();
@@ -88,13 +98,23 @@ public class FileController {
         return "itemTmpl/itemProfile";
     }
 
+    @PostMapping(path = "/item/{id}")
+    public String itemBuyRequest(Model model,
+                                 RedirectAttributes redirectAttributes,
+                                 @PathVariable Long id) {
+        requestService.addBuyRequest(model, redirectAttributes, id);
+
+        return "redirect:/item/{id}";
+    }
+
     @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
     public String deleteItem(@PathVariable("id") Long id,
                              Model model) {
         Item item = itemRepo.findById(id).orElse(null);
         Person person = item.getOwner();
-        itemRepo.deleteById(id);
+        item.setOwner(null);
         person.deleteItem(item);
+        itemRepo.deleteById(id);
         personRepo.save(person);
         return "redirect:/";
     }

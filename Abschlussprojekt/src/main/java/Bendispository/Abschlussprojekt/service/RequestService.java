@@ -134,15 +134,42 @@ public class RequestService {
         return true;
     }
 
-    public boolean checkRequesterDeposit(RedirectAttributes redirectAttributes,
+    public boolean checkRequesterBalance(RedirectAttributes redirectAttributes,
                                          Item item,
                                          String username) {
         if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
-            redirectAttributes.addFlashAttribute("messageDeposit",
-                    "You don't have enough money for the deposit!");
+            redirectAttributes.addFlashAttribute("messageBalance",
+                    "You don't have enough funds for this transaction!");
             return false;
         }
         return true;
+    }
+
+    public String addBuyRequest(Model model,
+                                RedirectAttributes redirectAttributes,
+                                @PathVariable Long id) {
+
+        Person currentUser = authenticationService.getCurrentUser();
+        Item item = itemRepo.findById(id).orElse(null);
+
+        Request request = new Request();
+        request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
+        request.setStartDate(LocalDate.now());
+        request.setEndDate(LocalDate.now().plusDays(1));
+        request.setDuration(0);
+        request.setRequestedItem(item);
+
+        String username = currentUser.getUsername();
+
+        if (!checkRequesterBalance(redirectAttributes, item, username))
+            return "redirect:/item/{id}";
+
+        requestRepo.save(request);
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Buy request has been sent!");
+
+        return "redirect:/item/{id}";
+
     }
 
     public String addRequest(Model model,
@@ -175,10 +202,9 @@ public class RequestService {
         String username = currentUser.getUsername();
 
         if (!checkRequestedAvailability(redirectAttributes, request) ||
-                !checkRequesterDeposit(redirectAttributes, item, username)){
+                !checkRequesterBalance(redirectAttributes, item, username)){
             return "redirect:/item/{id}/requestitem";
         }
-
 
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));

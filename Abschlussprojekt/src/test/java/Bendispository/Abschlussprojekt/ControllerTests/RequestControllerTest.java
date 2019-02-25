@@ -173,11 +173,6 @@ public class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("thisItem"))
                 .andExpect(view().name("formRequest"));
-
-        /*
-
-         */
-
     }
 
     @Test
@@ -186,8 +181,5 @@ public class RequestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("requests"));
-        /*
-
-         */
     }
 } 
