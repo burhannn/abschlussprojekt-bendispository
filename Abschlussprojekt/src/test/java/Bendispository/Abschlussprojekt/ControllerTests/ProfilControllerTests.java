@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
 import Bendispository.Abschlussprojekt.controller.ProfilController;
+import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Item;
@@ -98,11 +99,15 @@ public class ProfilControllerTests {
     Item dummyItem2;
     Item dummyItem3;
 
+    Rating rating1;
+    Rating rating2;
+
     @Before
     public void setUp(){
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+
 
         dummy1 = new Person();
         dummy2 = new Person();
@@ -111,6 +116,15 @@ public class ProfilControllerTests {
         dummyItem2 = new Item();
         dummyItem3 = new Item();
 
+        rating1 = new Rating();
+        rating2 = new Rating();
+
+        rating1.setRatingPoints(5);
+        rating1.setRater(dummy1);
+        rating2.setRatingPoints(3);
+        rating2.setRater(dummy2);
+
+
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
         dummy1.setCity("kölle");
@@ -118,6 +132,7 @@ public class ProfilControllerTests {
         dummy1.setUsername("user");
         dummy1.setPassword("abcdabcd");
         dummy1.setId(1L);
+        dummy1.setRatings(Arrays.asList(rating2));
 
         dummy2.setFirstName("nina");
         dummy2.setLastName("fischi");
@@ -126,6 +141,7 @@ public class ProfilControllerTests {
         dummy2.setUsername("nini");
         dummy2.setPassword("abcdabcd");
         dummy2.setId(2L);
+        dummy2.setRatings(Arrays.asList(rating1));
 
         dummy3.setFirstName("clara");
         dummy3.setLastName("maassen");
@@ -134,6 +150,7 @@ public class ProfilControllerTests {
         dummy3.setUsername("claraaa");
         dummy3.setPassword("abcdabcd");
         dummy3.setId(6L);
+
 
 
         dummyItem1.setName("stuhl");
@@ -197,10 +214,7 @@ public class ProfilControllerTests {
     public void retrieve() throws Exception{
 
         mvc.perform(get("/profilub")).andExpect(status().isOk());
-        mvc.perform(get("/openRatings")).andExpect(status().isOk());
         mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
-        mvc.perform(get("/registration")).andExpect(status().isOk());
-        mvc.perform(get("/login")).andExpect(status().isOk());
     }
 
     @Test
@@ -216,6 +230,7 @@ public class ProfilControllerTests {
                 .andExpect(model().attributeExists("OverviewAllItems"))
                 .andExpect(model().attributeExists("loggedInPerson"))
                 .andExpect(view().name("OverviewAllItems"))
+                .andExpect(model().attribute("OverviewAllItems", hasSize(2)))
                 .andExpect(model().attribute("OverviewAllItems", hasItem(
                         allOf(
                                 hasProperty("id", equalTo(3L)),
@@ -245,11 +260,11 @@ public class ProfilControllerTests {
         mvc.perform(get("/profile"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
-                .andExpect(view().name("profile"))
+                .andExpect(view().name("profileTmpl/profile"))
                 .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
                 .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
                 .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
-                .andExpect(model().attribute("person", hasProperty("username", equalTo("momo"))))
+                .andExpect(model().attribute("person", hasProperty("username", equalTo("user"))))
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
                 .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
                 .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem1, dummyItem2))));
@@ -305,12 +320,12 @@ public class ProfilControllerTests {
     public void checkUsersUebersicht() throws Exception {
 
         Mockito.when(personsRepo.findAll())
-               .thenReturn(Arrays.asList(dummy1, dummy2, dummy3));
+               .thenReturn(Arrays.asList(dummy2, dummy3));
 
         mvc.perform(get("/profilub"))
-                .andExpect(status().isOk());
-             /*   .andExpect(model().attributeExists("personen"))
-                .andExpect(view().name("profileDetails"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("personen"))
+                .andExpect(view().name("profileTmpl/profileDetails"))
                 .andExpect(model().attribute("personen", hasSize(2)))
                 .andExpect(model().attribute("personen", hasItem(
                         allOf(
@@ -338,7 +353,7 @@ public class ProfilControllerTests {
                                 hasProperty("city", equalTo("viersi")),
                                 hasProperty("email", equalTo("clara@gmail.com")),
                                 hasProperty("username", equalTo("claraaa")))
-                ))); */
+                )));
 
     }
 }
