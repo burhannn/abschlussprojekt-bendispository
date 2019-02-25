@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -47,6 +48,7 @@ public class RequestService {
 
     private final ConflictTransactionRepo conflictTransactionRepo;
 
+    private Clock clock;
 
     @Autowired
     public RequestService(PersonsRepo personsRepo,
@@ -55,7 +57,8 @@ public class RequestService {
                           LeaseTransactionRepo leaseTransactionRepo,
                           PaymentTransactionRepo paymentTransactionRepo,
                           ConflictTransactionRepo conflictTransactionRepo,
-                          RatingRepo ratingRepo){
+                          RatingRepo ratingRepo,
+                          Clock clock){
         this.conflictTransactionRepo = conflictTransactionRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.paymentTransactionRepo = paymentTransactionRepo;
@@ -70,7 +73,9 @@ public class RequestService {
                 proPaySubscriber,
                 paymentTransactionRepo,
                 conflictTransactionRepo,
-                ratingRepo);
+                ratingRepo,
+                clock);
+        this.clock = clock;
     }
 
     public void showRequests(Model model,
@@ -85,20 +90,19 @@ public class RequestService {
         model.addAttribute("requestsMyItems", requestsMyItems);
     }
 
-    private void deleteObsoleteRequests(List<Request> myRequests) {
+    protected void deleteObsoleteRequests(List<Request> myRequests) {
         List<Request> toRemove = new ArrayList<>();
         for(Request request : myRequests){
-            if(request.getStartDate().isBefore(LocalDate.now())) {
-                requestRepo.delete(request);
+            if(request.getStartDate().isBefore(LocalDate.now(clock))) {
                 toRemove.add(request);
             }
         }
+        requestRepo.deleteAll(toRemove);
         myRequests.removeAll(toRemove);
     }
 
     public boolean checkRequestedDate(String startDate,
-                                      String endDate,
-                                      RedirectAttributes redirectAttributes) {
+                                      String endDate) {
 
         LocalDate startdate, enddate;
 
@@ -107,23 +111,14 @@ public class RequestService {
             startdate = LocalDate.parse(startDate, formatter);
             enddate = LocalDate.parse(endDate, formatter);
         } catch(DateTimeParseException e){
-            redirectAttributes.addFlashAttribute("message",
-                    "Invalid date!");
             return false;
         }
 
-        if (startdate.isAfter(enddate) || startdate.isEqual(enddate)) {
-            redirectAttributes.addFlashAttribute("message",
-                    "Invalid date!");
-            //return "redirect:/item{id}/requestItem";
+        if (startdate.isAfter(enddate) || startdate.isEqual(enddate))
             return false;
-        }
 
-        if (startdate.isBefore(LocalDate.now())){
-            redirectAttributes.addFlashAttribute("message",
-                    "Start date can't be in the past!");
+        if (startdate.isBefore(LocalDate.now(clock)))
             return false;
-        }
 
         return true;
     }
@@ -156,8 +151,11 @@ public class RequestService {
                            String endDate,
                            @PathVariable Long id) {
 
-        if (!checkRequestedDate(startDate, endDate, redirectAttributes))
+        if (!checkRequestedDate(startDate, endDate)){
+            redirectAttributes.addFlashAttribute("message",
+                    "Invalid date!");
             return "redirect:/item/{id}/requestitem";
+        }
 
         LocalDate startdate, enddate;
 
@@ -177,8 +175,10 @@ public class RequestService {
         String username = currentUser.getUsername();
 
         if (!checkRequestedAvailability(redirectAttributes, request) ||
-                !checkRequesterDeposit(redirectAttributes, item, username))
+                !checkRequesterDeposit(redirectAttributes, item, username)){
             return "redirect:/item/{id}/requestitem";
+        }
+
 
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));

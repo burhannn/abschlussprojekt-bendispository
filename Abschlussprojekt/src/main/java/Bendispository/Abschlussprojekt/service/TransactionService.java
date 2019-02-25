@@ -13,6 +13,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransaction
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -33,13 +34,16 @@ public class TransactionService {
 
     private ProPaySubscriber proPaySubscriber;
 
+    private Clock clock;
+
     @Autowired
     public TransactionService(LeaseTransactionRepo leaseTransactionRepo,
                               RequestRepo requestRepo,
                               ProPaySubscriber proPaySubscriber,
                               PaymentTransactionRepo paymentTransactionRepo,
                               ConflictTransactionRepo conflictTransactionRepo,
-                              RatingRepo ratingRepo) {
+                              RatingRepo ratingRepo,
+                              Clock clock) {
         super();
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.requestRepo = requestRepo;
@@ -47,6 +51,7 @@ public class TransactionService {
         this.paymentTransactionRepo = paymentTransactionRepo;
         this.conflictTransactionRepo = conflictTransactionRepo;
         this.ratingRepo = ratingRepo;
+        this.clock = clock;
     }
 
     public boolean lenderApproved(Request request){
@@ -200,8 +205,8 @@ public class TransactionService {
     }
 
     public boolean isTimeViolation(LeaseTransaction leaseTransaction) {
-        if(LocalDate.now().isAfter(leaseTransaction.getEndDate())) {
-            Period period = Period.between(leaseTransaction.getEndDate(), LocalDate.now());
+        if(LocalDate.now(clock).isAfter(leaseTransaction.getEndDate())) {
+            Period period = Period.between(leaseTransaction.getEndDate(), LocalDate.now(clock));
             int timeViolation = period.getDays();
             leaseTransaction.setTimeframeViolation(true);
             leaseTransaction.setLengthOfTimeframeViolation(timeViolation);

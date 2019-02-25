@@ -18,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +43,7 @@ public class RequestController {
     private final RequestService requestService;
     private final RatingRepo ratingRepo;
     private final ConflictTransactionRepo conflictTransactionRepo;
+    private Clock clock;
 
     @Autowired
     public RequestController(RequestRepo requestRepo,
@@ -50,7 +53,8 @@ public class RequestController {
                              PaymentTransactionRepo paymentTransactionRepo,
                              RatingRepo ratingrepo,
                              ConflictTransactionRepo conflictTransactionRepo,
-                             RequestService requestService) {
+                             RequestService requestService,
+                             Clock clock) {
         this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
@@ -61,12 +65,16 @@ public class RequestController {
         this.authenticationService = new AuthenticationService(personsRepo);
         this.proPaySubscriber = new ProPaySubscriber(personsRepo,
                                                      leaseTransactionRepo);
-        this.transactionService = new TransactionService(leaseTransactionRepo,
-                                                         requestRepo,
-                                                         proPaySubscriber,
-                                                         paymentTransactionRepo,
-                                                         conflictTransactionRepo,
-                                                         ratingRepo);
+        this.transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+        this.clock = clock;
         this.requestService = requestService;
     }
 
@@ -86,7 +94,7 @@ public class RequestController {
         }
 
         List <LeaseTransaction> list = leaseTransactionRepo
-                                         .findAllByItemIdAndEndDateGreaterThan(id, LocalDate.now());
+                                         .findAllByItemIdAndEndDateGreaterThan(id, LocalDate.now(clock));
 
         Collections.sort(list, Comparator.comparing(LeaseTransaction::getStartDate));
         model.addAttribute("leases", list);

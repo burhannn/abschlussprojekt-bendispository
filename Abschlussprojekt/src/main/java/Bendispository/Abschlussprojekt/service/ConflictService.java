@@ -9,6 +9,8 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransaction
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
+
 @Component
 public class ConflictService {
 
@@ -24,10 +26,11 @@ public class ConflictService {
                            ProPaySubscriber proPaySubscriber,
                            PaymentTransactionRepo paymentTransactionRepo,
                            ConflictTransactionRepo conflictTransactionRepo,
-                           RatingRepo ratingRepo) {
+                           RatingRepo ratingRepo,
+                           Clock clock) {
         super();
         this.conflictTransactionRepo = conflictTransactionRepo;
-        this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo);
+        this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo, clock);
     }
 
     public boolean resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){

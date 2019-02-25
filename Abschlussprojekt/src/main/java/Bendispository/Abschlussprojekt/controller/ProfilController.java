@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +54,8 @@ public class ProfilController {
                              PaymentTransactionRepo paymentTransactionRepo,
                              RatingRepo ratingrepo,
                              ConflictTransactionRepo conflictTransactionRepo,
-                             RequestService requestService) {
+                             RequestService requestService,
+                             Clock clock) {
         this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
@@ -64,12 +66,15 @@ public class ProfilController {
         this.authenticationService = new AuthenticationService(personRepo);
         this.proPaySubscriber = new ProPaySubscriber(personRepo,
                 leaseTransactionRepo);
-        this.transactionService = new TransactionService(leaseTransactionRepo,
-                requestRepo,
-                proPaySubscriber,
-                paymentTransactionRepo,
-                conflictTransactionRepo,
-                ratingRepo);
+        this.transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
         this.requestService = requestService;
     }
 
