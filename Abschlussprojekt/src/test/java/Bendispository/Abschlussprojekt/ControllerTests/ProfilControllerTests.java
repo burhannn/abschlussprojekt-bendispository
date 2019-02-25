@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -36,7 +35,6 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,47 +44,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @WebAppConfiguration
 @WebMvcTest(controllers = ProfilController.class)
+@WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
 public class ProfilControllerTests {
 
     @Autowired
     private WebApplicationContext context;
-
     @Autowired
     MockMvc mvc;
 
     @MockBean
     ItemRepo itemRepo;
-
     @MockBean
     PersonsRepo personsRepo;
-
     @MockBean
     ConflictTransactionRepo conflictTransactionRepo;
-
     @MockBean
     LeaseTransactionRepo leaseTransactionRepo;
-
     @MockBean
     PaymentTransactionRepo paymentTransactionRepo;
-
     @MockBean
     RequestRepo requestRepo;
-
     @MockBean
     CustomUserDetailsService customUserDetailsService;
-
     @MockBean
     AuthenticationService authenticationService;
-
     @MockBean
     RatingRepo ratingRepo;
-
     @MockBean
     ConflictService conflictService;
-
     @MockBean
     RequestService requestService;
-
     @MockBean
     ItemService itemService;
 
@@ -101,6 +88,7 @@ public class ProfilControllerTests {
 
     Rating rating1;
     Rating rating2;
+    Rating rating3;
 
     @Before
     public void setUp(){
@@ -108,22 +96,22 @@ public class ProfilControllerTests {
                 .apply(springSecurity())
                 .build();
 
-
         dummy1 = new Person();
         dummy2 = new Person();
         dummy3 = new Person();
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
-
         rating1 = new Rating();
         rating2 = new Rating();
+        rating3 = new Rating();
 
         rating1.setRatingPoints(5);
         rating1.setRater(dummy1);
         rating2.setRatingPoints(3);
         rating2.setRater(dummy2);
-
+        rating3.setRatingPoints(1);
+        rating3.setRater(dummy3);
 
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
@@ -150,8 +138,7 @@ public class ProfilControllerTests {
         dummy3.setUsername("claraaa");
         dummy3.setPassword("abcdabcd");
         dummy3.setId(6L);
-
-
+        dummy3.setRatings(Arrays.asList(rating3));
 
         dummyItem1.setName("stuhl");
         dummyItem1.setDeposit(40);
@@ -172,32 +159,23 @@ public class ProfilControllerTests {
         dummyItem3.setId(5L);
 
         List<Item> items1 = new ArrayList<Item>();
-
         items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         dummy1.setItems(items1);
-
         List<Item> items2 = new ArrayList<Item>();
         items2.addAll(Arrays.asList(dummyItem3));
         dummy2.setItems(items2);
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
         personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
+        ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
 
-        Mockito.when(personsRepo.findById(1L))
-                .thenReturn(Optional.ofNullable(dummy1));
-        Mockito.when(personsRepo.findById(2L))
-                .thenReturn(Optional.ofNullable(dummy2));
-        Mockito.when(itemRepo.findById(3L))
-                .thenReturn(Optional.ofNullable(dummyItem1));
-        Mockito.when(itemRepo.findById(4L))
-                .thenReturn(Optional.ofNullable(dummyItem2));
-        Mockito.when(itemRepo.findById(5L))
-                .thenReturn(Optional.ofNullable(dummyItem3));
-        Mockito.when(personsRepo.findById(6L))
-                .thenReturn(Optional.ofNullable(dummy3));
-
-
+        Mockito.when(personsRepo.findById(1L)).thenReturn(Optional.ofNullable(dummy1));
+        Mockito.when(personsRepo.findById(2L)).thenReturn(Optional.ofNullable(dummy2));
+        Mockito.when(itemRepo.findById(3L)).thenReturn(Optional.ofNullable(dummyItem1));
+        Mockito.when(itemRepo.findById(4L)).thenReturn(Optional.ofNullable(dummyItem2));
+        Mockito.when(itemRepo.findById(5L)).thenReturn(Optional.ofNullable(dummyItem3));
+        Mockito.when(personsRepo.findById(6L)).thenReturn(Optional.ofNullable(dummy3));
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
     }
@@ -210,7 +188,6 @@ public class ProfilControllerTests {
 
 
     @Test
-    @WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
     public void retrieve() throws Exception{
 
         mvc.perform(get("/profilub")).andExpect(status().isOk());
@@ -218,11 +195,11 @@ public class ProfilControllerTests {
     }
 
     @Test
-
-    @WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
     public void checkOverviewItems() throws Exception {
 
-        Mockito.when(itemRepo.findAll())
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
+        Mockito.when(itemRepo.findByOwnerNot(dummy3))
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
         mvc.perform(get("/"))
@@ -230,7 +207,7 @@ public class ProfilControllerTests {
                 .andExpect(model().attributeExists("OverviewAllItems"))
                 .andExpect(model().attributeExists("loggedInPerson"))
                 .andExpect(view().name("OverviewAllItems"))
-                .andExpect(model().attribute("OverviewAllItems", hasSize(2)))
+                .andExpect(model().attribute("OverviewAllItems", hasSize(3)))
                 .andExpect(model().attribute("OverviewAllItems", hasItem(
                         allOf(
                                 hasProperty("id", equalTo(3L)),
@@ -254,7 +231,6 @@ public class ProfilControllerTests {
 
     //tests für profile anderer User
     @Test
-    @WithMockUser(username = "user", password = "abcdabcd")
     public void checkMyProfile() throws Exception {
 
         mvc.perform(get("/profile"))
@@ -271,7 +247,6 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
     public void checkExistingUserProfilOther() throws Exception {
 
         mvc.perform(get("/profile/{id}", 1L))
@@ -309,33 +284,24 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
     public void checkNONExistingUserProfilOther() throws Exception {
         mvc.perform(get("/profile/{id}", 8L))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    @WithMockUser(roles = "USER")
     public void checkUsersUebersicht() throws Exception {
 
         Mockito.when(personsRepo.findAll())
                .thenReturn(Arrays.asList(dummy2, dummy3));
+        Mockito.when(personsRepo.findAllByUsernameNotAndUsernameNot(
+                authenticationService.getCurrentUser().getUsername(),"admin")).thenReturn(Arrays.asList(dummy2, dummy3));
 
         mvc.perform(get("/profilub"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("personen"))
                 .andExpect(view().name("profileTmpl/profileDetails"))
                 .andExpect(model().attribute("personen", hasSize(2)))
-                .andExpect(model().attribute("personen", hasItem(
-                        allOf(
-                                hasProperty("id", equalTo(1L)),
-                                hasProperty("firstName", equalTo("mandy")),
-                                hasProperty("lastName", equalTo("moraru")),
-                                hasProperty("city", equalTo("kölle")),
-                                hasProperty("email", equalTo("momo@gmail.com")),
-                                hasProperty("username", equalTo("momo")))
-                )))
                 .andExpect(model().attribute("personen", hasItem(
                         allOf(
                                 hasProperty("id", equalTo(2L)),

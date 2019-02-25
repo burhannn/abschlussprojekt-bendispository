@@ -158,7 +158,7 @@ public class ProfilController {
     @GetMapping(path= "/profilub")
     public String profilPage(Model model){
         List<Person> all = personRepo.findAllByUsernameNotAndUsernameNot(
-                                authenticationService.getCurrentUser().getUsername(),"admin");
+                authenticationService.getCurrentUser().getUsername(),"admin");
         model.addAttribute("personen", all);
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
         return "profileTmpl/profileDetails";

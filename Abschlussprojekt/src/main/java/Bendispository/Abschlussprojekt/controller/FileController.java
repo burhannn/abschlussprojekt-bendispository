@@ -62,7 +62,6 @@ public class FileController {
             item.setUploadFile(uploadFile);
         }
         Person loggedIn = authenticationService.getCurrentUser();
-
         model.addAttribute("newItem", item);
 
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));

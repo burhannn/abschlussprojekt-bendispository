@@ -4,6 +4,7 @@ import Bendispository.Abschlussprojekt.controller.FileController;
 import Bendispository.Abschlussprojekt.controller.ProfilController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.UploadFile;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -17,6 +18,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,8 +33,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -214,6 +221,15 @@ public class FileControllerTests {
     @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkAddItem() throws Exception {
+        
+                /*
+        String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
+        if(!fileName.isEmpty()){
+            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
+            item.setUploadFile(uploadFile);
+        }*/
+        //Mockito.when(StringUtils.cleanPath(multipart.getOriginalFilename())).thenReturn("testbild.jpg");
+
 
         mvc.perform(post("/additem").contentType(MediaType.MULTIPART_FORM_DATA)
                 .param("name", "lasso")
@@ -221,7 +237,7 @@ public class FileControllerTests {
                 .param("place", "köln")
                 .param("deposit", "69")
                 .param("costPerDay", "69")
-                .param("file", "")
+                .param("file", "testfile")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("itemTmpl/AddItem"))
