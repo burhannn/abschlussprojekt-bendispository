@@ -156,7 +156,7 @@ public class RequestController {
 
         requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
-        return "redirect:/item/{id}";
+        return "redirect:/";
     }
 
     @GetMapping(path="/profile/renteditems")
