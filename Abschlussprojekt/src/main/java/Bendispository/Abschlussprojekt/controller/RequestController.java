@@ -121,20 +121,39 @@ public class RequestController {
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
                                         Integer requestMyItems,
+                                        Integer buyRequestMyItems,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
 
-        if(requestMyItems == -1){
-            request.setStatus(RequestStatus.DENIED);
-            requestRepo.save(request);
-            requestService.showRequests(model,id);
-            return "rentsTmpl/requests";
+        if (buyRequestMyItems != null) {
+            if (buyRequestMyItems == -1) {
+                request.setStatus(RequestStatus.DENIED);
+                requestRepo.save(request);
+                requestService.showRequests(model, id);
+                return "rentsTmpl/requests";
+            } else {
+                if (transactionService.lenderApprovedPurchase(request)) {
+                    requestService.showRequests(model, id);
+                    return "rentsTmpl/requests";
+                }
+            }
         }
-        if(transactionService.lenderApproved(request)){
-            requestService.showRequests(model,id);
-            return "rentsTmpl/requests";
+
+        if (requestMyItems != null) {
+            if(requestMyItems == -1){
+                request.setStatus(RequestStatus.DENIED);
+                requestRepo.save(request);
+                requestService.showRequests(model,id);
+                return "rentsTmpl/requests";
+            } else {
+                if (transactionService.lenderApproved(request)) {
+                    requestService.showRequests(model, id);
+                    return "rentsTmpl/requests";
+                }
+            }
         }
+
         requestService.showRequests(model,id);
         redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
         return "redirect:/item/{id}";
