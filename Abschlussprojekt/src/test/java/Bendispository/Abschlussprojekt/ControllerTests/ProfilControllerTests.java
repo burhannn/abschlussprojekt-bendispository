@@ -242,9 +242,7 @@ public class ProfilControllerTests {
     @WithMockUser(username = "user", password = "abcdabcd")
     public void checkMyProfile() throws Exception {
 
-
         mvc.perform(get("/profile"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("person"))
                 .andExpect(view().name("profile"))
