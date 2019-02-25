@@ -8,15 +8,19 @@
 <body>
 
 <div class = "projekt_container">
-<h1>I want to offer a new Item:</h1>
-<form method = "post" enctype="multipart/form-data">
+    <h1>I want to offer a new Item:</h1>
+    <form method = "post" enctype="multipart/form-data">
+        <tr><div>
+            Lease <input type ="radio" name = "leaseOrSell" value="false">
+            Sell  <input type ="radio" name = "leaseOrSell" value="true"></div></tr>
         <tr>Name:<div><input type ="text" name = "name" th:value="${newItem?.name}"></div></tr>
         <tr>Description:<div><input type ="text" name = "description" th:value="${newItem?.description}"></div></tr>
         <tr>Deposit:<div><input type ="text" name = "deposit" th:value="${newItem?.deposit}"></div></tr>
-        <tr>CostPerDay:<div><input type ="text" name = "costPerDay" th:value="${newItem?.costPerDay}"></div></tr>
+        <tr>Cost Per Day:<div><input type ="text" name = "costPerDay" th:value="${newItem?.costPerDay}"></div></tr>
+        <tr>Retail Price:<div><input type ="text" name = "retailPrice" th:value="${newItem?.retailPrice}"></div></tr>
         <tr>Place:<div><input type = "text" name = "place" th:value="${newItem?.place}"></div></tr>
         <tr>Upload File:<div><input type ="file" name = "file"></div></tr>
-        <button type="submit" class="button" style="margin-top: 2%">add Item</button>
+        <button type="submit" class="button" style="margin-top: 2%">Add Item</button>
 </form>
 </div>
 <a href="/" class="back_button">Back</a>

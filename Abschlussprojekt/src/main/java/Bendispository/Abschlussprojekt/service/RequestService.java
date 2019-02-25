@@ -142,13 +142,11 @@ public class RequestService {
     public boolean checkRequesterDeposit(RedirectAttributes redirectAttributes,
                                          Item item,
                                          String username) {
-
         if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
             redirectAttributes.addFlashAttribute("messageDeposit",
                     "You don't have enough money for the deposit!");
             return false;
         }
-
         return true;
     }
 

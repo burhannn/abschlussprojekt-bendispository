@@ -20,11 +20,12 @@
         </div>
         <tr><div th:text = "| Description: ${itemProfile?.description}|" ></div></tr>
         <tr><div th:text = "| Place: ${itemProfile?.place}|"></div></tr>
-        <tr><div th:text = "| Deposit: ${itemProfile?.deposit}€|" ></div></tr>
-        <tr><div th:text = "| Cost per day: ${itemProfile?.costPerDay}€|" ></div></tr>
+        <tr><div th:if = "${itemProfile?.leaseOrSell} == false" th:text = "| Deposit: ${itemProfile?.deposit}€|" ></div></tr>
+        <tr><div th:if = "${itemProfile?.leaseOrSell} == false" th:text = "| Cost per day: ${itemProfile?.costPerDay}€|" ></div></tr>
+        <tr><div th:unless = "${itemProfile?.leaseOrSell} == false" th:text = "| Retail Price: ${itemProfile?.retailPrice}€|" ></div></tr>
         <!-- <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|"></div></tr>-->
     </div>
-        <div> Owner: <a th:href = "@{'/profile/' + ${itemOwner?.id}}">Profil</a> </div>
+        <div> Owner: <a th:href = "@{'/profile/' + ${itemOwner?.id}}">Profile</a> </div>
         <a th:unless = "${itemOwner?.username == loggedInPerson?.username}" th:href = "@{'/item/' + ${itemProfile?.id} + '/requestitem'}">Request this item</a><br>
         <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/edititem/' + ${itemProfile?.id}}">Edit Item</a><br>
         <a th:if = "${itemOwner?.username == loggedInPerson?.username}" th:href="@{'/deleteitem/' + ${itemProfile?.id}}">Delete Item</a>
