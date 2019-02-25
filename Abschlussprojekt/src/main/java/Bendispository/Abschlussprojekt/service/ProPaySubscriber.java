@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientResponse;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -43,7 +44,7 @@ public class ProPaySubscriber {
         return reservation.getId();
     }
 
-    private Reservation makeReservation(String leaserName, String lenderName, double deposit) {
+    protected Reservation makeReservation(String leaserName, String lenderName, double deposit) {
         try {
             final Mono<Reservation> mono = WebClient
                     .create()
@@ -56,7 +57,9 @@ public class ProPaySubscriber {
                                     .build())
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .retrieve()
-                    .bodyToMono(Reservation.class);
+                    .bodyToMono(Reservation.class)
+                    .timeout(Duration.ofSeconds(2L))
+                    .retry(4L);
             return mono.block();
         } catch (Exception e){
             return null;
@@ -76,7 +79,9 @@ public class ProPaySubscriber {
                                     .build())
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .retrieve()
-                    .bodyToMono(ProPayAccount.class);
+                    .bodyToMono(ProPayAccount.class)
+                    .timeout(Duration.ofSeconds(2L))
+                    .retry(4L);
             return mono.block();
         } catch(Exception e){
             return null;
@@ -96,7 +101,9 @@ public class ProPaySubscriber {
                                     .build())
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .retrieve()
-                    .bodyToMono(ProPayAccount.class);
+                    .bodyToMono(ProPayAccount.class)
+                    .timeout(Duration.ofSeconds(2L))
+                    .retry(4L);
             return mono.block();
         } catch(Exception e){
             return null;
@@ -122,7 +129,9 @@ public class ProPaySubscriber {
                                     .build())
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .retrieve()
-                    .bodyToMono(ProPayAccount.class);
+                    .bodyToMono(ProPayAccount.class)
+                    .timeout(Duration.ofSeconds(2L))
+                    .retry(4L);
             return mono.block();
         } catch(Exception e){
             return null;
@@ -142,7 +151,9 @@ public class ProPaySubscriber {
                                     .build())
                     .accept(MediaType.APPLICATION_JSON_UTF8)
                     .retrieve()
-                    .bodyToMono(ProPayAccount.class);
+                    .bodyToMono(ProPayAccount.class)
+                    .timeout(Duration.ofSeconds(2L))
+                    .retry(4L);
             return mono.block();
         } catch(Exception e){
             return null;
@@ -153,7 +164,7 @@ public class ProPaySubscriber {
         return executeTransfer(leaserName, lenderName, amount);
     }
 
-    private boolean executeTransfer(String leaserName, String lenderName, double value) {
+    protected boolean executeTransfer(String leaserName, String lenderName, double value) {
         URI uri = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
@@ -169,7 +180,9 @@ public class ProPaySubscriber {
                   .uri(uri)
                   .accept(MediaType.APPLICATION_JSON_UTF8)
                   .retrieve()
-                  .bodyToMono(HttpHeaders.class);
+                  .bodyToMono(HttpHeaders.class)
+                  .timeout(Duration.ofSeconds(2L))
+                  .retry(4L);
             mono.block();
             return true;
         } catch(Exception e){
