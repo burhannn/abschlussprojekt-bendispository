@@ -57,9 +57,10 @@ public class FileController {
                                      boolean leaseOrSell) throws IOException, SQLException {
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-        item.setUploadFile(uploadFile);
-
+        if(!fileName.isEmpty()){
+            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
+            item.setUploadFile(uploadFile);
+        }
         Person loggedIn = authenticationService.getCurrentUser();
 
         model.addAttribute("newItem", item);
