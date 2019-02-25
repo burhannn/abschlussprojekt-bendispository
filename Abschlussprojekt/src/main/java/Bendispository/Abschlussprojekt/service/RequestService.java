@@ -150,6 +150,30 @@ public class RequestService {
         return true;
     }
 
+    public String addBuyRequest(Model model,
+                                RedirectAttributes redirectAttributes,
+                                @PathVariable Long id) {
+
+        Person currentUser = authenticationService.getCurrentUser();
+        Item item = itemRepo.findById(id).orElse(null);
+
+        Request request = new Request();
+        request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
+        request.setStartDate(LocalDate.now());
+        request.setEndDate(LocalDate.now().plusDays(1));
+        request.setDuration(0);
+        request.setRequestedItem(item);
+
+        String username = currentUser.getUsername();
+
+        requestRepo.save(request);
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Buy request has been sent!");
+
+        return "redirect:/item/{id}";
+
+    }
+
     public String addRequest(Model model,
                            RedirectAttributes redirectAttributes,
                            String startDate,
