@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.ServiceTests;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Request;
@@ -10,6 +10,10 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.RequestService;
+import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.hibernate.jdbc.Expectations;
 import org.junit.Before;
 import org.junit.Test;

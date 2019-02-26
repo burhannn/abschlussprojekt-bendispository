@@ -1,10 +1,12 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.ServiceTests;
 
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
