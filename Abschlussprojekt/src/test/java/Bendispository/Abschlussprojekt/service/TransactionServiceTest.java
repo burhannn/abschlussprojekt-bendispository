@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.List;
 
 
 import static org.junit.Assert.*;
@@ -93,9 +94,11 @@ public class TransactionServiceTest {
         doReturn(fakeClock.getZone()).when(clock).getZone();
 
         r1 = new Request();
+        r1.setId(1L);
         r1.setStartDate(LocalDate.of(2019,1,5));
         r1.setEndDate(LocalDate.of(2019,1,8));
         item1 = new Item();
+        item1.setId(1L);
         item1.setDeposit(30);
         person1 = new Person();
         person1.setUsername("user");
@@ -253,4 +256,45 @@ public class TransactionServiceTest {
         assertEquals(RequestStatus.DENIED, r4.getStatus());
         assertEquals(RequestStatus.APPROVED, r1.getStatus());
     }
+
+    @Test
+    public void itemIsAvailableOnTime(){
+        LeaseTransaction l1 = new LeaseTransaction();
+        LeaseTransaction l2 = new LeaseTransaction();
+        LeaseTransaction l3 = new LeaseTransaction();
+
+        // r1 => 5.1-8.1
+
+        l1.setStartDate(LocalDate.of(2019,1,6));
+        l1.setEndDate(LocalDate.of(2019,1,8));
+        l2.setStartDate(LocalDate.of(2019,1,9));
+        l2.setEndDate(LocalDate.of(2019,1,10));
+        l3.setStartDate(LocalDate.of(2019,1,7));
+        l3.setEndDate(LocalDate.of(2019,1,8));
+
+        LeaseTransactionRepo spy = Mockito.spy(LeaseTransactionRepo.class);
+        List<LeaseTransaction> ret = Arrays.asList(l1, l2, l3);
+        Mockito.doReturn(ret).when(spy).findAllByItemId(1L);
+
+        transactionService =
+                new TransactionService(
+                        spy,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        List<LeaseTransaction> leaseTransactionList = spy.findAllByItemId(r1.getRequestedItem().getId());
+        boolean check = transactionService.itemIsAvailableOnTime(r1);
+
+        assertEquals(false, check);
+    }
+
+    /*@Test
+    public void itemReturnedToLenderIssueWithProPay(){
+        boolean check = transactionService.itemReturnedToLender()
+        assertEquals(false, check);
+    }*/
 }
