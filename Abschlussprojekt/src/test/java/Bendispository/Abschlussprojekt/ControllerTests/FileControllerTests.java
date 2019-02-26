@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
@@ -212,25 +213,17 @@ public class FileControllerTests {
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkAddItem() throws Exception {
 
-                /*
-        String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        if(!fileName.isEmpty()){
-            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-            item.setUploadFile(uploadFile);
-        }*/
-        //Mockito.when(StringUtils.cleanPath(multipart.getOriginalFilename())).thenReturn("testbild.jpg");
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
-
-        mvc.perform(multipart("/additem")
-                .file("file", new byte[0])
+        mvc.perform(post("/additem").contentType(MediaType.MULTIPART_FORM_DATA)
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
                 .param("place", "köln")
                 .param("deposit", "69")
                 .param("costPerDay", "69")
                 .sessionAttr("newItem", new Item()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("itemTmpl/AddItem"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/item/null"))
                 .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
                 .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
                 .andExpect(model().attribute("newItem", hasProperty("place", equalTo("köln"))))

@@ -416,6 +416,7 @@ public class ProfilControllerTests {
 
     @Test
     public void checkRating() throws Exception {
+
     }
 
 }

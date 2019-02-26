@@ -82,7 +82,7 @@ public class RequestController {
                 .equals(authenticationService.getCurrentUser().getUsername())){
             return "redirect:/item/{id}"; // soll auf editieren gehen
         }
-        List<Request> requests = requestRepo.findByRequesterAndAndRequestedItemAndStatus
+        List<Request> requests = requestRepo.findByRequesterAndRequestedItemAndStatus
                 (authenticationService.getCurrentUser(), itemRepo.findById(id).get(), RequestStatus.PENDING);
         if (!(requests.isEmpty())) {
             redirectAttributes.addFlashAttribute("message",
