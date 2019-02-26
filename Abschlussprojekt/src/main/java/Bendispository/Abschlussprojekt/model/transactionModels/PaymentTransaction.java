@@ -41,7 +41,7 @@ public class PaymentTransaction {
     public PaymentTransaction(){}
 
     public String toString(){
-        return "amount:" + amount + "paymentisconcluded:" + paymentIsConcluded + "type:" + type;
+        return "amount:" + amount + " paymentisconcluded:" + paymentIsConcluded + " type:" + type;
     }
 
 }
