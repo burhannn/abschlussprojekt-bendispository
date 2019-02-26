@@ -1,6 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
-import Bendispository.Abschlussprojekt.Service.*;
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.ProfilController;
 import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;

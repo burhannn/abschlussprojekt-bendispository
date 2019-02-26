@@ -1,9 +1,9 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
-import Bendispository.Abschlussprojekt.Service.AuthenticationService;
-import Bendispository.Abschlussprojekt.Service.ConflictService;
-import Bendispository.Abschlussprojekt.Service.CustomUserDetailsService;
-import Bendispository.Abschlussprojekt.Service.RequestService;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ConflictService;
+import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
+import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;

@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Service;
+package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;

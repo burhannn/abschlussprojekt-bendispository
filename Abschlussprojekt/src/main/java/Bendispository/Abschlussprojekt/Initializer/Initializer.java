@@ -6,7 +6,7 @@ import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,5 @@
-package Bendispository.Abschlussprojekt.ServiceTests;
+package Bendispository.Abschlussprojekt.service;
 
-import Bendispository.Abschlussprojekt.Service.AuthenticationService;
-import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
-import Bendispository.Abschlussprojekt.Service.RequestService;
-import Bendispository.Abschlussprojekt.Service.TransactionService;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -58,9 +54,6 @@ public class RequestServiceTest {
     ConflictTransactionRepo conflictTransactionRepo;
 
     @MockBean
-    RatingRepo ratingRepo;
-
-    @MockBean
     RedirectAttributes redirectAttributes;
 
     @MockBean
@@ -85,7 +78,9 @@ public class RequestServiceTest {
     public void sup(){
         MockitoAnnotations.initMocks(this);
 
-        //requestService = new RequestService(personsRepo, requestRepo, itemRepo, authenticationService, clock, transactionService, proPaySubscriber);
+
+        requestService = new RequestService(personsRepo, requestRepo, itemRepo, authenticationService, clock, transactionService, proPaySubscriber, leaseTransactionRepo);
+
 
         fakeClock = Clock.fixed(Instant.parse("2019-01-03T10:15:30.00Z"), ZoneId.of("UTC"));
         doReturn(fakeClock.instant()).when(clock).instant();

@@ -6,9 +6,9 @@ import Bendispository.Abschlussprojekt.model.UploadFile;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.Service.AuthenticationService;
-import Bendispository.Abschlussprojekt.Service.ItemService;
-import Bendispository.Abschlussprojekt.Service.RequestService;
+import Bendispository.Abschlussprojekt.service.AuthenticationService;
+import Bendispository.Abschlussprojekt.service.ItemService;
+import Bendispository.Abschlussprojekt.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,7 +89,7 @@ public class FileController {
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
+        //model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
         if(item.getUploadFile() != null){
             model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
         }else{

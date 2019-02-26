@@ -1,6 +1,6 @@
 package Bendispository.Abschlussprojekt.security;
 
-import Bendispository.Abschlussprojekt.Service.CustomUserDetailsService;
+import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

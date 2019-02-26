@@ -1,6 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
-import Bendispository.Abschlussprojekt.Service.*;
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;

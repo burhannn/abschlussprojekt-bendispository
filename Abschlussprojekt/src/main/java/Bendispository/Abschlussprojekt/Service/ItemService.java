@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.Service;
+package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -22,13 +22,13 @@ public class ItemService {
         this.clock = clock;
     }
 
-    public boolean itemIsAvailable(Long id){
+    /*public boolean itemIsAvailable(Long id){
         List<LeaseTransaction> leaseTransactions = leaseTransactionRepo.findAllByItemId(id);
         LocalDate now = LocalDate.now(clock);
         for (LeaseTransaction lease : leaseTransactions)
             if (TransactionService.isOverlapping(now, now, lease.getStartDate(), lease.getEndDate()))
                 return false;
         return true;
-    }
+    }*/
 
 }
