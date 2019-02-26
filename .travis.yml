@@ -4,6 +4,7 @@ script:
 - cd Abschlussprojekt/
 - chmod =+rwx gradlew
 - chmod =+rwx gradle
+- ./gradlew check
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
