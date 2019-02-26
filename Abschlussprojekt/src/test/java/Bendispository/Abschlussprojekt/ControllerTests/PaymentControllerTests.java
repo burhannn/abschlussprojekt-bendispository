@@ -189,6 +189,11 @@ public class PaymentControllerTests {
     }
 
     @Test
+    public void retrieve() throws Exception{
+        mvc.perform(get("/chargeaccount")).andExpect(status().isOk());
+    }
+
+    @Test
     public void checkSaveAccount() throws Exception{
         mvc.perform(get("/chargeaccount"))
                 .andExpect(status().isOk())

@@ -2,12 +2,13 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml" lang="">
 <link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
 <body>
-    <div class="header_overview">All Items currently offered
+<div class="header_overview">All Items currently offered
     <h2 th:text= ${loggedInPerson?.username}></h2>
-    </div>
+</div>
     <div class="my_actions_profile">
         <a href="/profile">My Profile</a>
-        <a href="/additem">Add Item</a>
+        <a href="/additem">Add Lease Item</a>
+        <a href="/addsellitem">Add Sell Item</a>
         <a href="/profilub">Overview Users</a>
 		<a th:if="${loggedInPerson?.username == 'admin'}" href="/conflicts">Conflicts</a>
 		<a href="/logout">Logout</a>

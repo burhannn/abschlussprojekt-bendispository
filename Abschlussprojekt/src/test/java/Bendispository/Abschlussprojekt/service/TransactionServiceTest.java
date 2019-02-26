@@ -26,10 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -100,6 +97,7 @@ public class TransactionServiceTest {
         item1 = new Item();
         item1.setId(1L);
         item1.setDeposit(30);
+        item1.setCostPerDay(5);
         person1 = new Person();
         person1.setUsername("user");
         person2 = new Person();
@@ -110,10 +108,14 @@ public class TransactionServiceTest {
         leaseTransaction = new LeaseTransaction();
         leaseTransaction.setLeaser(person1);
         leaseTransaction.setItem(item1);
+        leaseTransaction.setStartDate(LocalDate.of(2019,1,5));
+        leaseTransaction.setEndDate(LocalDate.of(2019,1,8));
+        leaseTransaction.setDuration(Period.between(LocalDate.of(2019,1,5), LocalDate.of(2019,1,8)).getDays());
+        leaseTransaction.setRequestId(1L);
     }
 
     @Test
-    public void lenderApproveProPayReturnsFalse() {
+    public void lenderApprovedProPayReturnsFalse() {
         ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
         doReturn(false).when(spy).checkDeposit(anyDouble(), eq(""));
         transactionService =
@@ -130,7 +132,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void lenderApproveProPayReturnsTrueButNoDeposit() {
+    public void lenderApprovedProPayReturnsTrueButNoDeposit() {
         ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
         doReturn(true).when(spy).checkDeposit(anyDouble(), anyString());
         doReturn(-1).when(spy).makeDeposit(r1);
@@ -148,7 +150,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void lenderApproveProPayReturnsTrueAndDepositWasMade() {
+    public void lenderApprovedProPayReturnsTrueAndDepositWasMade() {
         ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
         Mockito.doReturn(true).when(spy).checkDeposit(anyDouble(), anyString());
         Mockito.doReturn(1).when(spy).makeDeposit(any(Request.class));
@@ -286,7 +288,6 @@ public class TransactionServiceTest {
                         ratingRepo,
                         clock);
 
-        List<LeaseTransaction> leaseTransactionList = spy.findAllByItemId(r1.getRequestedItem().getId());
         boolean check = transactionService.itemIsAvailableOnTime(r1);
 
         assertEquals(false, check);
@@ -294,7 +295,19 @@ public class TransactionServiceTest {
 
     /*@Test
     public void itemReturnedToLenderIssueWithProPay(){
-        boolean check = transactionService.itemReturnedToLender()
+
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        boolean check = transactionService.itemReturnedToLender(leaseTransaction);
+
         assertEquals(false, check);
     }*/
 }
