@@ -4,6 +4,7 @@ import Bendispository.Abschlussprojekt.controller.PaymentController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -34,15 +35,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration
@@ -80,6 +77,8 @@ public class PaymentControllerTests {
     RequestService requestService;
     @MockBean
     ItemService itemService;
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
 
 
     Person dummy1;
@@ -203,16 +202,24 @@ public class PaymentControllerTests {
                 .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
                 .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
                 .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem1, dummyItem2))));
+
+        mvc.perform(get("/chargeaccount"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("account"))
+                .andExpect(view().name("rentsTmpl/chargeAccount"))
+                .andExpect(model().attribute("account", hasProperty("amount", equalTo(0D))));
     }
 
     @Test
-    public void checkSaveAccountProPayAccountDoesNotExists() throws Exception{
-        mvc.perform(get("/chargeaccount"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("message"))
-                .andExpect(view().name("rentsTmpl/chargeAccount"))
-                .andExpect(model().attribute("message", "Something went wrong with ProPay!"));
+    public void checkChargeAccountNegativeInput() throws Exception{
+        mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("amount", "-1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/chargeaccount"))
+                .andExpect(flash().attribute("message", "Amount can't be negative!"));
     }
+
+
 
 
 }
