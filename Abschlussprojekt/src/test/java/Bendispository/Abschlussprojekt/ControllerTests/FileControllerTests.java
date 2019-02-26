@@ -222,8 +222,7 @@ public class FileControllerTests {
 
 
         mvc.perform(multipart("/additem")
-                //.file("file", new byte[0])
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .file("file", new byte[0])
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
                 .param("place", "köln")

@@ -12,10 +12,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -326,6 +323,7 @@ public class ProfilControllerTests {
     }
 
     @Test
+    @Ignore
     public void checkEditPerson() throws Exception{
 
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
@@ -386,12 +384,38 @@ public class ProfilControllerTests {
 
     @Test
     public void checkOpenratings() throws Exception {
-        //....
+        Mockito.when(ratingRepo.findAllByRater(dummy1)).thenReturn(dummy1.getRatings());
+
+        mvc.perform(get("/openratings"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("openRatings"))
+                .andExpect(model().attribute("openRatings", hasSize(1)))
+                .andExpect(view().name("profileTmpl/openRatings"));
     }
+
+    /*
+    @PostMapping(path="/rating")
+    public String Rating(Model model,
+                         int rating,
+                         Long ratingID){
+        if (rating != -1){
+            Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
+            rating1.setRatingPoints(rating);
+            ratingRepo.save(rating1);
+
+            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+                rating1.getRequest().getRequester().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequester());
+            }else{
+                rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
+            }
+        }
+        return "redirect:/";
+    */
 
     @Test
     public void checkRating() throws Exception {
-        //....
     }
 
 }
