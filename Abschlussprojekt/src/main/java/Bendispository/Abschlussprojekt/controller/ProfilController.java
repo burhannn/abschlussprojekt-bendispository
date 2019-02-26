@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,43 +33,27 @@ public class ProfilController {
     private final LeaseTransactionRepo leaseTransactionRepo;
     private final PersonsRepo personRepo;
     private final TransactionService transactionService;
-    private final PaymentTransactionRepo paymentTransactionRepo;
     private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
-    private final RequestService requestService;
     private final RatingRepo ratingRepo;
-    private final ConflictTransactionRepo conflictTransactionRepo;
 
     @Autowired
     public ProfilController(RequestRepo requestRepo,
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
                              PersonsRepo personRepo,
-                             PaymentTransactionRepo paymentTransactionRepo,
                              RatingRepo ratingrepo,
-                             ConflictTransactionRepo conflictTransactionRepo,
-                             RequestService requestService,
-                             Clock clock) {
+                            AuthenticationService authenticationService,
+                            ProPaySubscriber proPaySubscriber,
+                            TransactionService transactionService) {
         this.ratingRepo = ratingrepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personRepo = personRepo;
-        this.paymentTransactionRepo = paymentTransactionRepo;
-        this.conflictTransactionRepo = conflictTransactionRepo;
-        this.authenticationService = new AuthenticationService(personRepo);
-        this.proPaySubscriber = new ProPaySubscriber(personRepo,
-                leaseTransactionRepo);
-        this.transactionService =
-                new TransactionService(
-                        leaseTransactionRepo,
-                        requestRepo,
-                        proPaySubscriber,
-                        paymentTransactionRepo,
-                        conflictTransactionRepo,
-                        ratingRepo,
-                        clock);
-        this.requestService = requestService;
+        this.authenticationService = authenticationService;
+        this.proPaySubscriber = proPaySubscriber;
+        this.transactionService = transactionService;
     }
 
     @GetMapping(path= "/")

@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.model;
 
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import lombok.Data;
 import lombok.ToString;
 
@@ -21,7 +22,7 @@ public class Item {
 
 	private String description;
 
-	private boolean leaseOrSell;
+	private MarketType marketType;
 
 	private boolean forSale = true;
 
