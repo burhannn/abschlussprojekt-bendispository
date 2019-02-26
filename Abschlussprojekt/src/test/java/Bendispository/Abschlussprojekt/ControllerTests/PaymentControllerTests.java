@@ -206,8 +206,19 @@ public class PaymentControllerTests {
         mvc.perform(get("/chargeaccount"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("account"))
+                .andExpect(view().name("rentsTmpl/chargeAccount"));
+    }
+
+    @Test
+    public void checkChargeAccount() throws Exception{
+        mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("amount", "1"))
+                .andExpect(status().isOk())
                 .andExpect(view().name("rentsTmpl/chargeAccount"))
-                .andExpect(model().attribute("account", hasProperty("amount", equalTo(0D))));
+                .andExpect(model().attributeExists("success"))
+                .andExpect(model().attributeExists("person"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attribute("success", "Account has been charged!"));
     }
 
     @Test
