@@ -1,8 +1,7 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.UploadFile;
+import Bendispository.Abschlussprojekt.model.*;
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -59,8 +58,7 @@ public class FileController {
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
                                      @Valid @RequestParam("file") MultipartFile multipart,
-                                     Item item,
-                                     boolean leaseOrSell) throws IOException, SQLException {
+                                     Item item) throws IOException {
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
         if(!fileName.isEmpty()){
@@ -71,11 +69,42 @@ public class FileController {
         model.addAttribute("newItem", item);
 
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
+        item.setMarketType(MarketType.LEASE);
         itemRepo.save(item);
         List<Item> itemsOwner = new ArrayList<>();
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
         personRepo.save(loggedIn);
+        return "redirect:/item/" + item.getId() + "";
+    }
+
+    @GetMapping(path = "/addsellitem")
+    public String addSellItemPage() {
+        return "itemTmpl/addItemSell";
+    }
+
+    @PostMapping(path = "/addsellitem", consumes = {"multipart/form-data"})
+    public String addSellItemToDatabase(Model model,
+                                        @Valid @RequestParam("file") MultipartFile multipartFile,
+                                        Item item) throws IOException {
+
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        if(!fileName.isEmpty()){
+            UploadFile uploadFile = new UploadFile(fileName, multipartFile.getBytes());
+            item.setUploadFile(uploadFile);
+        }
+
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("newItem", item);
+
+        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
+        item.setMarketType(MarketType.SELL);
+        itemRepo.save(item);
+        List<Item> itemsOwner = new ArrayList<>();
+        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
+        loggedIn.setItems(itemsOwner);
+        personRepo.save(loggedIn);
+
         return "redirect:/item/" + item.getId() + "";
     }
 
@@ -85,16 +114,21 @@ public class FileController {
         if(itemRepo.findById(id).orElse(null) == null){
             return "redirect:/";
         }
+
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
+
         if(item.getUploadFile() != null){
             model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
         }else{
             model.addAttribute("pic",null);
         }
+
+        if (item.getMarketType() == MarketType.SELL)
+            return "itemTmpl/itemProfileSell";
+
         return "itemTmpl/itemProfile";
     }
 
@@ -102,6 +136,17 @@ public class FileController {
     public String itemBuyRequest(Model model,
                                  RedirectAttributes redirectAttributes,
                                  @PathVariable Long id) {
+
+        Item item = itemRepo.findById(id).orElse(null);
+        List<Request> requests = requestRepo.findByRequesterAndRequestedItemAndStatus
+                (authenticationService.getCurrentUser(), item, RequestStatus.AWAITING_SHIPMENT);
+
+        if (!(requests.isEmpty())) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You cannot buy the same item twice!");
+            return "redirect:/item/{id}";
+        }
+
         requestService.addBuyRequest(model, redirectAttributes, id);
 
         return "redirect:/item/{id}";

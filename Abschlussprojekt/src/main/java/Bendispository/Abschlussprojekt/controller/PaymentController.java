@@ -4,7 +4,6 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +21,10 @@ public class PaymentController {
     private ProPaySubscriber proPaySubscriber;
 
     @Autowired
-    public PaymentController(PersonsRepo personsRepo,
-                             LeaseTransactionRepo leaseTransactionRepo) {
-        this.authenticationService = new AuthenticationService(personsRepo);
-        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
-                leaseTransactionRepo);
+    public PaymentController(AuthenticationService authenticationService,
+                             ProPaySubscriber proPaySubscriber) {
+        this.authenticationService = authenticationService;
+        this.proPaySubscriber = proPaySubscriber;
     }
 
     @GetMapping(path = "/profile/paymenttransaction")

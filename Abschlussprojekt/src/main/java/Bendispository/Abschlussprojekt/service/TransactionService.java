@@ -54,7 +54,7 @@ public class TransactionService {
     }
 
     public boolean lenderApproved(Request request){
-        double deposit = request.getRequestedItem().getDeposit();
+        double deposit = (double) request.getRequestedItem().getDeposit();
         Person requester = request.getRequester();
 
         if(proPaySubscriber.checkDeposit(deposit,
@@ -75,13 +75,12 @@ public class TransactionService {
             setRequestApproved(request);
             createRating(request);
             requestRepo.save(request);
-
             return true;
         }
         return false;
     }
 
-    private void createRating(Request request){
+    protected void createRating(Request request){
         Rating rating1 = new Rating();
         rating1.setRequest(request);
         rating1.setRater(request.getRequester());
@@ -94,12 +93,12 @@ public class TransactionService {
         ratingRepo.save(rating2);
     }
 
-    private void setRequestApproved(Request request){
+    protected void setRequestApproved(Request request){
         setOtherRequestsOnDenied(request);
         request.setStatus(RequestStatus.APPROVED);
     }
 
-    private void setOtherRequestsOnDenied(Request request) {
+    protected void setOtherRequestsOnDenied(Request request) {
         List<Request> requestList = requestRepo.findAllByRequestedItem(request.getRequestedItem());
         for(Request r  : requestList)
             if(isOverlapping(r.getStartDate(), r.getEndDate(),
@@ -119,7 +118,7 @@ public class TransactionService {
     }
 
     // Disclaimer: https://stackoverflow.com/a/17107966
-    public static boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
+    public boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
         return (start1.isBefore(end2) && start2.isBefore(end1));
     }
 
@@ -135,18 +134,24 @@ public class TransactionService {
         PaymentTransaction payment = makePayment(leaser, lender, amount,
                                                  leaseTransaction, PaymentType.RENTPRICE);
         leaseTransaction.addPaymentTransaction(payment);
-        isReturnedInTime(leaseTransaction, leaser, lender);
+        if( !(isReturnedInTime(leaseTransaction, leaser, lender))){
+            return false;
+        }
         leaseTransactionRepo.save(leaseTransaction);
         return true;
     }
 
-    private boolean isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
+    // boolean is with regards to ProPay,
+    // not about returning in time!
+    protected boolean isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
         if(isTimeViolation(leaseTransaction)){
-            double amount = leaseTransaction.getItem().getCostPerDay() * leaseTransaction.getLengthOfTimeframeViolation();
-            PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
+            double amount =
+                    leaseTransaction.getItem().getCostPerDay()
+                            * leaseTransaction.getLengthOfTimeframeViolation();
             if( !(proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount))){
                 return false;
             }
+            PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
             leaseTransaction.addPaymentTransaction(payment);
         }
         return true;
@@ -186,21 +191,24 @@ public class TransactionService {
         leaseTransactionRepo.save(leaseTransaction);
     }
 
-    private PaymentTransaction makePayment(Person leaser, Person lender, double amount,
+    protected PaymentTransaction makePayment(Person leaser, Person lender, double amount,
                                            LeaseTransaction leaseTransaction, PaymentType type){
         PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
         paymentTransaction.setType(type);
         paymentTransaction.setLeaseTransaction(leaseTransaction);
-        paymentTransaction.setPaymentIsConcluded(true);
+        if(!(type == PaymentType.DEPOSIT)) {
+            paymentTransaction.setPaymentIsConcluded(true);
+        }
         paymentTransactionRepo.save(paymentTransaction);
         return paymentTransaction;
     }
 
-    public void itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {
+    public ConflictTransaction itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {
         ConflictTransaction conflictTransaction = new ConflictTransaction();
         conflictTransaction.setLeaseTransaction(leaseTransaction);
         conflictTransaction.setCommentary(commentary);
         conflictTransactionRepo.save(conflictTransaction);
+        return conflictTransaction;
     }
 
     public boolean isTimeViolation(LeaseTransaction leaseTransaction) {

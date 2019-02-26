@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -8,8 +9,6 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import Bendispository.Abschlussprojekt.service.*;
-import org.hibernate.mapping.Array;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
@@ -74,6 +71,12 @@ public class LoginRegistrationTests {
     @MockBean
     ItemService itemService;
 
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+
+    @MockBean
+    TransactionService transactionService;
+
     Person dummy1;
 
     @Before
@@ -110,7 +113,6 @@ public class LoginRegistrationTests {
                 .param("firstName", "clara")
                 .param("username", "clari")
                 .param("email", "clari@gmx.de")
-                .param("account", "0")
                 .param("city", "Düsseldorf")
                 .sessionAttr("newPerson", new Person()))
                 .andExpect(status().isOk())
@@ -132,7 +134,6 @@ public class LoginRegistrationTests {
                 .param("firstName", "clara")
                 .param("username", "momo")
                 .param("email", "clari@gmx.de")
-                .param("account", "0")
                 .param("city", "Düsseldorf")
                 .param("password", "abcd")
                 .sessionAttr("newPerson", new Person()))

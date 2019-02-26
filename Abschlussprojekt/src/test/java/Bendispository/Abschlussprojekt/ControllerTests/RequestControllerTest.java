@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -10,9 +11,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import Bendispository.Abschlussprojekt.service.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -80,6 +79,8 @@ public class RequestControllerTest {
     @MockBean
     RequestService requestService;
 
+    @MockBean
+    TransactionService transactionService;
     Person dummy1;
     Person dummy2;
 

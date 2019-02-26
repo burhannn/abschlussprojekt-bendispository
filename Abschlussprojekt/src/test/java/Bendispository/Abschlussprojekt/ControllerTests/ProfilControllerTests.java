@@ -1,9 +1,9 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.ProfilController;
 import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
-import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -12,10 +12,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,11 +77,16 @@ public class ProfilControllerTests {
     RequestService requestService;
     @MockBean
     ItemService itemService;
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+    @MockBean
+    TransactionService transactionService;
 
 
     Person dummy1;
     Person dummy2;
     Person dummy3;
+    Person dummyAdmin;
 
     Item dummyItem1;
     Item dummyItem2;
@@ -103,6 +105,7 @@ public class ProfilControllerTests {
         dummy1 = new Person();
         dummy2 = new Person();
         dummy3 = new Person();
+        dummyAdmin = new Person();
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
@@ -143,6 +146,13 @@ public class ProfilControllerTests {
         dummy3.setPassword("abcdabcd");
         dummy3.setId(6L);
         dummy3.setRatings(Arrays.asList(rating3));
+
+        dummyAdmin.setId(0L);
+        dummyAdmin.setFirstName("random");
+        dummyAdmin.setLastName("random");
+        dummyAdmin.setUsername("admin");
+        dummyAdmin.setPassword("rootroot");
+        dummyAdmin.setEmail("admin@gmail.com");
 
         dummyItem1.setName("stuhl");
         dummyItem1.setDeposit(40);
@@ -330,7 +340,7 @@ public class ProfilControllerTests {
 
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
-        mvc.perform(post("/editprofile").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mvc.perform(get("/editprofile").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("FirstName", "mandy")
                 .param("LastName", "candy")
                 .param("Password", "abcdabcd")
@@ -340,43 +350,30 @@ public class ProfilControllerTests {
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("profileTmpl/editProfile"));
-
-        Assert.assertEquals("koln", dummy1.getCity());
-
-    /*
-        mvc.perform(post("/editprofile").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("FirstName", "mandy")
-                .param("LastName", "candy")
-                .param("Password", "abcdabcd")
-                .param("Email", "candy@gmail.com")
-                .param("City", "koln")
-                .requestAttr("person", dummy1)
-                .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("redirect:/profile"))
-                .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
-                .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
-                .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
-                .andExpect(model().attribute("person", hasProperty("username", equalTo("user"))))
-                .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
-                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
-                .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem1, dummyItem2))));
-    */
     }
 
     @Test
-    public void checkEditOtherPersonNotPossible() throws Exception{
-        //....
-       }
-
-    @Test
+    @Ignore
+    @WithMockUser(username = "admin", password = "rootroot", roles = "ADMIN")
     public void checkdeletePersonByAdmin() throws Exception{
-        //....
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+
+        mvc.perform(get("deleteuser/{username}", dummy1.getUsername()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("redirect:/profilub"));
     }
 
+
     @Test
+    @WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
     public void checkdeletePersonNotByAdminFail() throws Exception {
-        //....
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+        mvc.perform(get("deleteuser/{username}", dummy2.getUsername()))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -386,12 +383,39 @@ public class ProfilControllerTests {
 
     @Test
     public void checkOpenratings() throws Exception {
-        //....
+        Mockito.when(ratingRepo.findAllByRater(dummy1)).thenReturn(dummy1.getRatings());
+
+        mvc.perform(get("/openratings"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("openRatings"))
+                .andExpect(model().attribute("openRatings", hasSize(1)))
+                .andExpect(view().name("profileTmpl/openRatings"));
     }
+
+    /*
+    @PostMapping(path="/rating")
+    public String Rating(Model model,
+                         int rating,
+                         Long ratingID){
+        if (rating != -1){
+            Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
+            rating1.setRatingPoints(rating);
+            ratingRepo.save(rating1);
+
+            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+                rating1.getRequest().getRequester().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequester());
+            }else{
+                rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
+                personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
+            }
+        }
+        return "redirect:/";
+    */
 
     @Test
     public void checkRating() throws Exception {
-        //....
+
     }
 
 }
