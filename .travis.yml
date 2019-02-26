@@ -20,3 +20,6 @@ branches:
     - master
     - newmergebranch
     - Travis
+
+notifications:
+  email: false
