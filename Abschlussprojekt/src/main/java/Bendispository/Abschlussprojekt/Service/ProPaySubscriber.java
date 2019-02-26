@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.Service;
 
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
@@ -12,13 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClientResponse;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 @Component
 public class ProPaySubscriber {

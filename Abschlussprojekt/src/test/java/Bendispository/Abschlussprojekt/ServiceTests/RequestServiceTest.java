@@ -1,8 +1,11 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.ServiceTests;
 
+import Bendispository.Abschlussprojekt.Service.AuthenticationService;
+import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.Service.RequestService;
+import Bendispository.Abschlussprojekt.Service.TransactionService;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -10,18 +13,14 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import org.hibernate.jdbc.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -31,11 +30,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
-/*@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class RequestServiceTest {
 
     @MockBean
@@ -169,7 +167,4 @@ public class RequestServiceTest {
         boolean check = requestService.checkRequesterBalance(redirectAttributes, new Item(), "");
         assertEquals(true, check);
     }
-
-
-
-}*/
+}
