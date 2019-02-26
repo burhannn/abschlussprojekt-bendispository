@@ -1,10 +1,10 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.Service.*;
 import Bendispository.Abschlussprojekt.controller.PaymentController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
-import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -12,7 +12,6 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import Bendispository.Abschlussprojekt.service.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -206,8 +205,19 @@ public class PaymentControllerTests {
         mvc.perform(get("/chargeaccount"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("account"))
+                .andExpect(view().name("rentsTmpl/chargeAccount"));
+    }
+
+    @Test
+    public void checkChargeAccount() throws Exception{
+        mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("amount", "1"))
+                .andExpect(status().isOk())
                 .andExpect(view().name("rentsTmpl/chargeAccount"))
-                .andExpect(model().attribute("account", hasProperty("amount", equalTo(0D))));
+                .andExpect(model().attributeExists("success"))
+                .andExpect(model().attributeExists("person"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attribute("success", "Account has been charged!"));
     }
 
     @Test
