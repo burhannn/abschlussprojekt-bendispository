@@ -199,7 +199,7 @@ public class ProfilControllerTests {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
-        Mockito.when(itemRepo.findByOwnerNot(dummy3))
+        Mockito.when(itemRepo.findByOwnerNotAndForSaleTrue(dummy3))
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
         mvc.perform(get("/"))
