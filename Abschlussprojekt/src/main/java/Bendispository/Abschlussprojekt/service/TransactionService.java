@@ -54,6 +54,19 @@ public class TransactionService {
         this.clock = clock;
     }
 
+    public boolean lenderApprovedPurchase(Request request) {
+        double retailPrice = request.getRequestedItem().getRetailPrice();
+        Person requester = request.getRequester();
+
+        if (proPaySubscriber.checkDeposit(retailPrice, requester.getUsername())) {
+            proPaySubscriber.transferMoney(requester.getUsername(),
+                    request.getRequestedItem().getOwner().getUsername(), retailPrice);
+        }
+
+        request.setStatus(RequestStatus.SOLD);
+        return true;
+    }
+
     public boolean lenderApproved(Request request){
         double deposit = request.getRequestedItem().getDeposit();
         Person requester = request.getRequester();

@@ -6,37 +6,67 @@
 </head>
 <body>
 <div class="projekt_container">
+    <h1>My Buy Requests</h1>
+    <div th:each="request : ${myBuyRequests}">
+        <hr width="50%">
+        <div th:utext= "|Item: ${request.requestedItem.name} <br/>
+                         From: ${request.requestedItem.owner.username}|"></div>
+        <form method="post" th:action="'/profile/deleterequest/' + ${request.id}">
+            <button type = "submit">Delete</button>
+        </form>
+    </div>
+</div>
+<div class="projekt_container">
+    <h1>Buy requests concerning my items</h1>
+    <div th:each="request : ${buyRequestsMyItems}">
+        <hr width="50%">
+        <table style="margin-top: 2%">
+            <tr style="text-align: left !important;">
+                <td class="item_name" th:text= "|Item: ${request.requestedItem.name}|"></td>
+                <td class="item_name" th:text= "|Requested by: ${request.requester.username}|"></td></tr>
+            <td th:text="|Status: ${request.status}|"></td>
+            <div th:if="${request.status.name() == 'PENDINGSELL'}">
+                <form method="post">
+                    <input type="radio" name="buyRequestMyItems" value="-1">reject
+                    <input type="radio" name="buyRequestMyItems" value="1">accept
+                    <input type="hidden" value="0" th:value="${request.id}" name="requestID">
+                    <button type = "submit">Submit</button>
+                </form>
+            </div>
+        </table>
+    </div>
+</div>
+<div class="projekt_container">
 <h1>My Requests</h1>
   <div th:each="request : ${myRequests}">
-      <tr>
-          <div th:text= "|Item: ${request.requestedItem.name} -Status: ${request.status} -von: ${request.requestedItem.owner.username}|"></div>
-          <form method="post" th:action="'/profile/deleterequest/' + ${request.id}">
-              <button type = "submit">delete</button>
-          </form>
-      </tr>
+      <hr width="50%">
+      <div th:utext= "|Item: ${request.requestedItem.name} <br/>
+                       Status: ${request.status} <br/>
+                       From: ${request.requestedItem.owner.username}|"></div>
+      <form method="post" th:action="'/profile/deleterequest/' + ${request.id}">
+          <button type = "submit">Delete</button>
+      </form>
   </div>
 </div>
 <div class="projekt_container">
     <h1>Requests concerning my items</h1>
     <div th:each="request : ${requestsMyItems}">
+        <hr width="50%">
         <table style="margin-top: 2%">
             <tr style="text-align: left !important;">
                 <td class="item_name" th:text= "|Item: ${request.requestedItem.name}|"></td>
-                <td class="item_name" th:text= "|Requested by: ${request.requester.username}|"></td>
-            </tr>
-        <td th:text="|Status: ${request.status}|"></td>
+                <td class="item_name" th:text= "|Requested by: ${request.requester.username}|"></td></tr>
+            <td th:text="|Status: ${request.status}|"></td>
             <div th:if="${request.status.name() == 'PENDING'}">
                 <form method="post">
                     <input type="radio" name="requestMyItems" value="-1">reject
                     <input type="radio" name="requestMyItems" value="1">accept
                     <input type="hidden" value="0" th:value="${request.id}" name="requestID">
-                    <button type = "submit">submit</button>
+                    <button type = "submit">Submit</button>
                 </form>
             </div>
-        </td>
-    </tr>
         </table>
-</div>
+    </div>
 </div>
 <a class="back_button" href="/profile">Back</a>
 </body>

@@ -27,8 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
-import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.*;
 
 @Component
 public class RequestService {
@@ -71,9 +70,19 @@ public class RequestService {
         myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
         myRequests = deleteObsoleteRequests(myRequests);
         model.addAttribute("myRequests", myRequests);
+
         List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
         requestsMyItems = deleteObsoleteRequests(requestsMyItems);
         model.addAttribute("requestsMyItems", requestsMyItems);
+
+        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, PENDINGSELL);
+        deleteObsoleteRequests(myBuyRequests);
+        model.addAttribute("myBuyRequests", myBuyRequests);
+
+        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDINGSELL);
+        deleteObsoleteRequests(buyRequestsMyItems);
+        model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
+
     }
 
     protected List<Request> deleteObsoleteRequests(List<Request> myRequests) {
@@ -143,6 +152,7 @@ public class RequestService {
         request.setStartDate(LocalDate.now());
         request.setEndDate(LocalDate.now().plusDays(1));
         request.setDuration(0);
+        request.setStatus(PENDINGSELL);
         request.setRequestedItem(item);
 
         String username = currentUser.getUsername();

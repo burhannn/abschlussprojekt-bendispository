@@ -17,7 +17,7 @@
     <h1>My Profile</h1>
     <div class="my_profile_administration">
         <a href = "/editprofile">Edit Profile</a>
-        <a href="/chargeaccount">Charge account</a>
+        <a href="/chargeaccount">Charge Account</a>
     </div>
     <div class="my_rating" th:if="${person?.getAverageRatings()} != -1">
         <tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
@@ -36,14 +36,12 @@
         <tr><div th:text="|Email: ${person?.email}|"></div></tr>
         <tr><div th:text="|City: ${person?.city}|"></div></tr>
         <tr><div th:text="|Username: ${person?.username}|"></div></tr>
-        <tr><div th:text="|Propay account balance: ${account?.amount}|"></div></tr>
-        <div class="current_reservations">
-            <h4>Current reservations</h4>
+        <tr><div th:text="|Propay account balance: ${account?.amount}€|"></div></tr>
+        <h4 align="center">Current Reservations:</h4>
+        <div class="scroll_box">
             <div th:each="reservation : ${reservations}">
-                <tr>
-                    <div th:text="|Reservierungsbetrag: ${reservation?.amount}|"></div>
-                    <div th:text="|ReservierungsID: ${reservation?.id}|"></div>
-                </tr>
+                <div th:text="|Reservation amount: ${reservation?.amount}|"></div>
+                <div th:text="|Reservation ID: ${reservation?.id}|"></div><hr align="left" width="95%">
             </div>
         </div>
         <div class="my_items">My Items:

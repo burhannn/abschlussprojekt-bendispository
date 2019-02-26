@@ -116,13 +116,15 @@ h1{
     max-width: 300px;
     margin-bottom: 20px;
 }
-.current_reservations{
-    height: 133px;
+.scroll_box{
+    height: 150px;
+    width: 600px;
     line-height: 1.5em;
     overflow: auto;
-    padding: 0% 0% 0% 4%;
+    padding: 0 0 0 4%;
     background-color: ghostwhite;
     box-shadow: inset 0 0 10px gray;
-    margin: 6% 0%;
+    margin: auto auto auto auto;
     font-size: 17px;
+    text-align: center;
 }

@@ -18,7 +18,7 @@
                 <input type="radio" name="rating" value="5">5
                 <input type="hidden" name="rating" value="-1" checked>
                 <input type="hidden" value="0" th:value="${openRatings.get(iterStart.index).id}" name="ratingID">
-                <button type = "submit">submit</button>
+                <button type = "submit">Submit</button>
             </form>
             <div th:if="${openRatings.get(iterStart.index).ratingPoints != null}" th:text="|Rating: ${openRatings.get(iterStart.index).ratingPoints}|">
             </div>

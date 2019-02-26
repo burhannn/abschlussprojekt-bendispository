@@ -14,7 +14,7 @@
         <tr>Description:<div><input type ="text" name = "description" th:value="${Item?.description}"></div></tr>
         <tr>Place:<div><input type ="text" name = "place" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.place}"></div></tr>
         <tr>Deposit:<div><input type ="text" name = "deposit" pattern="[0-9]+" required th:value="${Item?.deposit}"></div></tr>
-        <tr>CostPerDay:<div><input type ="text" name = "costPerDay" pattern="[0-9]+" required th:value="${Item?.costPerDay}"></div></tr>
+        <tr>Cost Per Day:<div><input type ="text" name = "costPerDay" pattern="[0-9]+" required th:value="${Item?.costPerDay}"></div></tr>
         <button type="submit" class="button" style="margin-top: 2%"> Save Changes</button>
     </form>
 </div>

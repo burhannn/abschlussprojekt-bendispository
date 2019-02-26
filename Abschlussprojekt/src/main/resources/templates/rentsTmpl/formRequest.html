@@ -39,13 +39,15 @@
             <span class="input-group-addon">to</span>
             <input type="text" autocomplete="off" class="input-sm form-control" name="endDate"
                                 th:value="${newRequest?.endDate}" placeholder="End Date"/>
-        </div>
-        <button type="submit">Send request</button>
-    </form>
-    <div th:if="${!leases.isEmpty()}" style="width:300px;height:150px;line-height:3em;overflow:auto;padding:5px;">
+        </div><br>
+        <button type="submit">Send Request</button>
+    </form><br>
+    <div th:if="${!leases.isEmpty()}">
         <h4>Future Reservations</h4>
-        <div th:each="lease : ${leases}">
-            <p th:text="|${#temporals.format(lease.startDate, 'yyyy.MM.dd')} - ${#temporals.format(lease.endDate, 'yyyy.MM.dd')}|"></p>
+        <div class = "scroll_box">
+            <th:block th:each="lease : ${leases}">
+                <tr th:text="|${#temporals.format(lease.startDate, 'yyyy.MM.dd')} - ${#temporals.format(lease.endDate, 'yyyy.MM.dd')}|"></tr><br>
+            </th:block>
         </div>
     </div>
     <div th:unless="${!leases.isEmpty()}">

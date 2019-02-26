@@ -1,5 +1,5 @@
 package Bendispository.Abschlussprojekt.model;
 
 public enum RequestStatus {
-    PENDING, APPROVED, DENIED
+    PENDING, PENDINGSELL, APPROVED, DENIED, SOLD
 }
