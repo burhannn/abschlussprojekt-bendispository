@@ -1,8 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -137,12 +135,19 @@ public class ProfilController {
     @GetMapping(path = "/profile/history")
     public String history(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
+
+        List<Request> purchases = requestRepo.findByRequesterAndStatus(loggedIn, RequestStatus.SHIPPED);
+        List<Request> sales = requestRepo.findByRequestedItemOwnerAndStatus(loggedIn, RequestStatus.SHIPPED);
+
         List<LeaseTransaction> leased =
                 leaseTransactionRepo
                         .findAllByLeaserAndLeaseIsConcludedIsTrue(loggedIn);
         List<LeaseTransaction> lent =
                 leaseTransactionRepo
                         .findAllByItemOwnerAndLeaseIsConcludedIsTrue(loggedIn);
+
+        model.addAttribute("purchases", purchases);
+        model.addAttribute("sales", sales);
         model.addAttribute("leased", leased);
         model.addAttribute("lent", lent);
         return "historia";
