@@ -215,7 +215,8 @@ public class FileControllerTests {
 
         MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
-        mvc.perform(post("/additem").contentType(MediaType.MULTIPART_FORM_DATA)
+        mvc.perform(multipart("/additem")
+                .file("file", new byte[0])
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
                 .param("place", "köln")
@@ -223,12 +224,7 @@ public class FileControllerTests {
                 .param("costPerDay", "69")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/item/null"))
-                .andExpect(model().attribute("newItem", hasProperty("name", equalTo("lasso"))))
-                .andExpect(model().attribute("newItem", hasProperty("description", equalTo("komm hol das lasso raus"))))
-                .andExpect(model().attribute("newItem", hasProperty("place", equalTo("köln"))))
-                .andExpect(model().attribute("newItem", hasProperty("deposit", equalTo(69))))
-                .andExpect(model().attribute("newItem", hasProperty("costPerDay", equalTo(69))));
+                .andExpect(view().name("redirect:/item/null"));
     }
 
     @Test

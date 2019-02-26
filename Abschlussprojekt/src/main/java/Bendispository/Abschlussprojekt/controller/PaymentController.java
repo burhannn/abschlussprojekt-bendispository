@@ -21,11 +21,10 @@ public class PaymentController {
     private ProPaySubscriber proPaySubscriber;
 
     @Autowired
-    public PaymentController(PersonsRepo personsRepo,
-                             LeaseTransactionRepo leaseTransactionRepo) {
-        this.authenticationService = new AuthenticationService(personsRepo);
-        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
-                leaseTransactionRepo);
+    public PaymentController(AuthenticationService authenticationService,
+                             ProPaySubscriber proPaySubscriber) {
+        this.authenticationService = authenticationService;
+        this.proPaySubscriber = proPaySubscriber;
     }
 
     @GetMapping(path = "/profile/paymenttransaction")
