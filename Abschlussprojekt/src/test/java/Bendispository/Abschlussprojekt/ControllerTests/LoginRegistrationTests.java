@@ -121,13 +121,11 @@ public class LoginRegistrationTests {
                 .andExpect(model().attribute("newPerson", hasProperty("username", equalTo("clari"))))
                 .andExpect(model().attribute("newPerson", hasProperty("email", equalTo("clari@gmx.de"))))
                 .andExpect(model().attribute("newPerson", hasProperty("city", equalTo("Düsseldorf"))));
-
-        //Mockito.verify(personsRepo).save(any(Person.class));
     }
 
     @Test
     @WithMockUser(username = "momo", password = "abcd", roles = "USER")
-    public void checkRegistrationfail() throws Exception {
+    public void checkRegistrationfailUsernameNotAvailable() throws Exception {
 
         mvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lastName", "mandy")

@@ -1,9 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Rating;
-import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -22,11 +19,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +83,7 @@ public class ProfilController {
                 model.addAttribute("itemname", leaseTransaction.getItem().getName());
             }
         }
-        List<Item> allOtherItems = itemRepo.findByOwnerNot(loggedIn);
+        List<Item> allOtherItems = itemRepo.findByOwnerNotAndForSaleTrue(loggedIn);
         model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
         return "OverviewAllItems";
@@ -140,12 +135,19 @@ public class ProfilController {
     @GetMapping(path = "/profile/history")
     public String history(Model model){
         Person loggedIn = authenticationService.getCurrentUser();
+
+        List<Request> purchases = requestRepo.findByRequesterAndStatus(loggedIn, RequestStatus.SHIPPED);
+        List<Request> sales = requestRepo.findByRequestedItemOwnerAndStatus(loggedIn, RequestStatus.SHIPPED);
+
         List<LeaseTransaction> leased =
                 leaseTransactionRepo
                         .findAllByLeaserAndLeaseIsConcludedIsTrue(loggedIn);
         List<LeaseTransaction> lent =
                 leaseTransactionRepo
                         .findAllByItemOwnerAndLeaseIsConcludedIsTrue(loggedIn);
+
+        model.addAttribute("purchases", purchases);
+        model.addAttribute("sales", sales);
         model.addAttribute("leased", leased);
         model.addAttribute("lent", lent);
         return "historia";
@@ -187,7 +189,7 @@ public class ProfilController {
         return "profileTmpl/editProfile";
     }
 
-    @PostMapping(path = "editprofile")
+    @PostMapping(path = "/editprofile")
     public String saveProfileInDatabase(
             @RequestParam(value = "Firstname", required = true) String firstName,
             @RequestParam(value = "Lastname", required = true) String lastName,

@@ -50,6 +50,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -221,7 +222,7 @@ public class FileControllerTests {
     @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkAddItem() throws Exception {
-        
+
                 /*
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
         if(!fileName.isEmpty()){
@@ -231,13 +232,14 @@ public class FileControllerTests {
         //Mockito.when(StringUtils.cleanPath(multipart.getOriginalFilename())).thenReturn("testbild.jpg");
 
 
-        mvc.perform(post("/additem").contentType(MediaType.MULTIPART_FORM_DATA)
+        mvc.perform(multipart("/additem")
+                //.file("file", new byte[0])
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "lasso")
                 .param("description", "komm hol das lasso raus")
                 .param("place", "köln")
                 .param("deposit", "69")
                 .param("costPerDay", "69")
-                .param("file", "testfile")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("itemTmpl/AddItem"))
@@ -287,8 +289,18 @@ public class FileControllerTests {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
+    public void checkNONExistingItemProfile() throws Exception {
+        mvc.perform(get("/item/{id}", 8L))
+                .andDo(print())
+                .andExpect(view().name("redirect:/"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+    }
+
+    @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
     public void ckeckEditItem() throws Exception{
+
         mvc.perform(get("/edititem/{id}", 3L))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -299,15 +311,6 @@ public class FileControllerTests {
                 .andExpect(model().attribute("Item", hasProperty("deposit", equalTo(40))))
                 .andExpect(model().attribute("Item", hasProperty("description", equalTo("bin billig"))))
                 .andExpect(model().attribute("Item", hasProperty("costPerDay", equalTo(10))));
-    }
-
-    @Test
-    @WithMockUser(roles = "USER")
-    public void checkNONExistingItemProfile() throws Exception {
-        mvc.perform(get("/item/{id}", 8L))
-                .andDo(print())
-                .andExpect(view().name("redirect:/"))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
     }
 
 }
