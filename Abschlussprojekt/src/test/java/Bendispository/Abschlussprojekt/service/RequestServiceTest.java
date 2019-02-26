@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+/*@RunWith(SpringRunner.class)
 @SpringBootTest
 public class RequestServiceTest {
 
@@ -172,4 +172,4 @@ public class RequestServiceTest {
 
 
 
-}
+}*/

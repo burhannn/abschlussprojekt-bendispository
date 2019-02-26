@@ -11,5 +11,5 @@ public interface ItemRepo extends CrudRepository<Item,Long> {
 
     List<Item> findByOwner(Person loggedIn);
 
-    List<Item> findByOwnerNot(Person loggedIn);
+    List<Item> findByOwnerNotAndForSaleTrue(Person loggedIn);
 }

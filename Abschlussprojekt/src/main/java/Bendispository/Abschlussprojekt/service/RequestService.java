@@ -5,11 +5,8 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
-import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -23,8 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.*;
@@ -79,11 +74,11 @@ public class RequestService {
         requestsMyItems = deleteObsoleteRequests(requestsMyItems);
         model.addAttribute("requestsMyItems", requestsMyItems);
 
-        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, PENDINGSELL);
+        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, AWAITING_SHIPMENT);
         deleteObsoleteRequests(myBuyRequests);
         model.addAttribute("myBuyRequests", myBuyRequests);
 
-        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDINGSELL);
+        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, AWAITING_SHIPMENT);
         deleteObsoleteRequests(buyRequestsMyItems);
         model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
 
@@ -161,7 +156,7 @@ public class RequestService {
         request.setStartDate(LocalDate.now());
         request.setEndDate(LocalDate.now().plusDays(1));
         request.setDuration(0);
-        request.setStatus(PENDINGSELL);
+        request.setStatus(AWAITING_SHIPMENT);
         request.setRequestedItem(item);
 
         ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
@@ -172,6 +167,7 @@ public class RequestService {
             return "redirect:/item/{id}";
         }
 
+        item.setForSale(false);
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         redirectAttributes.addFlashAttribute("success", "Item bought!");
