@@ -60,9 +60,6 @@ public class RequestServiceTest {
     ConflictTransactionRepo conflictTransactionRepo;
 
     @MockBean
-    RatingRepo ratingRepo;
-
-    @MockBean
     RedirectAttributes redirectAttributes;
 
     @MockBean

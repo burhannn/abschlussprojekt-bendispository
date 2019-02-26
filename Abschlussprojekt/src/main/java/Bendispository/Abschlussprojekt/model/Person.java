@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class Person {
 
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.TRUE)
-    private List<LeaseTransaction> leaseTransactions;
+    private List<LeaseTransaction> leaseTransactions = new ArrayList<>();
 
     public void addLeaseTransaction(LeaseTransaction leaseTransaction){
         leaseTransactions.add(leaseTransaction);
