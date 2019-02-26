@@ -67,6 +67,7 @@ public class Person {
         if(ratings.size() == 0){
             return -1;
         }
-        return ratings.stream().mapToInt(Rating::getRatingPoints).sum()/ratings.size();
+        double average = (double)ratings.stream().mapToInt(Rating::getRatingPoints).sum()/ratings.size();
+        return (int)Math.round(average);
     }
 }
