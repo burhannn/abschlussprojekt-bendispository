@@ -167,6 +167,7 @@ public class RequestService {
             return "redirect:/item/{id}";
         }
 
+        item.setForSale(false);
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
         redirectAttributes.addFlashAttribute("success", "Item bought!");
