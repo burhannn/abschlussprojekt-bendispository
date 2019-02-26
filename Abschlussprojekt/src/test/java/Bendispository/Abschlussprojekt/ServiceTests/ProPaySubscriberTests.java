@@ -5,7 +5,6 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.model.transactionModels.Reservation;
-import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-/*    @RunWith(SpringRunner.class)
+    @RunWith(SpringRunner.class)
     public class ProPaySubscriberTests {
 
         ProPayAccount proPayAccount1;
@@ -92,7 +91,7 @@ import java.util.ArrayList;
             /*
             personsRepo.save(dummy1);
             itemRepo.save(dummyItem1);
-            *//*
+            */
         }
 
         @Test
@@ -188,8 +187,7 @@ import java.util.ArrayList;
                     proPaySubscriber.transferMoney("checkov", "check", 2.1);
             assertEquals(false, check);
         }
-
-    /*
+/*
         @Test
         public void checkGetAccount(){
             ProPaySubscriber proPaySubscriber = mock(ProPaySubscriber.class);
@@ -230,7 +228,7 @@ import java.util.ArrayList;
             ProPayAccount account =
                     proPaySubscriber.releaseReservation(dummy1.getUsername(), 8);
             assertEquals(1, account.getReservations().length);
-        }
+        }*/
 
 
-    }*/
+    }

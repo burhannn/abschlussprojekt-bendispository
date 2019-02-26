@@ -9,10 +9,10 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import Bendispository.Abschlussprojekt.service.AuthenticationService;
-import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
-import Bendispository.Abschlussprojekt.service.RequestService;
-import Bendispository.Abschlussprojekt.service.TransactionService;
+import Bendispository.Abschlussprojekt.ServiceTests.AuthenticationService;
+import Bendispository.Abschlussprojekt.ServiceTests.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.ServiceTests.RequestService;
+import Bendispository.Abschlussprojekt.ServiceTests.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
-import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 

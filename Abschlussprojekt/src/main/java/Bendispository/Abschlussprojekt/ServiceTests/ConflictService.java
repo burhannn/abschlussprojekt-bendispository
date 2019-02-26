@@ -1,15 +1,10 @@
-package Bendispository.Abschlussprojekt.service;
+package Bendispository.Abschlussprojekt.ServiceTests;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.ConflictTransaction;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
-import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.time.Clock;
 
 @Component
 public class ConflictService {
