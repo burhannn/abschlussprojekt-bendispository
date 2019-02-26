@@ -133,22 +133,16 @@ public class RequestController {
     public String AcceptDeclineRequests(Model model,
                                         Long requestID,
                                         Integer requestMyItems,
-                                        Integer buyRequestMyItems,
+                                        Integer shipped,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
         Long id = authenticationService.getCurrentUser().getId();
 
-        if (buyRequestMyItems != null) {
-            if (buyRequestMyItems == -1) {
-                request.setStatus(RequestStatus.DENIED);
-                requestRepo.save(request);
+        if (shipped != null) {
+            if (shipped == 1) {
+                request.setStatus(RequestStatus.SHIPPED);
                 requestService.showRequests(model, id);
                 return "rentsTmpl/requests";
-            } else {
-                if (transactionService.lenderApprovedPurchase(request)) {
-                    requestService.showRequests(model, id);
-                    return "rentsTmpl/requests";
-                }
             }
         }
 
