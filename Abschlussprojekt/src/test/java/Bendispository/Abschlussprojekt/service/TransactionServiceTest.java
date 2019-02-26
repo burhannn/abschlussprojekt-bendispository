@@ -8,6 +8,7 @@ import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.PaymentType;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 
@@ -70,6 +71,7 @@ public class TransactionServiceTest {
     Person person1;
     Person person2;
     LeaseTransaction leaseTransaction;
+    LeaseTransaction leaseTransaction2;
 
     @Before
     public void sup(){
@@ -112,6 +114,13 @@ public class TransactionServiceTest {
         leaseTransaction.setEndDate(LocalDate.of(2019,1,8));
         leaseTransaction.setDuration(Period.between(LocalDate.of(2019,1,5), LocalDate.of(2019,1,8)).getDays());
         leaseTransaction.setRequestId(1L);
+        leaseTransaction2 = new LeaseTransaction();
+        leaseTransaction2.setLeaser(person1);
+        leaseTransaction2.setItem(item1);
+        leaseTransaction2.setStartDate(LocalDate.of(2019,1,1));
+        leaseTransaction2.setEndDate(LocalDate.of(2019,1,2));
+        leaseTransaction2.setDuration(Period.between(LocalDate.of(2019,1,1), LocalDate.of(2019,1,2)).getDays());
+        leaseTransaction2.setRequestId(1L);
     }
 
     @Test
@@ -170,6 +179,8 @@ public class TransactionServiceTest {
 
         boolean check = transactionService.lenderApproved(r1);
         assertEquals(true, check);
+        assertEquals(PaymentType.DEPOSIT, r1.getLeaseTransaction().getPayments().get(0).getType());
+        assertEquals(false, r1.getLeaseTransaction().getPayments().get(0).isPaymentIsConcluded());
     }
 
     @Test
@@ -260,7 +271,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void itemIsAvailableOnTime(){
+    public void itemIsAvailableOnTimeFalse(){
         LeaseTransaction l1 = new LeaseTransaction();
         LeaseTransaction l2 = new LeaseTransaction();
         LeaseTransaction l3 = new LeaseTransaction();
@@ -293,14 +304,49 @@ public class TransactionServiceTest {
         assertEquals(false, check);
     }
 
-    /*@Test
-    public void itemReturnedToLenderIssueWithProPay(){
+    @Test
+    public void itemIsAvailableOnTimeTrue(){
+        LeaseTransaction l1 = new LeaseTransaction();
+        LeaseTransaction l2 = new LeaseTransaction();
+        LeaseTransaction l3 = new LeaseTransaction();
 
+        // r1 => 5.1-8.1
+
+        l1.setStartDate(LocalDate.of(2019,1,19));
+        l1.setEndDate(LocalDate.of(2019,1,22));
+        l2.setStartDate(LocalDate.of(2019,1,9));
+        l2.setEndDate(LocalDate.of(2019,1,10));
+        l3.setStartDate(LocalDate.of(2019,1,11));
+        l3.setEndDate(LocalDate.of(2019,1,17));
+
+        LeaseTransactionRepo spy = Mockito.spy(LeaseTransactionRepo.class);
+        List<LeaseTransaction> ret = Arrays.asList(l1, l2, l3);
+        Mockito.doReturn(ret).when(spy).findAllByItemId(1L);
+
+        transactionService =
+                new TransactionService(
+                        spy,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        boolean check = transactionService.itemIsAvailableOnTime(r1);
+
+        assertEquals(true, check);
+    }
+
+    @Test
+    public void itemReturnedToLenderIssueWithProPay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(false).when(spy).transferMoney(anyString(), anyString(), anyDouble());
         transactionService =
                 new TransactionService(
                         leaseTransactionRepo,
                         requestRepo,
-                        proPaySubscriber,
+                        spy,
                         paymentTransactionRepo,
                         conflictTransactionRepo,
                         ratingRepo,
@@ -309,5 +355,107 @@ public class TransactionServiceTest {
         boolean check = transactionService.itemReturnedToLender(leaseTransaction);
 
         assertEquals(false, check);
-    }*/
+    }
+
+    @Test
+    public void itemReturnedToLenderNoIssueWithProPay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(true).when(spy).transferMoney(anyString(), anyString(), anyDouble());
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        spy,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        boolean check = transactionService.itemReturnedToLender(leaseTransaction);
+
+        assertEquals(true, check);
+    }
+
+    @Test
+    public void isReturnedInTimeIssueWithProPay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(false).when(spy).transferMoney(anyString(), anyString(), anyDouble());
+
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        spy,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        fakeClock);
+        boolean check = transactionService.isReturnedInTime(leaseTransaction2, person1, person2);
+
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void isReturnedInTimeNoIssueWithProPay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(true).when(spy).transferMoney(anyString(), anyString(), anyDouble());
+
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        spy,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        fakeClock);
+        boolean check = transactionService.isReturnedInTime(leaseTransaction2, person1, person2);
+
+        assertEquals(true, check);
+        assertEquals(true, leaseTransaction2.isTimeframeViolation());
+        assertEquals(1, leaseTransaction2.getLengthOfTimeframeViolation());
+        assertEquals(1, leaseTransaction2.getPayments().size());
+    }
+
+    @Test
+    public void itemIsIntactIssueWithProPay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(null).when(spy).releaseReservation(anyString(),anyInt());
+
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        spy,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        fakeClock);
+        boolean check = transactionService.itemIsIntact(leaseTransaction);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void itemIsIntactNoIssueWithProPay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        ProPayAccount account = new ProPayAccount();
+        Mockito.doReturn(account).when(spy).releaseReservation(anyString(),anyInt());
+
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        spy,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        fakeClock);
+
+
+        //leaseTransaction.addPaymentTransaction();
+
+        boolean check = transactionService.itemIsIntact(leaseTransaction);
+
+        assertEquals(true, check);
+    }
 }

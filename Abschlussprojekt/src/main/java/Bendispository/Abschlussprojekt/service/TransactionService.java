@@ -134,18 +134,24 @@ public class TransactionService {
         PaymentTransaction payment = makePayment(leaser, lender, amount,
                                                  leaseTransaction, PaymentType.RENTPRICE);
         leaseTransaction.addPaymentTransaction(payment);
-        isReturnedInTime(leaseTransaction, leaser, lender);
+        if( !(isReturnedInTime(leaseTransaction, leaser, lender))){
+            return false;
+        }
         leaseTransactionRepo.save(leaseTransaction);
         return true;
     }
 
-    private boolean isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
+    // boolean is with regards to ProPay,
+    // not about returning in time!
+    protected boolean isReturnedInTime(LeaseTransaction leaseTransaction, Person leaser, Person lender){
         if(isTimeViolation(leaseTransaction)){
-            double amount = leaseTransaction.getItem().getCostPerDay() * leaseTransaction.getLengthOfTimeframeViolation();
-            PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
+            double amount =
+                    leaseTransaction.getItem().getCostPerDay()
+                            * leaseTransaction.getLengthOfTimeframeViolation();
             if( !(proPaySubscriber.transferMoney(leaser.getUsername(), lender.getUsername(), amount))){
                 return false;
             }
+            PaymentTransaction payment = makePayment(leaser, lender, amount, leaseTransaction, PaymentType.DAMAGES);
             leaseTransaction.addPaymentTransaction(payment);
         }
         return true;
@@ -190,7 +196,9 @@ public class TransactionService {
         PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
         paymentTransaction.setType(type);
         paymentTransaction.setLeaseTransaction(leaseTransaction);
-        paymentTransaction.setPaymentIsConcluded(true);
+        if(!(type == PaymentType.DEPOSIT)) {
+            paymentTransaction.setPaymentIsConcluded(true);
+        }
         paymentTransactionRepo.save(paymentTransaction);
         return paymentTransaction;
     }
