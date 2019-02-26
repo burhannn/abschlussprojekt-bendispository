@@ -6,10 +6,10 @@
 </div>
 <div th:if="${openRatings.size() == 0}" class="projekt_container">Currently no open ratings</div>
 <div class = "projekt_container" th:each="item,iterStart : ${openRatings}">
-    <h1 class="header_container" th:text= ${openRatings.get(iterStart.index).request.requestedItem.name}></h1>
+    <h1 class="header_container" th:text= ${openRatings?.get(iterStart?.index)?.request?.requestedItem?.name}></h1>
     <div>
-        <div class ="item_description" th:text="${openRatings.get(iterStart.index).request.requestedItem.owner.username}"></div>
-            <form th:if="${openRatings.get(iterStart.index).ratingPoints == null}" method="post" action="/rating">
+        <div class ="item_description" th:text="${openRatings?.get(iterStart?.index)?.request?.requestedItem?.owner?.username}"></div>
+            <form th:if="${openRatings?.get(iterStart?.index)?.ratingPoints == null}" method="post" action="/rating">
                 <td>Give your Rating:</td>
                 <input type="radio" name="rating" value="1">1
                 <input type="radio" name="rating" value="2">2
@@ -17,10 +17,10 @@
                 <input type="radio" name="rating" value="4">4
                 <input type="radio" name="rating" value="5">5
                 <input type="hidden" name="rating" value="-1" checked>
-                <input type="hidden" value="0" th:value="${openRatings.get(iterStart.index).id}" name="ratingID">
+                <input type="hidden" value="0" th:value="${openRatings?.get(iterStart?.index)?.id}" name="ratingID">
                 <button type = "submit">Submit</button>
             </form>
-            <div th:if="${openRatings.get(iterStart.index).ratingPoints != null}" th:text="|Rating: ${openRatings.get(iterStart.index).ratingPoints}|">
+            <div th:if="${openRatings?.get(iterStart?.index)?.ratingPoints != null}" th:text="|Rating: ${openRatings?.get(iterStart?.index)?.ratingPoints}|">
             </div>
     </div>
 </div>
