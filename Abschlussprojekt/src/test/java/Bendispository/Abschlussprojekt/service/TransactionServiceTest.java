@@ -213,8 +213,8 @@ public class TransactionServiceTest {
         assertEquals(false, check);
     }
 
-    /*@Test
-    public void lenderApprovedOthersAtSamePointInTimeAreDenied(){
+    @Test
+    public void lenderApprovedOthersAtSameTimeAreDenied(){
         ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
         Mockito.doReturn(true).when(spy).checkDeposit(anyDouble(), anyString());
         Mockito.doReturn(1).when(spy).makeDeposit(any(Request.class));
@@ -241,7 +241,7 @@ public class TransactionServiceTest {
                 new TransactionService(
                         leaseTransactionRepo,
                         requestRepo,
-                        proPaySubscriber,
+                        spy,
                         paymentTransactionRepo,
                         conflictTransactionRepo,
                         ratingRepo,
@@ -252,5 +252,5 @@ public class TransactionServiceTest {
         assertEquals(RequestStatus.PENDING, r3.getStatus());
         assertEquals(RequestStatus.DENIED, r4.getStatus());
         assertEquals(RequestStatus.APPROVED, r1.getStatus());
-    }*/
+    }
 }
