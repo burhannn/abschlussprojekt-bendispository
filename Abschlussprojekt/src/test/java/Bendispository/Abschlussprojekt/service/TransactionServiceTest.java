@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.service;
 
+
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
@@ -7,6 +8,9 @@ import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.PaymentType;
+import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.TransactionService;
+
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
@@ -28,8 +32,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
 
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
+
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringRunner.class)

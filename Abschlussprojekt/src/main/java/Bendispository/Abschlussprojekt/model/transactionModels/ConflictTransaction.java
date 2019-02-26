@@ -1,9 +1,12 @@
 package Bendispository.Abschlussprojekt.model.transactionModels;
 
 import lombok.Data;
+import lombok.ToString;
+
 import javax.persistence.*;
 
 @Data
+@ToString(exclude = {"leaseTransaction"})
 @Entity
 public class ConflictTransaction {
 

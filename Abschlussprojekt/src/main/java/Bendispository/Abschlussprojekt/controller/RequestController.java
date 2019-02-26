@@ -21,11 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
-import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
