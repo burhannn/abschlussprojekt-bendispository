@@ -203,11 +203,12 @@ public class TransactionService {
         return paymentTransaction;
     }
 
-    public void itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {
+    public ConflictTransaction itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {
         ConflictTransaction conflictTransaction = new ConflictTransaction();
         conflictTransaction.setLeaseTransaction(leaseTransaction);
         conflictTransaction.setCommentary(commentary);
         conflictTransactionRepo.save(conflictTransaction);
+        return conflictTransaction;
     }
 
     public boolean isTimeViolation(LeaseTransaction leaseTransaction) {

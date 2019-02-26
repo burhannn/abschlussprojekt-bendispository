@@ -77,6 +77,10 @@ public class ProfilControllerTests {
     RequestService requestService;
     @MockBean
     ItemService itemService;
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+    @MockBean
+    TransactionService transactionService;
 
 
     Person dummy1;

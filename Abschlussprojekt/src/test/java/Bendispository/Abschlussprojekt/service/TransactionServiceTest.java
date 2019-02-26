@@ -5,10 +5,7 @@ import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
-import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
-import Bendispository.Abschlussprojekt.model.transactionModels.PaymentType;
-import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
+import Bendispository.Abschlussprojekt.model.transactionModels.*;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 
@@ -36,6 +33,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -377,7 +375,26 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void isReturnedInTimeIssueWithProPay(){
+    public void itemReturnedToLenderNotInTimeNoIssueThenIssueWithProPayWhenPayingDelay(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(true, false).when(spy).transferMoney(anyString(), anyString(), anyDouble());
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        spy,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        fakeClock);
+
+        boolean check = transactionService.itemReturnedToLender(leaseTransaction2);
+
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void isNotReturnedInTimeIssueWithProPay(){
         ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
         Mockito.doReturn(false).when(spy).transferMoney(anyString(), anyString(), anyDouble());
 
@@ -396,7 +413,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void isReturnedInTimeNoIssueWithProPay(){
+    public void isNotReturnedInTimeNoIssueWithProPay(){
         ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
         Mockito.doReturn(true).when(spy).transferMoney(anyString(), anyString(), anyDouble());
 
@@ -430,7 +447,7 @@ public class TransactionServiceTest {
                         paymentTransactionRepo,
                         conflictTransactionRepo,
                         ratingRepo,
-                        fakeClock);
+                        clock);
         boolean check = transactionService.itemIsIntact(leaseTransaction);
         assertEquals(false, check);
     }
@@ -449,13 +466,72 @@ public class TransactionServiceTest {
                         paymentTransactionRepo,
                         conflictTransactionRepo,
                         ratingRepo,
-                        fakeClock);
+                        clock);
 
 
-        //leaseTransaction.addPaymentTransaction();
+        PaymentTransaction p1 = transactionService.makePayment(person1, person2, r1.getRequestedItem().getDeposit(), leaseTransaction, PaymentType.DEPOSIT);
+        leaseTransaction.addPaymentTransaction(p1);
 
         boolean check = transactionService.itemIsIntact(leaseTransaction);
 
         assertEquals(true, check);
     }
+
+    @Test
+    public void itemIsNotIntact(){
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        ConflictTransaction conflictTransaction = transactionService.itemIsNotIntact(new Person(), leaseTransaction, "Echo!");
+        Mockito.verify(conflictTransactionRepo, times(1)).save(isA(ConflictTransaction.class));
+        assertEquals("Echo!", conflictTransaction.getCommentary());
+        assert(leaseTransaction.equals(conflictTransaction.getLeaseTransaction()));
+    }
+
+    @Test
+    public void itemIsNotIntactConclusionIssueWithProPay(){
+        Mockito.doReturn(null).when(proPaySubscriber).releaseReservationAndPunishUser(anyString(), anyInt());
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        boolean check = transactionService.itemIsNotIntactConclusion(leaseTransaction);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void itemIsNotIntactConclusionNoIssueWithProPay(){
+        Mockito.doReturn(new ProPayAccount()).when(proPaySubscriber).releaseReservationAndPunishUser(anyString(), anyInt());
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+
+        boolean check = transactionService.itemIsNotIntactConclusion(leaseTransaction);
+        assertEquals(true, check);
+    }
+
+    @Test
+    public void concludeNoDeposit(){
+        //leaseTransaction.addPaymentTransaction();
+    }
+
 }
