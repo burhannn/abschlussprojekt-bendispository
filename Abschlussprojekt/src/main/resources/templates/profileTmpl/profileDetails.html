@@ -16,7 +16,7 @@
     <tr th:each = "person : ${personen}">
         <td>
             <a th:href = "@{'/profile/' + ${person?.id}}">Profile</a>
-            <a th:if="${loggedInPerson.username == 'admin' and person.username != 'admin'}" th:href = "@{'/deleteuser/' + ${person?.username}}" type="submit">Delete user</a>
+            <a th:if="${loggedInPerson.username == 'admin' and person.username != 'admin'}" th:href = "@{'/deleteuser/' + ${person?.username}}" type="submit">Delete User</a>
 
         </td>
         <td th:text = "|${person?.firstName}, ${person?.lastName}|"></td>

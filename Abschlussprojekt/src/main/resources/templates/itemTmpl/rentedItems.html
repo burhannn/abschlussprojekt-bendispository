@@ -15,7 +15,7 @@
         <tr><div th:text="|Start date: ${#temporals.format(lease.startDate, 'yyyy-MM-dd')}|"></div></tr>
         <tr><div th:text="|To be returned on: ${lease.endDate}|"></div></tr>
         <form method="post">
-            <button type = "submit" th:value="${lease.id}" name="id">return</button>
+            <button type = "submit" th:value="${lease.id}" name="id">Return</button>
         </form>
     </div>
 </div>
