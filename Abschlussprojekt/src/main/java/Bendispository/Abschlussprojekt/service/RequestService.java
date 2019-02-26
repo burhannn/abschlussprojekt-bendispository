@@ -36,6 +36,8 @@ public class RequestService {
 
     RequestRepo requestRepo;
 
+    LeaseTransactionRepo leaseTransactionRepo;
+
     private final AuthenticationService authenticationService;
 
     private final ItemRepo itemRepo;
@@ -53,13 +55,15 @@ public class RequestService {
                           AuthenticationService authenticationService,
                           Clock clock,
                           TransactionService transactionService,
-                          ProPaySubscriber proPaySubscriber){
+                          ProPaySubscriber proPaySubscriber,
+                          LeaseTransactionRepo leaseTransactionRepo){
         this.personsRepo = personsRepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.authenticationService = authenticationService;
         this.proPaySubscriber = proPaySubscriber;
         this.transactionService = transactionService;
+        this.leaseTransactionRepo = leaseTransactionRepo;
         this.clock = clock;
     }
 
@@ -147,6 +151,11 @@ public class RequestService {
         Person currentUser = authenticationService.getCurrentUser();
         Item item = itemRepo.findById(id).orElse(null);
 
+        String username = currentUser.getUsername();
+
+        if (!checkRequesterBalance(redirectAttributes, item, username))
+            return "redirect:/item/{id}";
+
         Request request = new Request();
         request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
         request.setStartDate(LocalDate.now());
@@ -155,14 +164,17 @@ public class RequestService {
         request.setStatus(PENDINGSELL);
         request.setRequestedItem(item);
 
-        String username = currentUser.getUsername();
+        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
 
-        if (!checkRequesterBalance(redirectAttributes, item, username))
+        if (!proPaySubscriber.transferMoney(username, item.getOwner().getUsername(), item.getRetailPrice())) {
+            redirectAttributes.addFlashAttribute("messageBalance",
+                                    "You don't have enough funds for this transaction!");
             return "redirect:/item/{id}";
+        }
 
         requestRepo.save(request);
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-        redirectAttributes.addFlashAttribute("success", "Buy request has been sent!");
+        redirectAttributes.addFlashAttribute("success", "Item bought!");
 
         return "redirect:/item/{id}";
     }
