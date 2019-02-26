@@ -1,7 +1,6 @@
 language: java
 
 script:
-  script:
 - cd Abschlussprojekt/
 - chmod =+rwx gradlew
 - chmod =+rwx gradle
