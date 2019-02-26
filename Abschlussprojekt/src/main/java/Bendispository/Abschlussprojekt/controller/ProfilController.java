@@ -3,7 +3,6 @@ package Bendispository.Abschlussprojekt.controller;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
-import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -22,11 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +85,7 @@ public class ProfilController {
                 model.addAttribute("itemname", leaseTransaction.getItem().getName());
             }
         }
-        List<Item> allOtherItems = itemRepo.findByOwnerNot(loggedIn);
+        List<Item> allOtherItems = itemRepo.findByOwnerNotAndForSaleTrue(loggedIn);
         model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
         return "OverviewAllItems";
