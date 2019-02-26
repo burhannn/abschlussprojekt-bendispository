@@ -1,8 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.UploadFile;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -85,6 +83,7 @@ public class FileController {
         if(itemRepo.findById(id).orElse(null) == null){
             return "redirect:/";
         }
+
         Item item = itemRepo.findById(id).orElse(null);
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
@@ -95,6 +94,7 @@ public class FileController {
         }else{
             model.addAttribute("pic",null);
         }
+
         return "itemTmpl/itemProfile";
     }
 
@@ -102,6 +102,17 @@ public class FileController {
     public String itemBuyRequest(Model model,
                                  RedirectAttributes redirectAttributes,
                                  @PathVariable Long id) {
+
+        Item item = itemRepo.findById(id).orElse(null);
+        List<Request> requests = requestRepo.findByRequesterAndRequestedItemAndStatus
+                (authenticationService.getCurrentUser(), item, RequestStatus.AWAITING_SHIPMENT);
+
+        if (!(requests.isEmpty())) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You cannot buy the same item twice!");
+            return "redirect:/item/{id}";
+        }
+
         requestService.addBuyRequest(model, redirectAttributes, id);
 
         return "redirect:/item/{id}";
