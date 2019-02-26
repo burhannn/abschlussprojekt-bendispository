@@ -1,5 +1,9 @@
 package Bendispository.Abschlussprojekt.ServiceTests;
 
+import Bendispository.Abschlussprojekt.Service.AuthenticationService;
+import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.Service.RequestService;
+import Bendispository.Abschlussprojekt.Service.TransactionService;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
@@ -13,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;

@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.ServiceTests;
+package Bendispository.Abschlussprojekt.Service;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;

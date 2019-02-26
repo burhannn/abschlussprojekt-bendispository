@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.Service.*;
 import Bendispository.Abschlussprojekt.controller.ConflictController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -12,7 +13,6 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
-import Bendispository.Abschlussprojekt.ServiceTests.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,17 +64,22 @@ public class ConflictControllerTests {
 
     @MockBean RequestRepo requestRepo;
 
-    @MockBean CustomUserDetailsService customUserDetailsService;
+    @MockBean
+    CustomUserDetailsService customUserDetailsService;
 
-    @MockBean AuthenticationService authenticationService;
+    @MockBean
+    AuthenticationService authenticationService;
 
     @MockBean RatingRepo ratingRepo;
 
-    @MockBean ConflictService conflictService;
+    @MockBean
+    ConflictService conflictService;
 
-    @MockBean RequestService requestService;
+    @MockBean
+    RequestService requestService;
 
-    @MockBean ItemService itemService;
+    @MockBean
+    ItemService itemService;
 
     @MockBean UserDetails loggedIn;
 

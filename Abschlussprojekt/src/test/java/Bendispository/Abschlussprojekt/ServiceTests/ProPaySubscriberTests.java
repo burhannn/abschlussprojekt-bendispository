@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ServiceTests;
 
+import Bendispository.Abschlussprojekt.Service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
