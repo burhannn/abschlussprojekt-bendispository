@@ -2,12 +2,14 @@ package Bendispository.Abschlussprojekt.model;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
+@ToString(exclude = {"requestedItem", "requester", "leaseTransaction"})
 @Entity
 public class Request {
 

@@ -54,7 +54,7 @@ public class TransactionService {
     }
 
     public boolean lenderApproved(Request request){
-        double deposit = request.getRequestedItem().getDeposit();
+        double deposit = (double) request.getRequestedItem().getDeposit();
         Person requester = request.getRequester();
 
         if(proPaySubscriber.checkDeposit(deposit,
@@ -75,13 +75,12 @@ public class TransactionService {
             setRequestApproved(request);
             createRating(request);
             requestRepo.save(request);
-
             return true;
         }
         return false;
     }
 
-    private void createRating(Request request){
+    protected void createRating(Request request){
         Rating rating1 = new Rating();
         rating1.setRequest(request);
         rating1.setRater(request.getRequester());
@@ -94,12 +93,12 @@ public class TransactionService {
         ratingRepo.save(rating2);
     }
 
-    private void setRequestApproved(Request request){
+    protected void setRequestApproved(Request request){
         setOtherRequestsOnDenied(request);
         request.setStatus(RequestStatus.APPROVED);
     }
 
-    private void setOtherRequestsOnDenied(Request request) {
+    protected void setOtherRequestsOnDenied(Request request) {
         List<Request> requestList = requestRepo.findAllByRequestedItem(request.getRequestedItem());
         for(Request r  : requestList)
             if(isOverlapping(r.getStartDate(), r.getEndDate(),
@@ -119,7 +118,7 @@ public class TransactionService {
     }
 
     // Disclaimer: https://stackoverflow.com/a/17107966
-    public static boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
+    public boolean isOverlapping(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
         return (start1.isBefore(end2) && start2.isBefore(end1));
     }
 
@@ -186,7 +185,7 @@ public class TransactionService {
         leaseTransactionRepo.save(leaseTransaction);
     }
 
-    private PaymentTransaction makePayment(Person leaser, Person lender, double amount,
+    protected PaymentTransaction makePayment(Person leaser, Person lender, double amount,
                                            LeaseTransaction leaseTransaction, PaymentType type){
         PaymentTransaction paymentTransaction = new PaymentTransaction(leaser, lender, amount);
         paymentTransaction.setType(type);

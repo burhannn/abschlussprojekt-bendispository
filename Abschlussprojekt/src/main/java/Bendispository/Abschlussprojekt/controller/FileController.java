@@ -88,7 +88,7 @@ public class FileController {
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
+        //model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
         if(item.getUploadFile() != null){
             model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
         }else{

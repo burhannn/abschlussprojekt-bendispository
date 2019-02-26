@@ -4,6 +4,7 @@ import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"item", "payments", "conflictTransaction"})
 @Entity
 public class LeaseTransaction {
 
