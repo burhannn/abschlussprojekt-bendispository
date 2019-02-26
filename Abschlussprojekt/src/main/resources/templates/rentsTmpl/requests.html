@@ -6,18 +6,15 @@
 </head>
 <body>
 <div class="projekt_container">
-    <h1>My Buy Requests</h1>
+    <h1>My Purchases</h1>
     <div th:each="request : ${myBuyRequests}">
         <hr width="50%">
         <div th:utext= "|Item: ${request.requestedItem.name} <br/>
                          From: ${request.requestedItem.owner.username}|"></div>
-        <form method="post" th:action="'/profile/deleterequest/' + ${request.id}">
-            <button type = "submit">Delete</button>
-        </form>
     </div>
 </div>
 <div class="projekt_container">
-    <h1>Buy requests concerning my items</h1>
+    <h1>My Sales</h1>
     <div th:each="request : ${buyRequestsMyItems}">
         <hr width="50%">
         <table style="margin-top: 2%">
@@ -25,12 +22,10 @@
                 <td class="item_name" th:text= "|Item: ${request.requestedItem.name}|"></td>
                 <td class="item_name" th:text= "|Requested by: ${request.requester.username}|"></td></tr>
             <td th:text="|Status: ${request.status}|"></td>
-            <div th:if="${request.status.name() == 'PENDINGSELL'}">
+            <div th:if="${request.status.name() == 'AWAITING_SHIPMENT'}">
                 <form method="post">
-                    <input type="radio" name="buyRequestMyItems" value="-1">reject
-                    <input type="radio" name="buyRequestMyItems" value="1">accept
                     <input type="hidden" value="0" th:value="${request.id}" name="requestID">
-                    <button type = "submit">Submit</button>
+                    <button type = "submit" name="shipped" value = "1">Item Shipped</button>
                 </form>
             </div>
         </table>
