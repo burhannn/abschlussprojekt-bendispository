@@ -10,6 +10,7 @@
     <div th:each="request : ${myBuyRequests}">
         <hr width="50%">
         <div th:utext= "|Item: ${request.requestedItem.name} <br/>
+                         Status: ${request.status} <br/>
                          From: ${request.requestedItem.owner.username}|"></div>
     </div>
 </div>
