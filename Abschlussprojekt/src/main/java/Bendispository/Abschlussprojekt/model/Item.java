@@ -23,6 +23,8 @@ public class Item {
 
 	private boolean leaseOrSell;
 
+	private boolean forSale = true;
+
 	//@Pattern(regexp="[0-9.,]+")
 	private double retailPrice;
 

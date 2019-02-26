@@ -17,7 +17,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Component
 public class TransactionService {
@@ -52,19 +51,6 @@ public class TransactionService {
         this.conflictTransactionRepo = conflictTransactionRepo;
         this.ratingRepo = ratingRepo;
         this.clock = clock;
-    }
-
-    public boolean lenderApprovedPurchase(Request request) {
-        double retailPrice = request.getRequestedItem().getRetailPrice();
-        Person requester = request.getRequester();
-
-        if (proPaySubscriber.checkDeposit(retailPrice, requester.getUsername())) {
-            proPaySubscriber.transferMoney(requester.getUsername(),
-                    request.getRequestedItem().getOwner().getUsername(), retailPrice);
-        }
-
-        request.setStatus(RequestStatus.SOLD);
-        return true;
     }
 
     public boolean lenderApproved(Request request){

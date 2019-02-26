@@ -1,15 +1,20 @@
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class LoginController {
 
+    List<Rating> ratings = new ArrayList<>();
     @Autowired
     PersonsRepo personRepo;
 
@@ -23,6 +28,7 @@ public class LoginController {
                                Person person) {
         model.addAttribute("newPerson", person);
         if(personRepo.findByUsername(person.getUsername())== null) {
+            person.setRatings(ratings);
             personRepo.save(person);
             return "authTmpl/login";
         } else {
