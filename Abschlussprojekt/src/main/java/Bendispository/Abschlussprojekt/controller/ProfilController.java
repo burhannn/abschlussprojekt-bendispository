@@ -187,7 +187,7 @@ public class ProfilController {
         return "profileTmpl/editProfile";
     }
 
-    @PostMapping(path = "editprofile")
+    @PostMapping(path = "/editprofile")
     public String saveProfileInDatabase(
             @RequestParam(value = "Firstname", required = true) String firstName,
             @RequestParam(value = "Lastname", required = true) String lastName,

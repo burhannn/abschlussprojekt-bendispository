@@ -13,6 +13,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,8 +37,10 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -186,10 +190,8 @@ public class ProfilControllerTests {
         itemRepo.deleteAll();
     }
 
-
     @Test
     public void retrieve() throws Exception{
-
         mvc.perform(get("/profilub")).andExpect(status().isOk());
         mvc.perform(get("/profile/{id}", 1L)).andExpect(status().isOk());
     }
@@ -322,6 +324,76 @@ public class ProfilControllerTests {
                 )));
 
     }
+
+    @Test
+    public void checkEditPerson() throws Exception{
+
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+        mvc.perform(post("/editprofile").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("FirstName", "mandy")
+                .param("LastName", "candy")
+                .param("Password", "abcdabcd")
+                .param("Email", "candy@gmail.com")
+                .param("City", "koln")
+                .requestAttr("person", dummy1)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profileTmpl/editProfile"));
+
+        Assert.assertEquals("koln", dummy1.getCity());
+
+    /*
+        mvc.perform(post("/editprofile").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("FirstName", "mandy")
+                .param("LastName", "candy")
+                .param("Password", "abcdabcd")
+                .param("Email", "candy@gmail.com")
+                .param("City", "koln")
+                .requestAttr("person", dummy1)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("redirect:/profile"))
+                .andExpect(model().attribute("person", hasProperty("id", equalTo(1L))))
+                .andExpect(model().attribute( "person", hasProperty("firstName", equalTo("mandy"))))
+                .andExpect(model().attribute("person", hasProperty("lastName", equalTo("moraru"))))
+                .andExpect(model().attribute("person", hasProperty("username", equalTo("user"))))
+                .andExpect(model().attribute("person", hasProperty("email", equalTo("momo@gmail.com"))))
+                .andExpect(model().attribute("person", hasProperty("city", equalTo("kölle"))))
+                .andExpect(model().attribute("person", hasProperty("items", containsInAnyOrder(dummyItem1, dummyItem2))));
+    */
+    }
+
+    @Test
+    public void checkEditOtherPersonNotPossible() throws Exception{
+        //....
+       }
+
+    @Test
+    public void checkdeletePersonByAdmin() throws Exception{
+        //....
+    }
+
+    @Test
+    public void checkdeletePersonNotByAdminFail() throws Exception {
+        //....
+    }
+
+    @Test
+    public void checkProfileHistory() throws Exception {
+        //....
+    }
+
+    @Test
+    public void checkOpenratings() throws Exception {
+        //....
+    }
+
+    @Test
+    public void checkRating() throws Exception {
+        //....
+    }
+
 }
 
 
