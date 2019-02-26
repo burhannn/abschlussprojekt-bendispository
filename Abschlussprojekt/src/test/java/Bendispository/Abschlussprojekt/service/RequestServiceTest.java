@@ -1,15 +1,20 @@
 package Bendispository.Abschlussprojekt.service;
 
+import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
+import Bendispository.Abschlussprojekt.repos.ItemRepo;
+import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import org.hibernate.jdbc.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,19 +38,44 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class RequestServiceTest {
 
-    @Mock
+    @MockBean
     private Clock clock;
 
-    @Mock
-    RedirectAttributes redirectAttributes;
-
-    private Clock fakeClock;
+    @MockBean
+    PersonsRepo personsRepo;
 
     @MockBean
     RequestRepo requestRepo;
 
-    @Spy
-    @InjectMocks
+    @MockBean
+    ItemRepo itemRepo;
+
+    @MockBean
+    LeaseTransactionRepo leaseTransactionRepo;
+
+    @MockBean
+    PaymentTransactionRepo paymentTransactionRepo;
+
+    @MockBean
+    ConflictTransactionRepo conflictTransactionRepo;
+
+    @MockBean
+    RatingRepo ratingRepo;
+
+    @MockBean
+    RedirectAttributes redirectAttributes;
+
+    @MockBean
+    TransactionService transactionService;
+
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+
+    @MockBean
+    AuthenticationService authenticationService;
+
+    private Clock fakeClock;
+
     RequestService requestService;
 
     Request r1;
@@ -55,6 +85,10 @@ public class RequestServiceTest {
 
     @Before
     public void sup(){
+        MockitoAnnotations.initMocks(this);
+
+        requestService = new RequestService(personsRepo, requestRepo, itemRepo, authenticationService, clock, transactionService, proPaySubscriber);
+
         fakeClock = Clock.fixed(Instant.parse("2019-01-03T10:15:30.00Z"), ZoneId.of("UTC"));
         doReturn(fakeClock.instant()).when(clock).instant();
         doReturn(fakeClock.getZone()).when(clock).getZone();
@@ -71,41 +105,71 @@ public class RequestServiceTest {
         r4 = new Request();
         r4.setStartDate(LocalDate.of(2019,1,4));
         r4.setEndDate(LocalDate.of(2019,1,5));
+
         requestRepo.saveAll(Arrays.asList(r1,r2,r3,r4));
         when(requestRepo.findAll()).thenReturn(Arrays.asList(r1,r2,r3,r4));
-        //when(redirectAttributes.addFlashAttribute(anyString(),anyString())).thenReturn(new Re)
-        //when(requestRepo.delete()).then
+        when(redirectAttributes.addFlashAttribute(anyString(),anyString())).thenReturn(redirectAttributes);
     }
 
-    /*@Test
+    @Test
     public void deletingTwoObsoleteRequests(){
-        //RequestService requestService = mock(RequestService.class);
-
         List<Request> repoList = requestRepo.findAll();
-        Mockito.doCallRealMethod().when(requestService).deleteObsoleteRequests(repoList);
-        //when(requestService.deleteObsoleteRequests(anyList())).thenCallRealMethod();
-        List<Request> expectedlyRemoved = new ArrayList<Request>(){{add(r1);add(r2);}};
-        List<Request> toRemove = requestService.deleteObsoleteRequests(repoList);
+        List<Request> expectedReturn = new ArrayList<Request>(){{add(r3);add(r4);}};
+        List<Request> actualReturn = requestService.deleteObsoleteRequests(repoList);
 
-        assertEquals(expectedlyRemoved, toRemove);
+        assertEquals(expectedReturn, actualReturn);
 
-    }*/
+    }
 
     @Test
     public void checkingRequestedDate(){
-        //RequestService requestService = mock(RequestService.class);
-        when(requestService.checkRequestedDate(anyString(),anyString())).thenCallRealMethod();
+        RequestService spy = Mockito.spy(requestService);
+        when(spy.checkRequestedDate("","")).thenCallRealMethod();
 
-        boolean check = requestService.checkRequestedDate("2019.01.02", "2019.01.03");
+        boolean check = spy.checkRequestedDate("2019.01.02", "2019.01.03");
         assertEquals(false, check);
-        check = requestService.checkRequestedDate("2019-01-02", "2019-01-02");
+        check = spy.checkRequestedDate("2019-01-02", "2019-01-02");
         assertEquals(false, check);
-        check = requestService.checkRequestedDate("2019-01-03", "2019-01-02");
+        check = spy.checkRequestedDate("2019-01-03", "2019-01-02");
         assertEquals(false, check);
-        check = requestService.checkRequestedDate("2019-01-02", "2019-01-03");      // false due to LocalDate.now(fakeClock)!
+        check = spy.checkRequestedDate("2019-01-02", "2019-01-03");      // false due to LocalDate.now(fakeClock)!
         assertEquals(false, check);
-        check = requestService.checkRequestedDate("2019-01-05", "2019-01-06");
+        check = spy.checkRequestedDate("2019-01-05", "2019-01-06");
         assertEquals(true, check);
     }
+
+    @Test
+    public void checkingRequestedAvailabilityNotAvailable(){
+        doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+
+        boolean check = requestService.checkRequestedAvailability(redirectAttributes, r1);
+        assertEquals(true, check);
+    }
+
+    @Test
+    public void checkingRequestedAvailabilityIsAvailable(){
+        doReturn(false).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+
+        boolean check = requestService.checkRequestedAvailability(redirectAttributes, r1);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void checkingRequesterBalanceSufficient(){
+        doReturn(false).when(proPaySubscriber).checkDeposit(anyDouble(), eq(""));
+
+        boolean check = requestService.checkRequesterBalance(redirectAttributes, new Item(), "");
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void checkingRequesterBalanceInsufficient(){
+        doReturn(true).when(proPaySubscriber).checkDeposit(anyDouble(), eq(""));
+
+        boolean check = requestService.checkRequesterBalance(redirectAttributes, new Item(), "");
+        assertEquals(true, check);
+    }
+
+
 
 }

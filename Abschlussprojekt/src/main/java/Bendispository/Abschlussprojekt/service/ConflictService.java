@@ -21,16 +21,12 @@ public class ConflictService {
     private RatingRepo ratingRepo;
 
     @Autowired
-    public ConflictService(LeaseTransactionRepo leaseTransactionRepo,
-                           RequestRepo requestRepo,
-                           ProPaySubscriber proPaySubscriber,
-                           PaymentTransactionRepo paymentTransactionRepo,
+    public ConflictService(
                            ConflictTransactionRepo conflictTransactionRepo,
-                           RatingRepo ratingRepo,
-                           Clock clock) {
+                           TransactionService transactionService) {
         super();
         this.conflictTransactionRepo = conflictTransactionRepo;
-        this.transactionService = new TransactionService(leaseTransactionRepo, requestRepo, proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo, clock);
+        this.transactionService = transactionService;
     }
 
     public boolean resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){

@@ -109,7 +109,11 @@ public class RequestController {
                                      RedirectAttributes redirectAttributes
                                      ){
 
-        return requestService.addRequest(model, redirectAttributes, startDate, endDate, id);
+        return requestService
+                .addRequest(
+                        model,
+                        redirectAttributes,
+                        startDate, endDate, id);
     }
 
     @GetMapping(path="/profile/requests")

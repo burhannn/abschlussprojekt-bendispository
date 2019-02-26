@@ -23,6 +23,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
 import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
@@ -38,15 +41,9 @@ public class RequestService {
 
     private final ItemRepo itemRepo;
 
-    private final LeaseTransactionRepo leaseTransactionRepo;
-
     private final ProPaySubscriber proPaySubscriber;
 
     private final TransactionService transactionService;
-
-    private final PaymentTransactionRepo paymentTransactionRepo;
-
-    private final ConflictTransactionRepo conflictTransactionRepo;
 
     private Clock clock;
 
@@ -54,27 +51,16 @@ public class RequestService {
     public RequestService(PersonsRepo personsRepo,
                           RequestRepo requestRepo,
                           ItemRepo itemRepo,
-                          LeaseTransactionRepo leaseTransactionRepo,
-                          PaymentTransactionRepo paymentTransactionRepo,
-                          ConflictTransactionRepo conflictTransactionRepo,
-                          RatingRepo ratingRepo,
-                          Clock clock){
-        this.conflictTransactionRepo = conflictTransactionRepo;
-        this.leaseTransactionRepo = leaseTransactionRepo;
-        this.paymentTransactionRepo = paymentTransactionRepo;
+                          AuthenticationService authenticationService,
+                          Clock clock,
+                          TransactionService transactionService,
+                          ProPaySubscriber proPaySubscriber){
         this.personsRepo = personsRepo;
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
-        this.authenticationService = new AuthenticationService(personsRepo);
-        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
-                leaseTransactionRepo);
-        this.transactionService = new TransactionService(leaseTransactionRepo,
-                requestRepo,
-                proPaySubscriber,
-                paymentTransactionRepo,
-                conflictTransactionRepo,
-                ratingRepo,
-                clock);
+        this.authenticationService = authenticationService;
+        this.proPaySubscriber = proPaySubscriber;
+        this.transactionService = transactionService;
         this.clock = clock;
     }
 
@@ -83,14 +69,14 @@ public class RequestService {
         Person me = personsRepo.findById(id).orElse(null);
         List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
         myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
-        deleteObsoleteRequests(myRequests);
+        myRequests = deleteObsoleteRequests(myRequests);
         model.addAttribute("myRequests", myRequests);
         List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
-        deleteObsoleteRequests(requestsMyItems);
+        requestsMyItems = deleteObsoleteRequests(requestsMyItems);
         model.addAttribute("requestsMyItems", requestsMyItems);
     }
 
-    protected void deleteObsoleteRequests(List<Request> myRequests) {
+    protected List<Request> deleteObsoleteRequests(List<Request> myRequests) {
         List<Request> toRemove = new ArrayList<>();
         for(Request request : myRequests){
             if(request.getStartDate().isBefore(LocalDate.now(clock))) {
@@ -98,7 +84,7 @@ public class RequestService {
             }
         }
         requestRepo.deleteAll(toRemove);
-        myRequests.removeAll(toRemove);
+        return myRequests.stream().filter(i -> !toRemove.contains(i)).collect(Collectors.toList());
     }
 
     public boolean checkRequestedDate(String startDate,
@@ -169,7 +155,6 @@ public class RequestService {
         redirectAttributes.addFlashAttribute("success", "Buy request has been sent!");
 
         return "redirect:/item/{id}";
-
     }
 
     public String addRequest(Model model,
