@@ -84,7 +84,7 @@ public class RequestServiceTest {
     public void sup(){
         MockitoAnnotations.initMocks(this);
 
-        requestService = new RequestService(personsRepo, requestRepo, itemRepo, authenticationService, clock, transactionService, proPaySubscriber);
+        requestService = new RequestService(personsRepo, requestRepo, itemRepo, authenticationService, clock, transactionService, proPaySubscriber, leaseTransactionRepo);
 
         fakeClock = Clock.fixed(Instant.parse("2019-01-03T10:15:30.00Z"), ZoneId.of("UTC"));
         doReturn(fakeClock.instant()).when(clock).instant();

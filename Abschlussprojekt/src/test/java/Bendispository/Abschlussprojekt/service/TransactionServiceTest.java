@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.service;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.PaymentTransaction;
 import Bendispository.Abschlussprojekt.model.transactionModels.PaymentType;
@@ -86,6 +87,8 @@ public class TransactionServiceTest {
         doReturn(fakeClock.getZone()).when(clock).getZone();
 
         r1 = new Request();
+        r1.setStartDate(LocalDate.of(2019,1,5));
+        r1.setEndDate(LocalDate.of(2019,1,8));
         item1 = new Item();
         item1.setDeposit(30);
         person1 = new Person();
@@ -153,20 +156,6 @@ public class TransactionServiceTest {
 
         leaseTransaction = Mockito.mock(LeaseTransaction.class);
         Mockito.doNothing().when(leaseTransaction).addLeaseTransaction(any(Request.class), anyInt());
-        //Mockito.doNothing().when(transactionService).setRequestApproved(any(Request.class));
-        //Mockito.doNothing().when(transactionService).createRating(any(Request.class));
-        /*
-        Mockito.doReturn(Arrays.asList(leaseTransaction))
-                .when(leaseTransactionRepo)
-                .findAllByItemId(anyLong());
-        Mockito.doReturn(Arrays.asList(r1))
-                .when(requestRepo)
-                .findAllByRequestedItem(any(Item.class));
-        /*Mockito.doReturn(false)
-                .when(transactionService)
-                .isOverlapping(
-                        any(LocalDate.class), any(LocalDate.class),
-                        any(LocalDate.class), any(LocalDate.class));*/
 
         boolean check = transactionService.lenderApproved(r1);
         assertEquals(true, check);
@@ -218,4 +207,44 @@ public class TransactionServiceTest {
         assertEquals(false, check);
     }
 
+    /*@Test
+    public void lenderApprovedOthersAtSamePointInTimeAreDenied(){
+        ProPaySubscriber spy = Mockito.spy(proPaySubscriber);
+        Mockito.doReturn(true).when(spy).checkDeposit(anyDouble(), anyString());
+        Mockito.doReturn(1).when(spy).makeDeposit(any(Request.class));
+
+        Request r2 = new Request();
+        r2.setStartDate(LocalDate.of(2019,1,6));
+        r2.setEndDate(LocalDate.of(2019,1,8));
+        r2.setRequestedItem(item1);
+        Request r3 = new Request();
+        r3.setStartDate(LocalDate.of(2019,1,9));
+        r3.setEndDate(LocalDate.of(2019,1,10));
+        r3.setRequestedItem(item1);
+        Request r4 = new Request();
+        r4.setStartDate(LocalDate.of(2019,1,7));
+        r4.setEndDate(LocalDate.of(2019,1,8));
+        r4.setRequestedItem(item1);
+
+        Mockito.doReturn(Arrays.asList(r1,r2,r3,r4)).when(requestRepo).findAllByRequestedItem(any(Item.class));
+
+        leaseTransaction = Mockito.mock(LeaseTransaction.class);
+        Mockito.doNothing().when(leaseTransaction).addLeaseTransaction(any(Request.class), anyInt());
+
+        transactionService =
+                new TransactionService(
+                        leaseTransactionRepo,
+                        requestRepo,
+                        proPaySubscriber,
+                        paymentTransactionRepo,
+                        conflictTransactionRepo,
+                        ratingRepo,
+                        clock);
+        boolean check = transactionService.lenderApproved(r1);
+        assertEquals(true, check);
+        assertEquals(RequestStatus.DENIED, r2.getStatus());
+        assertEquals(RequestStatus.PENDING, r3.getStatus());
+        assertEquals(RequestStatus.DENIED, r4.getStatus());
+        assertEquals(RequestStatus.APPROVED, r1.getStatus());
+    }*/
 }
