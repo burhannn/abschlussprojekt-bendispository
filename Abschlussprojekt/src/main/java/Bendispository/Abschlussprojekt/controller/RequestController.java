@@ -60,9 +60,9 @@ public class RequestController {
     @GetMapping(path = "/item/{id}/requestitem")
     public String request(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes){
         itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-        if (itemRepo.findById(id).get().getOwner().getUsername()
-                .equals(authenticationService.getCurrentUser().getUsername())){
-            return "redirect:/item/{id}"; // soll auf editieren gehen
+        if (itemRepo.findById(id).get().getOwner()
+                .equals(authenticationService.getCurrentUser())){
+            return "redirect:/item/{id}";
         }
         List<Request> requests = requestRepo.findByRequesterAndRequestedItemAndStatus
                 (authenticationService.getCurrentUser(), itemRepo.findById(id).get(), RequestStatus.PENDING);
@@ -88,17 +88,31 @@ public class RequestController {
                                      RedirectAttributes redirectAttributes
                                      ){
 
-        return requestService
-                .addRequest(
-                        model,
-                        redirectAttributes,
-                        startDate, endDate, id);
+        Request request = requestService
+                .addRequest(startDate, endDate, id);
+        if(request == null){
+            redirectAttributes.addFlashAttribute("message",
+                    "Invalid date!");
+            return "redirect:/item/{id}/requestitem";
+        }
+
+        boolean saveRequest = requestService.saveRequest(request);
+
+        if(!saveRequest){
+            redirectAttributes.addFlashAttribute("message",
+                    "Item is not available during selected period, or something went wrong with ProPay!");
+        }
+
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Request has been sent!");
+
+        return "redirect:/item/{id}";
     }
 
     @GetMapping(path="/profile/requests")
     public String Requests(Model model){
-        Long id = authenticationService.getCurrentUser().getId();
-        requestService.showRequests(model,id);
+        Person person = authenticationService.getCurrentUser();
+        requestService.showRequests(model, person);
         return "rentsTmpl/requests";
     }
 
@@ -115,12 +129,12 @@ public class RequestController {
                                         Integer shipped,
                                         RedirectAttributes redirectAttributes){
         Request request = requestRepo.findById(requestID).orElse(null);
-        Long id = authenticationService.getCurrentUser().getId();
+        Person person = authenticationService.getCurrentUser();
 
         if (shipped != null) {
             if (shipped == 1) {
                 request.setStatus(RequestStatus.SHIPPED);
-                requestService.showRequests(model, id);
+                requestService.showRequests(model, person);
                 return "rentsTmpl/requests";
             }
         }
@@ -129,17 +143,17 @@ public class RequestController {
             if(requestMyItems == -1){
                 request.setStatus(RequestStatus.DENIED);
                 requestRepo.save(request);
-                requestService.showRequests(model,id);
+                requestService.showRequests(model, person);
                 return "rentsTmpl/requests";
             } else {
                 if (transactionService.lenderApproved(request)) {
-                    requestService.showRequests(model, id);
+                    requestService.showRequests(model, person);
                     return "rentsTmpl/requests";
                 }
             }
         }
 
-        requestService.showRequests(model,id);
+        requestService.showRequests(model,person);
         redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
         return "redirect:/";
     }
@@ -156,7 +170,6 @@ public class RequestController {
         model.addAttribute("myRentedItems", myRentedItems);
         List<LeaseTransaction> myLeasedItems = leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(me);
         model.addAttribute("myLeasedItems", myLeasedItems);
-        //return "itemTmpl/rentedItems";
     }
 
     @PostMapping(path = "/profile/renteditems")

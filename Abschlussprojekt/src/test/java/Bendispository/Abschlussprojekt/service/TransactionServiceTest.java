@@ -36,7 +36,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 public class TransactionServiceTest {
 
     @MockBean
@@ -527,11 +527,6 @@ public class TransactionServiceTest {
 
         boolean check = transactionService.itemIsNotIntactConclusion(leaseTransaction);
         assertEquals(true, check);
-    }
-
-    @Test
-    public void concludeNoDeposit(){
-        //leaseTransaction.addPaymentTransaction();
     }
 
 }

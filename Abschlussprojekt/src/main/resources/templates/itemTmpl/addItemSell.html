@@ -10,7 +10,7 @@
     <h1>I want to sell a new Item:</h1>
     <form method = "post" enctype="multipart/form-data">
         <tr>Name:<div><input type ="text" name = "name" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${newItem?.name}"></div></tr>
-        <tr>Description:<div><input type ="text" name = "description" th:value="${newItem?.description}"></div></tr>
+        <tr>Description:<div><input type ="text" name = "description" pattern="[a-zA-ZöäüÖÄÜß .,?!0-9]+" required th:value="${newItem?.description}"></div></tr>
         <tr>Retail Price:<div><input type ="text" name = "retailPrice" pattern="[0-9]+" required th:value="${newItem?.retailPrice}"></div></tr>
         <tr>Place:<div><input type = "text" name = "place" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${newItem?.place}"></div></tr>
         <tr>Upload File:<div><input type ="file" name = "file"></div></tr>

@@ -1,8 +1,11 @@
-package Bendispository.Abschlussprojekt.ControllerTests;
+package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.ProfilController;
+
+import Bendispository.Abschlussprojekt.model.Rating;
+
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -239,7 +242,7 @@ public class ProfilControllerTests {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
-        Mockito.when(itemRepo.findByOwnerNotAndForSaleTrue(dummy3))
+        Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy3))
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
         mvc.perform(get("/"))
@@ -274,8 +277,6 @@ public class ProfilControllerTests {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-        Mockito.when(itemRepo.findByOwnerNotAndForSaleTrue(dummy1))
-                .thenReturn(Arrays.asList(dummyItem3));
 
         mvc.perform(get("/"))
                 .andExpect(status().isOk())

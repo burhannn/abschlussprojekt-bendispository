@@ -1,7 +1,5 @@
-package Bendispository.Abschlussprojekt.ModelTests;
+package Bendispository.Abschlussprojekt.model;
 
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Rating;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

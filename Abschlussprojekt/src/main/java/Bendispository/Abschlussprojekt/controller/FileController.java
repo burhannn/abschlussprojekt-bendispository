@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -69,7 +68,7 @@ public class FileController {
         model.addAttribute("newItem", item);
 
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        item.setMarketType(MarketType.LEASE);
+        item.setMarketType(MarketType.LEND);
         itemRepo.save(item);
         List<Item> itemsOwner = new ArrayList<>();
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
@@ -147,7 +146,22 @@ public class FileController {
             return "redirect:/item/{id}";
         }
 
-        requestService.addBuyRequest(model, redirectAttributes, id);
+        Request request = requestService.addBuyRequest(id);
+        if(request == null){
+            redirectAttributes.addFlashAttribute("message", "You don't have enough funds for this transaction!");
+            return "redirect:/item/{id}";
+        }
+
+        boolean isItemBought = requestService.buyItemAndTransferMoney(request);
+
+        if(!isItemBought){
+            redirectAttributes.addFlashAttribute("messageBalance",
+                    "There is a Problem with ProPay!");
+            return "redirect:/item/{id}";
+        }
+
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Item bought!");
 
         return "redirect:/item/{id}";
     }
@@ -174,6 +188,9 @@ public class FileController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("Item", item);
         if(loggedIn.getUsername().equals(item.getOwner().getUsername())){
+            if(item.getMarketType().equals(MarketType.SELL)) {
+                return "itemTmpl/editItemSell";
+            }
             return "itemTmpl/editItem";
         }
 
@@ -189,10 +206,11 @@ public class FileController {
         inpItem.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
         loggedIn.setItems(itemsOwner);
+        inpItem.setMarketType(item.get().getMarketType());
         if(item.get().getUploadFile() != null) {
             inpItem.setUploadFile(item.get().getUploadFile());
         }
         itemRepo.save(inpItem);
-        return "redirect:/";
+        return "redirect:/item/{id}";
     }
 }
