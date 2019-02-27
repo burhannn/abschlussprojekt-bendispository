@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticationService {
 
-    private final PersonsRepo personsRepo;
+	private final PersonsRepo personsRepo;
 
-    @Autowired
-    public AuthenticationService(PersonsRepo personsRepo){
-        this.personsRepo = personsRepo;
-    }
+	@Autowired
+	public AuthenticationService(PersonsRepo personsRepo) {
+		this.personsRepo = personsRepo;
+	}
 
-    /////DONT TOUCH THIS FUNCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    public Person getCurrentUser(){
-        UserDetails user = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return personsRepo.findByUsername(user.getUsername());
-    }
+	/////DONT TOUCH THIS FUNCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	public Person getCurrentUser() {
+		UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return personsRepo.findByUsername(user.getUsername());
+	}
 }

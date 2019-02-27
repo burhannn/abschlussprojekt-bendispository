@@ -1,59 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link href="../../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
 <head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    <script type='text/javascript' src='//code.jquery.com/jquery-1.8.3.js'></script>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	<script src='//code.jquery.com/jquery-1.8.3.js' type='text/javascript'></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
-    <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
-    <script type='text/javascript'>
-        $(function(){
-            $('.input-daterange').datepicker({
-                autoclose: true,
-                todayHighlight: true,
-                format: 'yyyy-mm-dd',
-                startDate: new Date(),
-                weekStart: 1
-            });
-        });
-    </script>
-    <meta charset="UTF-8">
-    <title>Request Item</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css"
+		  rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"
+			type='text/javascript'></script>
+	<script type='text/javascript'>
+		$(function () {
+			$('.input-daterange').datepicker({
+				autoclose: true,
+				todayHighlight: true,
+				format: 'yyyy-mm-dd',
+				startDate: new Date(),
+				weekStart: 1
+			});
+		});
+	</script>
+	<meta charset="UTF-8">
+	<title>Request Item</title>
 </head>
 <body>
 <div class="projekt_container">
-    <div th:if="${success}">
-        <div class="alert_success" th:text="${success}"></div></div>
-    <div th:if="${message}">
-        <div class="alert_error" th:text="${message}"></div></div>
-    <div th:if="${messageBalance}">
-        <div class="alert_error" th:text="${messageBalance}"></div>
-        <a href="/chargeaccount">Charge account?</a></div>
-    <h1 th:text="|Request for ${thisItem.name}|"></h1>
-    <form method = "post">
-        <div class="input-daterange input-group" id="datepicker">
-            <input type="text" autocomplete="off" class="input-sm form-control" name="startDate"
-                                   th:value="${newRequest?.startDate}" placeholder="Start Date"/>
-            <span class="input-group-addon">to</span>
-            <input type="text" autocomplete="off" class="input-sm form-control" name="endDate"
-                                th:value="${newRequest?.endDate}" placeholder="End Date"/>
-        </div><br>
-        <button type="submit">Send Request</button>
-    </form><br>
-    <div th:if="${!leases.isEmpty()}">
-        <h4>Future Reservations</h4>
-        <div class = "scroll_box">
-            <th:block th:each="lease : ${leases}">
-                <tr th:text="|${#temporals.format(lease.startDate, 'yyyy.MM.dd')} - ${#temporals.format(lease.endDate, 'yyyy.MM.dd')}|"></tr><br>
-            </th:block>
-        </div>
-    </div>
-    <div th:unless="${!leases.isEmpty()}">
-        <h4>Currently no future reservations for this item.</h4>
-    </div>
+	<div th:if="${success}">
+		<div class="alert_success" th:text="${success}"></div>
+	</div>
+	<div th:if="${message}">
+		<div class="alert_error" th:text="${message}"></div>
+	</div>
+	<div th:if="${messageBalance}">
+		<div class="alert_error" th:text="${messageBalance}"></div>
+		<a href="/chargeaccount">Charge account?</a></div>
+	<h1 th:text="|Request for ${thisItem.name}|"></h1>
+	<form method="post">
+		<div class="input-daterange input-group" id="datepicker">
+			<input autocomplete="off" class="input-sm form-control" name="startDate" placeholder="Start Date"
+				   th:value="${newRequest?.startDate}" type="text"/>
+			<span class="input-group-addon">to</span>
+			<input autocomplete="off" class="input-sm form-control" name="endDate" placeholder="End Date"
+				   th:value="${newRequest?.endDate}" type="text"/>
+		</div>
+		<br>
+		<button type="submit">Send Request</button>
+	</form>
+	<br>
+	<div th:if="${!leases.isEmpty()}">
+		<h4>Future Reservations</h4>
+		<div class="scroll_box">
+			<th:block th:each="lease : ${leases}">
+				<tr th:text="|${#temporals.format(lease.startDate, 'yyyy.MM.dd')} - ${#temporals.format(lease.endDate, 'yyyy.MM.dd')}|"></tr>
+				<br>
+			</th:block>
+		</div>
+	</div>
+	<div th:unless="${!leases.isEmpty()}">
+		<h4>Currently no future reservations for this item.</h4>
+	</div>
 </div>
-<a href="/" class="back_button">Back</a>
+<a class="back_button" href="/">Back</a>
 </body>
 </html>

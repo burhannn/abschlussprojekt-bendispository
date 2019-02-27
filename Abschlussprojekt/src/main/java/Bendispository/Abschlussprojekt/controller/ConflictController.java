@@ -17,48 +17,48 @@ import java.util.List;
 @Controller
 public class ConflictController {
 
-    private final AuthenticationService authenticationService;
+	private final AuthenticationService authenticationService;
 
-    private final ConflictService conflictService;
+	private final ConflictService conflictService;
 
-    private final ConflictTransactionRepo conflictTransactionRepo;
+	private final ConflictTransactionRepo conflictTransactionRepo;
 
-    @Autowired
-    public ConflictController(ConflictTransactionRepo conflictTransactionRepo,
-                              ConflictService conflictService,
-                              AuthenticationService authenticationService){
-        this.conflictTransactionRepo = conflictTransactionRepo;
-        this.conflictService = conflictService;
-        this.authenticationService = authenticationService;
-    }
+	@Autowired
+	public ConflictController(ConflictTransactionRepo conflictTransactionRepo,
+							  ConflictService conflictService,
+							  AuthenticationService authenticationService) {
+		this.conflictTransactionRepo = conflictTransactionRepo;
+		this.conflictService = conflictService;
+		this.authenticationService = authenticationService;
+	}
 
-    @GetMapping(path = "/conflicts")
-    public String listAllConflictTransaction(Model model){
-        Person loggedin = authenticationService.getCurrentUser();
-        if(loggedin.getUsername().equals("admin")){
-            showConflicts(model);
-            return "rentsTmpl/conflictTransaction";
-        }
-        return "redirect:/";
-    }
+	@GetMapping(path = "/conflicts")
+	public String listAllConflictTransaction(Model model) {
+		Person loggedin = authenticationService.getCurrentUser();
+		if (loggedin.getUsername().equals("admin")) {
+			showConflicts(model);
+			return "rentsTmpl/conflictTransaction";
+		}
+		return "redirect:/";
+	}
 
-    @PostMapping(path = "/conflicts")
-    public String addChangesConflictTransaction(Model model,
-                                                Long conflictId,
-                                                Integer beneficiary,
-                                                RedirectAttributes redirectAttributes){
-        ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
-        if(!conflictService.resolveConflict(conflict, beneficiary == -1)){
-            redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
-            showConflicts(model);
-            return "redirect:/conflicts";
-        }
-        showConflicts(model);
-        return "rentsTmpl/conflictTransaction";
-    }
+	@PostMapping(path = "/conflicts")
+	public String addChangesConflictTransaction(Model model,
+												Long conflictId,
+												Integer beneficiary,
+												RedirectAttributes redirectAttributes) {
+		ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
+		if (!conflictService.resolveConflict(conflict, beneficiary == -1)) {
+			redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
+			showConflicts(model);
+			return "redirect:/conflicts";
+		}
+		showConflicts(model);
+		return "rentsTmpl/conflictTransaction";
+	}
 
-    public void showConflicts(Model model){
-        List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
-        model.addAttribute("allConflicts", allConflicts);
-    }
+	public void showConflicts(Model model) {
+		List<ConflictTransaction> allConflicts = conflictTransactionRepo.findAllByLenderAcceptedIsFalseAndLeaserAcceptedIsFalse();
+		model.addAttribute("allConflicts", allConflicts);
+	}
 }
