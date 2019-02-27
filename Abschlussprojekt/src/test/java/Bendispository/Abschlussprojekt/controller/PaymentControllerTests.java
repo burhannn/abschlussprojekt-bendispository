@@ -242,7 +242,23 @@ public class PaymentControllerTests {
                 .andExpect(flash().attribute("message", "Amount can't be negative!"));
     }
 
+  @Test
+  public void checkChargeAccountFail() throws Exception {
+         mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                 .param("amount", "1"))
+                 .andExpect(status().is3xxRedirection())
+                 .andExpect(view().name("redirect:/chargeaccount"))
+                 .andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+    }
 
-
+    @Test
+    public void checkGetAccountFail() throws Exception {
+        Mockito.when(proPaySubscriber.chargeAccount("user", 1)).thenReturn(proPayAccount);
+        mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("amount", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/chargeaccount"))
+                .andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+    }
 
 }

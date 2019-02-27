@@ -27,11 +27,6 @@ public class PaymentController {
         this.proPaySubscriber = proPaySubscriber;
     }
 
-    @GetMapping(path = "/profile/paymenttransaction")
-    public String concludeTransaction(){
-        return "/";
-    }
-
     @GetMapping(path = "/chargeaccount")
     public String saveAccount(Model model,
                               RedirectAttributes redirectAttributes){
