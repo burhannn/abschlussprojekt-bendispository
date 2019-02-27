@@ -1,5 +1,8 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ConflictService;
 import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
@@ -17,6 +20,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransaction
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
@@ -31,6 +36,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -38,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
-@WithMockUser(username = "momo", password = "abcd")
+@WithMockUser(username = "momo", password = "abcdabcd")
 @WebMvcTest(controllers = RequestController.class)
 public class RequestControllerTest {
 
@@ -103,7 +112,7 @@ public class RequestControllerTest {
         dummy1.setCity("kölle");
         dummy1.setEmail("momo@gmail.com");
         dummy1.setUsername("momo");
-        dummy1.setPassword("abcd");
+        dummy1.setPassword("abcdabcd");
         dummy1.setId(1L);
 
         dummy2.setFirstName("nina");
@@ -119,18 +128,21 @@ public class RequestControllerTest {
         dummyItem1.setDescription("bin billig");
         dummyItem1.setCostPerDay(10);
         dummyItem1.setId(3L);
+        dummyItem1.setOwner(dummy1);
 
         dummyItem2.setName("playstation");
         dummyItem2.setDeposit(250);
         dummyItem2.setDescription("bin teuer");
         dummyItem2.setCostPerDay(120);
         dummyItem2.setId(4L);
+        dummyItem2.setOwner(dummy1);
 
         dummyItem3.setName("Kulli");
         dummyItem3.setDeposit(5);
         dummyItem3.setDescription("schicker kulli");
         dummyItem3.setCostPerDay(1);
         dummyItem3.setId(5L);
+        dummyItem3.setOwner(dummy2);
 
         List<Item> items1 = new ArrayList<Item>();
 
@@ -145,6 +157,9 @@ public class RequestControllerTest {
         personsRepo.saveAll(Arrays.asList(dummy1, dummy2));
 
 
+        List<Request> requests = new ArrayList<>();
+        List<LeaseTransaction> leaseTransactions = new ArrayList<>();
+
         Mockito.when(personsRepo.findById(1L))
                 .thenReturn(Optional.ofNullable(dummy1));
         Mockito.when(personsRepo.findById(2L))
@@ -156,32 +171,40 @@ public class RequestControllerTest {
         Mockito.when(itemRepo.findById(5L))
                 .thenReturn(Optional.ofNullable(dummyItem3));
 
-        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-    }
+        Mockito.when(requestRepo.findByRequesterAndStatus(any(), any())).thenReturn(requests);
+        Mockito.when(requestRepo.findByRequestedItemOwnerAndStatus(any(), any())).thenReturn(requests);
 
+        Mockito.when(leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(dummy1)).thenReturn(leaseTransactions);
+        Mockito.when(leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(dummy1)).thenReturn(leaseTransactions);
+        Mockito.when(leaseTransactionRepo.findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(dummy1)).thenReturn(leaseTransactions);
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+    }
 
     @Test
     public void retrieve() throws Exception {
+
         mvc.perform(get("/profile/returneditems")).andExpect(status().isOk());
         mvc.perform(get("/profile/requests")).andExpect(status().isOk());
-        mvc.perform(get("/profile/rentedItems")).andExpect(status().isOk());
+        mvc.perform(get("/profile/renteditems")).andExpect(status().isOk());
     }
 
     @Test
     public void checkAddItemRequest() throws Exception {
 
-        mvc.perform(get("/item{id}/requestItem", 3L))
+        mvc.perform(get("/item/{id}/requestitem", 5L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("thisItem"))
-                .andExpect(view().name("formRequest"));
+                .andExpect(model().attributeExists("leases"))
+                .andExpect(view().name("rentsTmpl/formRequest"));
     }
 
     @Test
     public void checkRequestOverview() throws  Exception {
-        mvc.perform(get("/profile/requests", 3L))
+        mvc.perform(get("/profile/requests"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("requests"));
+                .andExpect(view().name("rentsTmpl/requests"));
     }
-} 
+}
