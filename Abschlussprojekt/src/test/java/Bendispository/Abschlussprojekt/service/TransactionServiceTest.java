@@ -27,12 +27,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(SpringRunner.class)
@@ -527,6 +529,19 @@ public class TransactionServiceTest {
 
         boolean check = transactionService.itemIsNotIntactConclusion(leaseTransaction);
         assertEquals(true, check);
+    }
+
+    @Test
+    public void notIntact(){
+        String comment = "comment";
+        Person me = new Person();
+        Optional<LeaseTransaction> l2 = Optional.of(leaseTransaction);
+        Mockito.doReturn(l2).when(leaseTransactionRepo).findById(anyLong());
+
+        ConflictTransaction conflictTransaction = transactionService.notIntact(1L, comment, me);
+
+        assert(conflictTransaction.getLeaseTransaction().equals(l2.get()));
+        Mockito.verify(conflictTransactionRepo, times(1)).save(isA(ConflictTransaction.class));
     }
 
 }

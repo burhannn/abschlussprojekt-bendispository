@@ -1,10 +1,11 @@
 package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
-import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -16,10 +17,7 @@ import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -28,6 +26,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -78,6 +77,11 @@ public class RequestServiceTest {
     Request r3;
     Request r4;
 
+    Person user;
+    Item item;
+    Person owner;
+    Item item2;
+
     @Before
     public void sup(){
         MockitoAnnotations.initMocks(this);
@@ -103,9 +107,28 @@ public class RequestServiceTest {
         r4.setStartDate(LocalDate.of(2019,1,4));
         r4.setEndDate(LocalDate.of(2019,1,5));
 
+        user = new Person();
+        user.setUsername("user");
+        Mockito.doReturn(user).when(authenticationService).getCurrentUser();
+
+        owner = new Person();
+        owner.setUsername("owner");
+
+        item = new Item();
+        item.setOwner(owner);
+        item.setRetailPrice(23);
+
+        item2 = new Item();
+        Mockito.doReturn(Optional.of(item)).when(itemRepo).findById(anyLong());
+
+        r1.setRequestedItem(item);
+        r2.setRequestedItem(item2);
+
         requestRepo.saveAll(Arrays.asList(r1,r2,r3,r4));
         when(requestRepo.findAll()).thenReturn(Arrays.asList(r1,r2,r3,r4));
-        when(redirectAttributes.addFlashAttribute(anyString(),anyString())).thenReturn(redirectAttributes);
+        Mockito.doReturn(user).when(personsRepo).findByUsername(anyString());
+        //when(redirectAttributes.addFlashAttribute(anyString(),anyString())).thenReturn(redirectAttributes);
+
     }
 
     @Test
@@ -165,6 +188,83 @@ public class RequestServiceTest {
 
         boolean check = requestService.checkRequesterBalance(new Item(), "");
         assertEquals(true, check);
+    }
+
+    @Test
+    public void addingBuyRequestIssueWithProPay(){
+        Mockito.doReturn(false).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
+
+        Request request = requestService.addBuyRequest(1L);
+        assertEquals(null, request);
+    }
+
+    @Test
+    public void addingBuyRequestNoIssueWithProPay(){
+        Mockito.doReturn(true).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
+        Request request = requestService.addBuyRequest(1L);
+        assertEquals(user, request.getRequester());
+        assertEquals(RequestStatus.AWAITING_SHIPMENT, request.getStatus());
+        assertEquals(item, request.getRequestedItem());
+    }
+
+    @Test
+    public void buyItemAndTransferMoneyIssueWithProPay(){
+        Mockito.doReturn(false).when(proPaySubscriber).transferMoney(anyString(), anyString(), anyDouble());
+
+        boolean check = requestService.buyItemAndTransferMoney(r1);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void buyItemAndTransferMoneyNoIssueWithProPay(){
+        Mockito.doReturn(true).when(proPaySubscriber).transferMoney(anyString(), anyString(), anyDouble());
+
+        boolean check = requestService.buyItemAndTransferMoney(r1);
+        assertEquals(true, check);
+        assertEquals(false, item.isActive());
+        Mockito.verify(requestRepo, times(1)).save(isA(Request.class));
+    }
+
+    @Test
+    public void addRequestIssueWithDate(){
+        Request request = requestService.addRequest("2019-1-5", "2019-1-4", 1L);
+        assertEquals(null, request);
+        request = requestService.addRequest("2019-1-2", "2019-1-4", 1L);
+        assertEquals(null, request);
+    }
+
+    @Test
+    public void addRequestNoIssueWithDate(){
+        Request request = requestService.addRequest("2019-01-04", "2019-01-05", 1L);
+        assertEquals(user, request.getRequester());
+        assertEquals(LocalDate.of(2019,1,4), request.getStartDate());
+        assertEquals(LocalDate.of(2019,1,5), request.getEndDate());
+        assertEquals(1, request.getDuration());
+        assertEquals(item, request.getRequestedItem());
+    }
+
+    @Test
+    public void saveRequestItemNotAvailable(){
+        Mockito.doReturn(false).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+        boolean check = requestService.saveRequest(r1);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void saveRequestIssueWithProPay(){
+        Mockito.doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+        Mockito.doReturn(false).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
+        boolean check = requestService.saveRequest(r2);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void saveRequestNoIssues(){
+        Mockito.doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+        Mockito.doReturn(true).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
+        boolean check = requestService.saveRequest(r2);
+        assertEquals(true, check);
+        Mockito.verify(requestRepo, times(1)).save(isA(Request.class));
     }
 
 }

@@ -71,7 +71,7 @@ public class RequestService {
             }
         }
         requestRepo.deleteAll(toRemove);
-        return myRequests.stream().filter(i -> !toRemove.contains(i)).collect(Collectors.toList());
+        return myRequests.stream().filter(i -> !(toRemove.contains(i))).collect(Collectors.toList());
     }
 
     public boolean checkRequestedDate(String startDate,
