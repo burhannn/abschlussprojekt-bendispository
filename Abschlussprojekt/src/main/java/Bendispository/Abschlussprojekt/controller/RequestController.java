@@ -242,13 +242,8 @@ public class RequestController {
     public String returnedItemIsNotIntactPost(Model model,
                                               @PathVariable Long id,
                                               String comment){
-        Long userId = authenticationService.getCurrentUser().getId();
-        Person me = personsRepo.findById(userId).orElse(null);
-        LeaseTransaction leaseTransaction = leaseTransactionRepo
-                .findById(id)
-                .orElse(null);
-        leaseTransaction.setLeaseIsConcluded(true);
-        transactionService.itemIsNotIntact(me, leaseTransaction, comment);
+        Person me = authenticationService.getCurrentUser();
+        transactionService.notIntact(id, comment, me);
         List<LeaseTransaction> transactionList =
               leaseTransactionRepo
                     .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
