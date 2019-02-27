@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -56,17 +55,13 @@ public class FileController {
 
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
-                                     @Valid @RequestParam("file") MultipartFile multipart,
+                                     @Valid @RequestParam("file") MultipartFile multipartFile,
                                      Item item) throws IOException {
 
-        String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        if(!fileName.isEmpty()){
-            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-            item.setUploadFile(uploadFile);
-        }
+        itemService.addFile(item, multipartFile);
 
         model.addAttribute("newItem", item);
-        itemService.addItem(item);
+        itemService.addItem(item, MarketType.LEND);
 
         return "redirect:/item/" + item.getId() + "";
     }
@@ -81,14 +76,10 @@ public class FileController {
                                         @Valid @RequestParam("file") MultipartFile multipartFile,
                                         Item item) throws IOException {
 
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        if(!fileName.isEmpty()){
-            UploadFile uploadFile = new UploadFile(fileName, multipartFile.getBytes());
-            item.setUploadFile(uploadFile);
-        }
+        itemService.addFile(item, multipartFile);
 
         model.addAttribute("newItem", item);
-        itemService.addSellItem(item);
+        itemService.addItem(item, MarketType.SELL);
 
         return "redirect:/item/" + item.getId() + "";
     }
