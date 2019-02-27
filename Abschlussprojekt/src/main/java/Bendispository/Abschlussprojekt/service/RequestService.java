@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.service;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -194,4 +195,26 @@ public class RequestService {
         requestRepo.save(request);
         return true;
     }
+
+    public boolean wasShipped(Request request, Integer shipped){
+        if (shipped != null) {
+            request.setStatus(RequestStatus.SHIPPED);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean wasDeniedOrAccepted(Integer requestMyItems, Request request){
+        if(requestMyItems == -1){
+            request.setStatus(RequestStatus.DENIED);
+            requestRepo.save(request);
+            return true;
+        }
+        if (transactionService.lenderApproved(request)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

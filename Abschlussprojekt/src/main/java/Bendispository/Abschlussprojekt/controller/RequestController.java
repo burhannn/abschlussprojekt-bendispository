@@ -4,13 +4,9 @@ import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
-import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
-import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,30 +127,17 @@ public class RequestController {
         Request request = requestRepo.findById(requestID).orElse(null);
         Person person = authenticationService.getCurrentUser();
 
-        if (shipped != null) {
-            if (shipped == 1) {
-                request.setStatus(RequestStatus.SHIPPED);
-                requestService.showRequests(model, person);
-                return "rentsTmpl/requests";
-            }
+        if (requestService.wasShipped(request, shipped)) {
+            requestService.showRequests(model, person);
+            return "rentsTmpl/requests";
         }
 
-        if (requestMyItems != null) {
-            if(requestMyItems == -1){
-                request.setStatus(RequestStatus.DENIED);
-                requestRepo.save(request);
-                requestService.showRequests(model, person);
-                return "rentsTmpl/requests";
-            } else {
-                if (transactionService.lenderApproved(request)) {
-                    requestService.showRequests(model, person);
-                    return "rentsTmpl/requests";
-                }
-            }
+        if(requestService.wasDeniedOrAccepted(requestMyItems, request)){
+            requestService.showRequests(model, person);
+            return "rentsTmpl/requests";
         }
-
         requestService.showRequests(model,person);
-        redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
+        redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or ProPay is Offline!");
         return "redirect:/";
     }
 
