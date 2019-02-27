@@ -224,6 +224,13 @@ public class FileControllerTests {
 
     @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
+    public void retrieve() throws Exception{
+        mvc.perform(get("/additem")).andExpect(status().isOk());
+        mvc.perform(get("/addsellitem")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "momo", password = "abcdabcd")
     public void checkAddItem() throws Exception {
 
         MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
@@ -328,7 +335,7 @@ public class FileControllerTests {
 
     @Test
     @WithMockUser(username = "momo", password = "abcdabcd")
-    public void ckeckEditItem() throws Exception{
+    public void checkEditItem() throws Exception{
 
         mvc.perform(get("/edititem/{id}", 3L))
                 .andDo(print())
@@ -340,5 +347,15 @@ public class FileControllerTests {
                 .andExpect(model().attribute("Item", hasProperty("deposit", equalTo(40))))
                 .andExpect(model().attribute("Item", hasProperty("description", equalTo("bin billig"))))
                 .andExpect(model().attribute("Item", hasProperty("costPerDay", equalTo(10))));
+    }
+
+    @Test
+    @WithMockUser(username = "momo", password = "abcdabcd")
+    public void checkEditItemNotExisting() throws Exception{
+
+        mvc.perform(get("/edititem/{id}", 10L))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"));
     }
 }
