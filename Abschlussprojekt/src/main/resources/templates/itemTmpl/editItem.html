@@ -10,7 +10,7 @@
     <h1>Edit Item</h1>
     <form method = "post">
         <tr>Name:<div><input type ="text" name = "name" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.name}"></div></tr>
-        <tr>Description:<div><input type ="text" name = "description" th:value="${Item?.description}"></div></tr>
+        <tr>Description:<div><input type ="text" name = "description" pattern="[a-zA-ZöäüÖÄÜß .,?!0-9]+" required th:value="${Item?.description}"></div></tr>
         <tr>Place:<div><input type ="text" name = "place" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.place}"></div></tr>
         <tr>Deposit:<div><input type ="text" name = "deposit" pattern="[0-9]+" required th:value="${Item?.deposit}"></div></tr>
         <tr>Cost Per Day:<div><input type ="text" name = "costPerDay" pattern="[0-9]+" required th:value="${Item?.costPerDay}"></div></tr>

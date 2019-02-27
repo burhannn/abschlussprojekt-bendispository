@@ -20,16 +20,17 @@ public class Item {
 	@Pattern(regexp="[a-zA-ZöäüÖÄÜß 0-9]+")
 	private String name;
 
+	@Pattern(regexp="[a-zA-ZöäüÖÄÜß .,?!0-9]+")
 	private String description;
 
 	private MarketType marketType;
 
 	private boolean active = true;
 
-	//@Pattern(regexp="[0-9.,]+")
+	@Digits(integer = 10, fraction = 2)
 	private double retailPrice;
 
-	@Digits(integer = 100, fraction = 0)
+	@Digits(integer = 10, fraction = 0)
 	private int deposit;
 
 	@Embedded
