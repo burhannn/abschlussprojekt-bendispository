@@ -88,11 +88,25 @@ public class RequestController {
                                      RedirectAttributes redirectAttributes
                                      ){
 
-        return requestService
-                .addRequest(
-                        model,
-                        redirectAttributes,
-                        startDate, endDate, id);
+        Request request = requestService
+                .addRequest(startDate, endDate, id);
+        if(request == null){
+            redirectAttributes.addFlashAttribute("message",
+                    "Invalid date!");
+            return "redirect:/item/{id}/requestitem";
+        }
+
+        boolean saveRequest = requestService.saveRequest(request);
+
+        if(!saveRequest){
+            redirectAttributes.addFlashAttribute("message",
+                    "Item is not available during selected period, or something went wrong with ProPay!");
+        }
+
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Request has been sent!");
+
+        return "redirect:/item/{id}";
     }
 
     @GetMapping(path="/profile/requests")

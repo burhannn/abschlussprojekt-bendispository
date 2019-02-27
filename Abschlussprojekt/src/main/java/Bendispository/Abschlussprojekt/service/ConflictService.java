@@ -24,7 +24,7 @@ public class ConflictService {
         this.transactionService = transactionService;
     }
 
-    public boolean resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){
+    public boolean resolveConflict(ConflictTransaction conflict, boolean depositBackToLeaser){
         conflict.setLeaserAccepted(true);
         conflict.setLenderAccepted(true);
         conflict.setLeaserGotTheDepositBack(depositBackToLeaser);

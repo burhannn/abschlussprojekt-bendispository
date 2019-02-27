@@ -529,9 +529,4 @@ public class TransactionServiceTest {
         assertEquals(true, check);
     }
 
-    @Test
-    public void concludeNoDeposit(){
-        //leaseTransaction.addPaymentTransaction();
-    }
-
 }

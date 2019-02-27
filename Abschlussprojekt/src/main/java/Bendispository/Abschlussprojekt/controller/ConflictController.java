@@ -48,7 +48,7 @@ public class ConflictController {
                                                 Integer beneficiary,
                                                 RedirectAttributes redirectAttributes){
         ConflictTransaction conflict = conflictTransactionRepo.findById(conflictId).orElse(null);
-        if(!conflictService.resolveConflict(conflict, conflictTransactionRepo, beneficiary == -1)){
+        if(!conflictService.resolveConflict(conflict, beneficiary == -1)){
             redirectAttributes.addFlashAttribute("message", "Something went wrong with ProPay!");
             showConflicts(model);
             return "redirect:/conflicts";
