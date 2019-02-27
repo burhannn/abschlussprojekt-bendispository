@@ -52,17 +52,6 @@ public class ItemService {
         personRepo.save(loggedIn);
     }
 
-    /*public void addSellItem(Item item){
-        Person loggedIn = authenticationService.getCurrentUser();
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        item.setMarketType(MarketType.SELL);
-        itemRepo.save(item);
-        List<Item> itemsOwner = new ArrayList<>();
-        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-        personRepo.save(loggedIn);
-    }*/
-
     public void deleteItem(Long id){
         Item item = itemRepo.findById(id).orElse(null);
         Person person = item.getOwner();
