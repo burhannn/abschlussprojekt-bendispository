@@ -18,9 +18,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static Bendispository.Abschlussprojekt.model.RequestStatus.AWAITING_SHIPMENT;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
 @Controller
 public class RequestController {
@@ -108,8 +113,27 @@ public class RequestController {
     @GetMapping(path="/profile/requests")
     public String Requests(Model model){
         Person person = authenticationService.getCurrentUser();
-        requestService.showRequests(model, person);
+        showRequests(model, person);
         return "rentsTmpl/requests";
+    }
+
+    public void showRequests(Model model,
+                             Person me) {
+        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
+        myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
+        myRequests = requestService.deleteObsoleteRequests(myRequests);
+        model.addAttribute("myRequests", myRequests);
+
+        List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
+        requestsMyItems = requestService.deleteObsoleteRequests(requestsMyItems);
+        model.addAttribute("requestsMyItems", requestsMyItems);
+
+        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, AWAITING_SHIPMENT);
+        model.addAttribute("myBuyRequests", myBuyRequests);
+
+        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, AWAITING_SHIPMENT);
+        model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
+
     }
 
     @PostMapping(path = "/profile/deleterequest/{id}")
@@ -128,15 +152,15 @@ public class RequestController {
         Person person = authenticationService.getCurrentUser();
 
         if (requestService.wasShipped(request, shipped)) {
-            requestService.showRequests(model, person);
+            showRequests(model, person);
             return "rentsTmpl/requests";
         }
 
         if(requestService.wasDeniedOrAccepted(requestMyItems, request)){
-            requestService.showRequests(model, person);
+            showRequests(model, person);
             return "rentsTmpl/requests";
         }
-        requestService.showRequests(model,person);
+        showRequests(model,person);
         redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or ProPay is Offline!");
         return "redirect:/";
     }

@@ -63,26 +63,7 @@ public class RequestService {
         this.clock = clock;
     }
 
-    public void showRequests(Model model,
-                              Person me) {
-        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
-        myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
-        myRequests = deleteObsoleteRequests(myRequests);
-        model.addAttribute("myRequests", myRequests);
-
-        List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
-        requestsMyItems = deleteObsoleteRequests(requestsMyItems);
-        model.addAttribute("requestsMyItems", requestsMyItems);
-
-        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, AWAITING_SHIPMENT);
-        model.addAttribute("myBuyRequests", myBuyRequests);
-
-        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, AWAITING_SHIPMENT);
-        model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
-
-    }
-
-    protected List<Request> deleteObsoleteRequests(List<Request> myRequests) {
+    public List<Request> deleteObsoleteRequests(List<Request> myRequests) {
         List<Request> toRemove = new ArrayList<>();
         for(Request request : myRequests){
             if(request.getStartDate().isBefore(LocalDate.now(clock))) {
