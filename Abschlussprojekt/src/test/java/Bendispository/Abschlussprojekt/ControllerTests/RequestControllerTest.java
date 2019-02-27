@@ -1,9 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
-import Bendispository.Abschlussprojekt.service.AuthenticationService;
-import Bendispository.Abschlussprojekt.service.ConflictService;
-import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
-import Bendispository.Abschlussprojekt.service.RequestService;
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -82,6 +79,8 @@ public class RequestControllerTest {
     @MockBean
     RequestService requestService;
 
+    @MockBean
+    TransactionService transactionService;
     Person dummy1;
     Person dummy2;
 
