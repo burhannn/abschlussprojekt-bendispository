@@ -63,8 +63,7 @@ public class RequestService {
     }
 
     public void showRequests(Model model,
-                              Long id) {
-        Person me = personsRepo.findById(id).orElse(null);
+                              Person me) {
         List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
         myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
         myRequests = deleteObsoleteRequests(myRequests);

@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.ModelTests;
+package Bendispository.Abschlussprojekt.model;
 
 import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import org.junit.Assert;

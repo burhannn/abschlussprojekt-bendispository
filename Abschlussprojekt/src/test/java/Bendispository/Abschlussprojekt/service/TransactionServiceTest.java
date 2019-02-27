@@ -36,7 +36,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 public class TransactionServiceTest {
 
     @MockBean

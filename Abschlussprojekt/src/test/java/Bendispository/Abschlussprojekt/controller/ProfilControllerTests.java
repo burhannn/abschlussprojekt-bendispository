@@ -1,11 +1,12 @@
-package Bendispository.Abschlussprojekt.ControllerTests;
+package Bendispository.Abschlussprojekt.controller;
 
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.ProfilController;
+
 import Bendispository.Abschlussprojekt.model.Rating;
+
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -26,11 +27,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
@@ -96,11 +96,27 @@ public class ProfilControllerTests {
     Rating rating2;
     Rating rating3;
 
+    Request dummyRequest1;
+    Request dummyRequest2;
+    Request dummyRequest3;
+    Request dummyRequest4;
+
+    List<Request> requestList1 = new ArrayList<>();
+    List<Request> requestList2 = new ArrayList<>();
+
     @Before
     public void setUp(){
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+
+        dummyRequest1 = new Request();
+        dummyRequest2 = new Request();
+        dummyRequest3 = new Request();
+        dummyRequest4 = new Request();
+
+        requestList1 = new ArrayList<>();
+        requestList2 = new ArrayList<>();
 
         dummy1 = new Person();
         dummy2 = new Person();
@@ -114,10 +130,13 @@ public class ProfilControllerTests {
         rating3 = new Rating();
 
         rating1.setRatingPoints(5);
+        rating1.setId(10L);
         rating1.setRater(dummy1);
         rating2.setRatingPoints(3);
+        rating2.setId(20L);
         rating2.setRater(dummy2);
         rating3.setRatingPoints(1);
+        rating3.setId(30L);
         rating3.setRater(dummy3);
 
         dummy1.setFirstName("mandy");
@@ -172,6 +191,18 @@ public class ProfilControllerTests {
         dummyItem3.setCostPerDay(1);
         dummyItem3.setId(5L);
 
+        dummyRequest1.setRequester(dummy1);
+        dummyRequest1.setId(9L);
+        dummyRequest2.setRequester(dummy1);
+        dummyRequest2.setId(8L);
+        dummyRequest3.setRequester(dummy2);
+        dummyRequest3.setId(7L);
+        dummyRequest4.setRequester(dummy2);
+        dummyRequest4.setId(6L);
+
+        requestList1.addAll(Arrays.asList(dummyRequest1, dummyRequest2));
+        requestList2.addAll(Arrays.asList(dummyRequest3, dummyRequest4));
+
         List<Item> items1 = new ArrayList<Item>();
         items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         dummy1.setItems(items1);
@@ -207,7 +238,7 @@ public class ProfilControllerTests {
     }
 
     @Test
-    public void checkOverviewItems() throws Exception {
+    public void checkOverviewItemsFromOthersAreShownNoOwnItems() throws Exception {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
@@ -240,6 +271,29 @@ public class ProfilControllerTests {
                         )
                 )));
     }
+
+    @Test
+    public void checkOverviewItemsFromOthersAreShownWithoutOwnItems() throws Exception {
+
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+        mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("OverviewAllItems"))
+                .andExpect(model().attributeExists("loggedInPerson"))
+                .andExpect(view().name("OverviewAllItems"))
+                .andExpect(model().attribute("OverviewAllItems", hasSize(1)))
+                .andExpect(model().attribute("OverviewAllItems", hasItem(
+                        allOf(
+                                hasProperty("id", equalTo(5L)),
+                                hasProperty("name", equalTo("Kulli")),
+                                hasProperty("description", equalTo("schicker kulli"))
+                        )
+                )));
+    }
+
+
 
     //tests für profile anderer User
     @Test
@@ -359,7 +413,7 @@ public class ProfilControllerTests {
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
 
-        mvc.perform(get("deleteuser/{username}", dummy1.getUsername()))
+        mvc.perform(get("deleteuser/{username}", "string"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("redirect:/profilub"));
@@ -375,10 +429,33 @@ public class ProfilControllerTests {
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
+    /*
 
+        List<Request> purchases = requestRepo.findByRequesterAndStatus(loggedIn, RequestStatus.SHIPPED);
+        List<Request> sales = requestRepo.findByRequestedItemOwnerAndStatus(loggedIn, RequestStatus.SHIPPED);
+
+        List<LeaseTransaction> leased = leaseTransactionRepo.findAllByLeaserAndLeaseIsConcludedIsTrue(loggedIn);
+        List<LeaseTransaction> lent = leaseTransactionRepo.findAllByItemOwnerAndLeaseIsConcludedIsTrue(loggedIn);
+
+    }*/
     @Test
     public void checkProfileHistory() throws Exception {
-        //....
+
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(requestRepo.findByRequesterAndStatus(dummy1, RequestStatus.SHIPPED)).thenReturn(requestList1);
+        Mockito.when(requestRepo.findByRequestedItemOwnerAndStatus(dummy1, RequestStatus.SHIPPED)).thenReturn(requestList2);
+
+        mvc.perform(get("/profile/history"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("purchases"))
+                .andExpect(model().attributeExists("sales"))
+                .andExpect(model().attributeExists("leased"))
+                .andExpect(model().attributeExists("lent"))
+                .andExpect(model().attribute("purchases", hasSize(2)))
+                .andExpect(model().attribute("sales", hasSize(2)))
+                //.andExpect(model().attribute("leased", hasSize(2)))
+                //.andExpect(model().attribute("lent", hasSize(2)))
+                .andExpect(view().name("historia"));
     }
 
     @Test
@@ -392,29 +469,27 @@ public class ProfilControllerTests {
                 .andExpect(view().name("profileTmpl/openRatings"));
     }
 
-    /*
-    @PostMapping(path="/rating")
-    public String Rating(Model model,
-                         int rating,
-                         Long ratingID){
-        if (rating != -1){
-            Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
-            rating1.setRatingPoints(rating);
-            ratingRepo.save(rating1);
-
-            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
-                rating1.getRequest().getRequester().addRating(rating1);
-                personRepo.save(rating1.getRequest().getRequester());
-            }else{
-                rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
-                personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
-            }
-        }
-        return "redirect:/";
-    */
-
     @Test
+    @Ignore
     public void checkRating() throws Exception {
+        Request request = new Request();
+
+        Mockito.when(ratingRepo.findById(1L)).thenReturn(Optional.ofNullable(rating1));
+        rating1.setRequest(request);
+
+        mvc.perform(post("/rating", 5 , 10L).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .requestAttr("rating", 5)
+                .requestAttr("ratingID", 10L)
+                .sessionAttr("rating", new Rating()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("rating"))
+                .andExpect(model().attribute("rating", hasSize(1)))
+                .andExpect(view().name("/rating"))
+                .andExpect(model().attribute("rating", hasItem(
+                allOf(
+                        hasProperty("id", equalTo(10L)),
+                        hasProperty("rater", equalTo(dummy1)),
+                        hasProperty("ratingPoints", equalTo(5))))));
 
     }
 
