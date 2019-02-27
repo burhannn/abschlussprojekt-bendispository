@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link href="../../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 </head>
 <body>
 <div class="projekt_container">
-    <h1>My rented Items</h1>
-    <div th:each="lease : ${myRentedItems}">
-        <tr> Item: <a th:href = "|@{'/item/' + ${lease.item.id}}|"
-                      th:text= "${lease.item.name}"></a></tr><br>
-        <tr> Owner: <a th:href = "@{'/profile/' + ${lease.item.owner.id}}|"
-                       th:text= "${lease.item.owner.username}"></a></tr><br>
-        <tr><div th:text="|Start date: ${#temporals.format(lease.startDate, 'yyyy-MM-dd')}|"></div></tr>
-        <tr><div th:text="|To be returned on: ${lease.endDate}|"></div></tr>
-        <form method="post">
-            <button type = "submit" th:value="${lease.id}" name="id">Return</button>
-        </form>
-    </div>
+	<h1>My rented Items</h1>
+	<div th:each="lease : ${myRentedItems}">
+		<tr> Item: <a th:href="|@{'/item/' + ${lease?.item?.id}}|"
+					  th:text="${lease?.item?.name}"></a></tr>
+		<br>
+		<tr> Owner: <a th:href="@{'/profile/' + ${lease?.item?.owner?.id}}|"
+					   th:text="${lease?.item?.owner?.username}"></a></tr>
+		<br>
+		<tr>
+			<div th:text="|Start date: ${#temporals.format(lease?.startDate, 'yyyy-MM-dd')}|"></div>
+		</tr>
+		<tr>
+			<div th:text="|To be returned on: ${lease?.endDate}|"></div>
+		</tr>
+		<form method="post">
+			<button name="id" th:value="${lease?.id}" type="submit">Return</button>
+		</form>
+	</div>
 </div>
 <div class="projekt_container">
-    <h1>My leased Items</h1>
-    <div th:each="lease : ${myLeasedItems}">
-        <tr> Item: <a th:href = "|@{'/item/' + ${lease.item.id}}|"
-                      th:text= "${lease.item.name}"></a></tr><br>
-        <tr> Owner: <a th:href = "@{'/profile/' + ${lease.leaser.id}}|"
-                       th:text= "${lease.leaser.username}"></a></tr><br>
-        <tr><div th:text="|Start date: ${#temporals.format(lease.startDate, 'yyyy-MM-dd')}|"></div></tr>
-        <tr><div th:text="|To be returned on: ${lease.endDate}|"></div></tr>
-    </div>
+	<h1>My leased Items</h1>
+	<div th:each="lease : ${myLeasedItems}">
+		<tr> Item: <a th:href="|@{'/item/' + ${lease?.item?.id}}|"
+					  th:text="${lease?.item?.name}"></a></tr>
+		<br>
+		<tr> Owner: <a th:href="@{'/profile/' + ${lease?.leaser?.id}}|"
+					   th:text="${lease?.leaser?.username}"></a></tr>
+		<br>
+		<tr>
+			<div th:text="|Start date: ${#temporals.format(lease?.startDate, 'yyyy-MM-dd')}|"></div>
+		</tr>
+		<tr>
+			<div th:text="|To be returned on: ${lease?.endDate}|"></div>
+		</tr>
+	</div>
 </div>
 <a class="back_button" href="/profile">Back</a> <!-- ergänzt um person (login) -->
 </body>

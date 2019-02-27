@@ -9,29 +9,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConflictService {
 
-    private final ConflictTransactionRepo conflictTransactionRepo;
+	private final ConflictTransactionRepo conflictTransactionRepo;
 
-    private final TransactionService transactionService;
+	private final TransactionService transactionService;
 
-    private RatingRepo ratingRepo;
+	private RatingRepo ratingRepo;
 
-    @Autowired
-    public ConflictService(
-                           ConflictTransactionRepo conflictTransactionRepo,
-                           TransactionService transactionService) {
-        super();
-        this.conflictTransactionRepo = conflictTransactionRepo;
-        this.transactionService = transactionService;
-    }
+	@Autowired
+	public ConflictService(
+			ConflictTransactionRepo conflictTransactionRepo,
+			TransactionService transactionService) {
+		super();
+		this.conflictTransactionRepo = conflictTransactionRepo;
+		this.transactionService = transactionService;
+	}
 
-    public boolean resolveConflict(ConflictTransaction conflict, ConflictTransactionRepo conflictTransactionRepo, boolean depositBackToLeaser){
-        conflict.setLeaserAccepted(true);
-        conflict.setLenderAccepted(true);
-        conflict.setLeaserGotTheDepositBack(depositBackToLeaser);
-        conflictTransactionRepo.save(conflict);
-        if(depositBackToLeaser)
-            return transactionService.itemIsIntact(conflict.getLeaseTransaction());
-        else
-            return transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction());
-    }
+	public boolean resolveConflict(ConflictTransaction conflict, boolean depositBackToLeaser) {
+		conflict.setLeaserAccepted(true);
+		conflict.setLenderAccepted(true);
+		conflict.setLeaserGotTheDepositBack(depositBackToLeaser);
+		conflictTransactionRepo.save(conflict);
+		if (depositBackToLeaser)
+			return transactionService.itemIsIntact(conflict.getLeaseTransaction());
+		else
+			return transactionService.itemIsNotIntactConclusion(conflict.getLeaseTransaction());
+	}
 }

@@ -1,6 +1,9 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.*;
+import Bendispository.Abschlussprojekt.model.Item;
+import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -11,15 +14,12 @@ import Bendispository.Abschlussprojekt.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -28,171 +28,157 @@ import java.util.Optional;
 @Controller
 public class FileController {
 
-    private ItemRepo itemRepo;
-    private PersonsRepo personRepo;
-    private RequestRepo requestRepo;
-    private AuthenticationService authenticationService;
-    private ItemService itemService;
-    private RequestService requestService;
+	private ItemRepo itemRepo;
+	private PersonsRepo personRepo;
+	private RequestRepo requestRepo;
+	private AuthenticationService authenticationService;
+	private ItemService itemService;
+	private RequestService requestService;
 
-    @Autowired
-    public FileController(ItemRepo itemRepo,
-                          PersonsRepo personRepo,
-                          RequestRepo requestRepo,
-                          AuthenticationService authenticationService,
-                          ItemService itemService,
-                          RequestService requestService){
-        this.itemRepo = itemRepo;
-        this.personRepo = personRepo;
-        this.requestRepo = requestRepo;
-        this.authenticationService = authenticationService;
-        this.itemService = itemService;
-        this.requestService = requestService;
-    }
+	@Autowired
+	public FileController(ItemRepo itemRepo,
+						  PersonsRepo personRepo,
+						  RequestRepo requestRepo,
+						  AuthenticationService authenticationService,
+						  ItemService itemService,
+						  RequestService requestService) {
+		this.itemRepo = itemRepo;
+		this.personRepo = personRepo;
+		this.requestRepo = requestRepo;
+		this.authenticationService = authenticationService;
+		this.itemService = itemService;
+		this.requestService = requestService;
+	}
 
-    @GetMapping(path = "/additem")
-    public String addItemPage(){
-        return "itemTmpl/AddItem";
-    }
+	@GetMapping(path = "/additem")
+	public String addItemPage() {
+		return "itemTmpl/AddItem";
+	}
 
-    @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
-    public String addItemsToDatabase(Model model,
-                                     @Valid @RequestParam("file") MultipartFile multipart,
-                                     Item item) throws IOException {
+	@PostMapping(path = "/additem", consumes = {"multipart/form-data"})
+	public String addItemsToDatabase(Model model,
+									 @Valid @RequestParam("file") MultipartFile multipartFile,
+									 Item item) throws IOException {
 
-        String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
-        if(!fileName.isEmpty()){
-            UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
-            item.setUploadFile(uploadFile);
-        }
-        Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("newItem", item);
+		itemService.addFile(item, multipartFile);
 
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        item.setMarketType(MarketType.LEASE);
-        itemRepo.save(item);
-        List<Item> itemsOwner = new ArrayList<>();
-        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-        personRepo.save(loggedIn);
-        return "redirect:/item/" + item.getId() + "";
-    }
+		model.addAttribute("newItem", item);
+		itemService.addItem(item, MarketType.LEND);
 
-    @GetMapping(path = "/addsellitem")
-    public String addSellItemPage() {
-        return "itemTmpl/addItemSell";
-    }
+		return "redirect:/item/" + item.getId() + "";
+	}
 
-    @PostMapping(path = "/addsellitem", consumes = {"multipart/form-data"})
-    public String addSellItemToDatabase(Model model,
-                                        @Valid @RequestParam("file") MultipartFile multipartFile,
-                                        Item item) throws IOException {
+	@GetMapping(path = "/addsellitem")
+	public String addSellItemPage() {
+		return "itemTmpl/addItemSell";
+	}
 
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        if(!fileName.isEmpty()){
-            UploadFile uploadFile = new UploadFile(fileName, multipartFile.getBytes());
-            item.setUploadFile(uploadFile);
-        }
+	@PostMapping(path = "/addsellitem", consumes = {"multipart/form-data"})
+	public String addSellItemToDatabase(Model model,
+										@Valid @RequestParam("file") MultipartFile multipartFile,
+										Item item) throws IOException {
 
-        Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("newItem", item);
+		itemService.addFile(item, multipartFile);
 
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        item.setMarketType(MarketType.SELL);
-        itemRepo.save(item);
-        List<Item> itemsOwner = new ArrayList<>();
-        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-        personRepo.save(loggedIn);
+		model.addAttribute("newItem", item);
+		itemService.addItem(item, MarketType.SELL);
 
-        return "redirect:/item/" + item.getId() + "";
-    }
+		return "redirect:/item/" + item.getId() + "";
+	}
 
-    @GetMapping(path = "/item/{id}" )
-    public String ItemProfile(Model model,
-                              @PathVariable Long id) {
-        if(itemRepo.findById(id).orElse(null) == null){
-            return "redirect:/";
-        }
+	@GetMapping(path = "/item/{id}")
+	public String ItemProfile(Model model,
+							  @PathVariable Long id) {
+		if (itemRepo.findById(id).orElse(null) == null) {
+			return "redirect:/";
+		}
 
-        Item item = itemRepo.findById(id).orElse(null);
-        model.addAttribute("itemProfile", item);
-        model.addAttribute("itemOwner", item.getOwner());
-        model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
+		Item item = itemRepo.findById(id).orElse(null);
+		model.addAttribute("itemProfile", item);
+		model.addAttribute("itemOwner", item.getOwner());
+		model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
 
-        if(item.getUploadFile() != null){
-            model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
-        }else{
-            model.addAttribute("pic",null);
-        }
+		if (item.getUploadFile() != null) {
+			model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
+		} else {
+			model.addAttribute("pic", null);
+		}
 
-        if (item.getMarketType() == MarketType.SELL)
-            return "itemTmpl/itemProfileSell";
+		if (item.getMarketType() == MarketType.SELL)
+			return "itemTmpl/itemProfileSell";
 
-        return "itemTmpl/itemProfile";
-    }
+		return "itemTmpl/itemProfile";
+	}
 
-    @PostMapping(path = "/item/{id}")
-    public String itemBuyRequest(Model model,
-                                 RedirectAttributes redirectAttributes,
-                                 @PathVariable Long id) {
+	@PostMapping(path = "/item/{id}")
+	public String itemBuyRequest(Model model,
+								 RedirectAttributes redirectAttributes,
+								 @PathVariable Long id) {
 
-        Item item = itemRepo.findById(id).orElse(null);
-        List<Request> requests = requestRepo.findByRequesterAndRequestedItemAndStatus
-                (authenticationService.getCurrentUser(), item, RequestStatus.AWAITING_SHIPMENT);
+		Item item = itemRepo.findById(id).orElse(null);
+		List<Request> requests = requestRepo.findByRequesterAndRequestedItemAndStatus
+				(authenticationService.getCurrentUser(), item, RequestStatus.AWAITING_SHIPMENT);
 
-        if (!(requests.isEmpty())) {
-            redirectAttributes.addFlashAttribute("message",
-                    "You cannot buy the same item twice!");
-            return "redirect:/item/{id}";
-        }
+		if (!(requests.isEmpty())) {
+			redirectAttributes.addFlashAttribute("message",
+					"You cannot buy the same item twice!");
+			return "redirect:/item/{id}";
+		}
 
-        requestService.addBuyRequest(model, redirectAttributes, id);
+		Request request = requestService.addBuyRequest(id);
+		if (request == null) {
+			redirectAttributes.addFlashAttribute("message", "You don't have enough funds for this transaction!");
+			return "redirect:/item/{id}";
+		}
 
-        return "redirect:/item/{id}";
-    }
+		boolean isItemBought = requestService.buyItemAndTransferMoney(request);
 
-    @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
-    public String deleteItem(@PathVariable("id") Long id,
-                             Model model) {
-        Item item = itemRepo.findById(id).orElse(null);
-        Person person = item.getOwner();
-        item.setOwner(null);
-        person.deleteItem(item);
-        itemRepo.deleteById(id);
-        personRepo.save(person);
-        return "redirect:/";
-    }
+		if (!isItemBought) {
+			redirectAttributes.addFlashAttribute("messageBalance",
+					"There is a Problem with ProPay!");
+			return "redirect:/item/{id}";
+		}
 
-    @GetMapping(path = "/edititem/{id}")
-    public String editItem(Model model,
-                           @PathVariable Long id){
-        if(itemRepo.findById(id).orElse(null) == null){
-            return "redirect:/";
-        }
-        Item item = itemRepo.findById(id).orElse(null);
-        Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("Item", item);
-        if(loggedIn.getUsername().equals(item.getOwner().getUsername())){
-            return "itemTmpl/editItem";
-        }
+		itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem", o));
+		redirectAttributes.addFlashAttribute("success", "Item bought!");
 
-        return "redirect:/";
-    }
+		return "redirect:/item/{id}";
+	}
 
-    @PostMapping(path = "/edititem/{id}")
-    public String editItemInDatabase(Model model,
-                                     @PathVariable Long id, Item inpItem){
-        Optional<Item> item = itemRepo.findById(id);
-        model.addAttribute("Item", item.get());
-        Person loggedIn = authenticationService.getCurrentUser();
-        inpItem.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
-        loggedIn.setItems(itemsOwner);
-        if(item.get().getUploadFile() != null) {
-            inpItem.setUploadFile(item.get().getUploadFile());
-        }
-        itemRepo.save(inpItem);
-        return "redirect:/";
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "/deleteitem/{id}")
+	public String deleteItem(@PathVariable("id") Long id,
+							 RedirectAttributes redirectAttributes) {
+		itemService.deleteItem(id);
+		redirectAttributes.addFlashAttribute("message", "Item has been deleted!");
+		return "redirect:/";
+	}
+
+	@GetMapping(path = "/edititem/{id}")
+	public String editItem(Model model,
+						   @PathVariable Long id) {
+		if (itemRepo.findById(id).orElse(null) == null) {
+			return "redirect:/";
+		}
+		Item item = itemRepo.findById(id).orElse(null);
+		Person loggedIn = authenticationService.getCurrentUser();
+		model.addAttribute("Item", item);
+		if (loggedIn.getUsername().equals(item.getOwner().getUsername())) {
+			if (item.getMarketType().equals(MarketType.SELL)) {
+				return "itemTmpl/editItemSell";
+			}
+			return "itemTmpl/editItem";
+		}
+
+		return "redirect:/";
+	}
+
+	@PostMapping(path = "/edititem/{id}")
+	public String editItemInDatabase(Model model,
+									 @PathVariable Long id,
+									 Item inputItem) {
+		Optional<Item> item = itemRepo.findById(id);
+		model.addAttribute("Item", item.get());
+		itemService.editItem(inputItem, item, id);
+		return "redirect:/item/{id}";
+	}
 }

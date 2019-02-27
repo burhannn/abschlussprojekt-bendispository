@@ -3,15 +3,13 @@ package Bendispository.Abschlussprojekt.service;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -22,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Bendispository.Abschlussprojekt.model.RequestStatus.*;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.AWAITING_SHIPMENT;
 
 @Component
 public class RequestService {
@@ -62,29 +60,7 @@ public class RequestService {
         this.clock = clock;
     }
 
-    public void showRequests(Model model,
-                              Long id) {
-        Person me = personsRepo.findById(id).orElse(null);
-        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
-        myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
-        myRequests = deleteObsoleteRequests(myRequests);
-        model.addAttribute("myRequests", myRequests);
-
-        List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
-        requestsMyItems = deleteObsoleteRequests(requestsMyItems);
-        model.addAttribute("requestsMyItems", requestsMyItems);
-
-        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, AWAITING_SHIPMENT);
-        deleteObsoleteRequests(myBuyRequests);
-        model.addAttribute("myBuyRequests", myBuyRequests);
-
-        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, AWAITING_SHIPMENT);
-        deleteObsoleteRequests(buyRequestsMyItems);
-        model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
-
-    }
-
-    protected List<Request> deleteObsoleteRequests(List<Request> myRequests) {
+    public List<Request> deleteObsoleteRequests(List<Request> myRequests) {
         List<Request> toRemove = new ArrayList<>();
         for(Request request : myRequests){
             if(request.getStartDate().isBefore(LocalDate.now(clock))) {
@@ -92,7 +68,7 @@ public class RequestService {
             }
         }
         requestRepo.deleteAll(toRemove);
-        return myRequests.stream().filter(i -> !toRemove.contains(i)).collect(Collectors.toList());
+        return myRequests.stream().filter(i -> !(toRemove.contains(i))).collect(Collectors.toList());
     }
 
     public boolean checkRequestedDate(String startDate,
@@ -117,74 +93,54 @@ public class RequestService {
         return true;
     }
 
-    public boolean checkRequestedAvailability(RedirectAttributes redirectAttributes,
-                                              Request request) {
-
-        if (!transactionService.itemIsAvailableOnTime(request)) {
-            redirectAttributes.addFlashAttribute("message",
-                    "Item is not available during selected period!");
-            return false;
-        }
-        return true;
+    public boolean checkRequestedAvailability(Request request) {
+        return transactionService.itemIsAvailableOnTime(request);
     }
 
-    public boolean checkRequesterBalance(RedirectAttributes redirectAttributes,
-                                         Item item,
-                                         String username) {
-        if (!proPaySubscriber.checkDeposit(item.getDeposit(), username)) {
-            redirectAttributes.addFlashAttribute("messageBalance",
-                    "You don't have enough funds for this transaction!");
-            return false;
-        }
-        return true;
+    public boolean checkRequesterBalance(Item item, String username) {
+        return proPaySubscriber.checkDeposit(item.getDeposit(), username);
     }
 
-    public String addBuyRequest(Model model,
-                                RedirectAttributes redirectAttributes,
-                                @PathVariable Long id) {
+    public Request addBuyRequest(Long id) {
 
         Person currentUser = authenticationService.getCurrentUser();
         Item item = itemRepo.findById(id).orElse(null);
 
         String username = currentUser.getUsername();
 
-        if (!checkRequesterBalance(redirectAttributes, item, username))
-            return "redirect:/item/{id}";
+        if (!checkRequesterBalance(item, username))
+            return null;
 
         Request request = new Request();
         request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
-        request.setStartDate(LocalDate.now());
-        request.setEndDate(LocalDate.now().plusDays(1));
-        request.setDuration(0);
         request.setStatus(AWAITING_SHIPMENT);
         request.setRequestedItem(item);
 
-        ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personsRepo, leaseTransactionRepo);
-
-        if (!proPaySubscriber.transferMoney(username, item.getOwner().getUsername(), item.getRetailPrice())) {
-            redirectAttributes.addFlashAttribute("messageBalance",
-                                    "You don't have enough funds for this transaction!");
-            return "redirect:/item/{id}";
-        }
-
-        item.setForSale(false);
-        requestRepo.save(request);
-        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-        redirectAttributes.addFlashAttribute("success", "Item bought!");
-
-        return "redirect:/item/{id}";
+        return request;
     }
 
-    public String addRequest(Model model,
-                           RedirectAttributes redirectAttributes,
-                           String startDate,
-                           String endDate,
-                           @PathVariable Long id) {
+    public boolean buyItemAndTransferMoney(Request request){
+        Person currentUser = authenticationService.getCurrentUser();
+        String username = currentUser.getUsername();
+        Item item = request.getRequestedItem();
 
-        if (!checkRequestedDate(startDate, endDate)){
-            redirectAttributes.addFlashAttribute("message",
-                    "Invalid date!");
-            return "redirect:/item/{id}/requestitem";
+        if (!proPaySubscriber
+                .transferMoney(
+                        username,
+                        item.getOwner().getUsername(),
+                        item.getRetailPrice())) {
+            return false;
+        }
+
+        item.setActive(false);
+        requestRepo.save(request);
+        return true;
+    }
+
+    public Request addRequest(String startDate, String endDate, Long id) {
+
+        if(!checkRequestedDate(startDate, endDate)){
+            return null;
         }
 
         LocalDate startdate, enddate;
@@ -202,17 +158,38 @@ public class RequestService {
         request.setEndDate(enddate);
         request.setDuration(Period.between(startdate, enddate).getDays());
         request.setRequestedItem(item);
+
+        return request;
+    }
+
+    public boolean saveRequest(Request request){
+        Person currentUser = authenticationService.getCurrentUser();
         String username = currentUser.getUsername();
 
-        if (!checkRequestedAvailability(redirectAttributes, request) ||
-                !checkRequesterBalance(redirectAttributes, item, username)){
-            return "redirect:/item/{id}/requestitem";
+        if (!checkRequestedAvailability(request) ||
+                !checkRequesterBalance(request.getRequestedItem(), username)){
+            return false;
         }
-
         requestRepo.save(request);
-        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
-        redirectAttributes.addFlashAttribute("success", "Request has been sent!");
-
-        return "redirect:/item/{id}";
+        return true;
     }
+
+    public boolean wasShipped(Request request, Integer shipped){
+        if (shipped != null) {
+            request.setStatus(RequestStatus.SHIPPED);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean wasDeniedOrAccepted(Integer requestMyItems, Request request){
+        if(requestMyItems == -1){
+            request.setStatus(RequestStatus.DENIED);
+            requestRepo.save(request);
+            return true;
+        }
+        return transactionService.lenderApproved(request);
+    }
+
+
 }

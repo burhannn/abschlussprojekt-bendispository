@@ -7,12 +7,9 @@ import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
-import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,7 +63,7 @@ public class ProfilController {
                 model.addAttribute("itemname", leaseTransaction.getItem().getName());
             }
         }
-        List<Item> allOtherItems = itemRepo.findByOwnerNotAndForSaleTrue(loggedIn);
+        List<Item> allOtherItems = itemRepo.findByOwnerNotAndActiveTrue(loggedIn);
         model.addAttribute("OverviewAllItems", allOtherItems);
         model.addAttribute("loggedInPerson",loggedIn);
         return "OverviewAllItems";
@@ -96,22 +93,21 @@ public class ProfilController {
     }
 
     @PostMapping(path="/rating")
-    public String Rating(Model model,
-                         int rating,
-                         Long ratingID){
+    public String Rating(Model model, @RequestParam("rating") int rating, @RequestParam("ratingID") Long ratingID){
         if (rating != -1){
             Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
             rating1.setRatingPoints(rating);
             ratingRepo.save(rating1);
-
-            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+            if(authenticationService.getCurrentUser().getId().equals(rating1.getRequest().getRequestedItem().getOwner().getId())){
                 rating1.getRequest().getRequester().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequester());
             }else{
                 rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
             }
+            model.addAttribute("rating", rating1);
         }
+
         return "redirect:/";
     }
 
@@ -154,7 +150,7 @@ public class ProfilController {
         return "profileTmpl/profileDetails";
     }
 
-    @GetMapping(value="deleteuser/{username}")
+    @GetMapping(value = "/deleteuser/{username}")
     public String deleteUser(@PathVariable String username){
         if(authenticationService.getCurrentUser().getUsername().equals("admin")){
             Person deletePerson = personRepo.findByUsername(username);
@@ -189,4 +185,5 @@ public class ProfilController {
         personRepo.save(loggedIn);
         return "redirect:/profile";
     }
+
 }

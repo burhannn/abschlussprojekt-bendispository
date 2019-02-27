@@ -1,10 +1,9 @@
-package Bendispository.Abschlussprojekt.ControllerTests;
+package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.service.*;
-import Bendispository.Abschlussprojekt.controller.PaymentController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -12,6 +11,7 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.service.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,6 +92,8 @@ public class PaymentControllerTests {
     Rating rating2;
     Rating rating3;
 
+    ProPayAccount proPayAccount;
+
     @Before
     public void setUp(){
         mvc = MockMvcBuilders.webAppContextSetup(context)
@@ -107,6 +109,7 @@ public class PaymentControllerTests {
         rating1 = new Rating();
         rating2 = new Rating();
         rating3 = new Rating();
+        proPayAccount = new ProPayAccount();
 
         rating1.setRatingPoints(5);
         rating1.setRater(dummy1);
@@ -123,6 +126,7 @@ public class PaymentControllerTests {
         dummy1.setPassword("abcdabcd");
         dummy1.setId(1L);
         dummy1.setRatings(Arrays.asList(rating2));
+        proPayAccount.setAccount("user");
 
         dummy2.setFirstName("nina");
         dummy2.setLastName("fischi");
@@ -180,6 +184,7 @@ public class PaymentControllerTests {
         Mockito.when(personsRepo.findById(6L)).thenReturn(Optional.ofNullable(dummy3));
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+        Mockito.when(proPaySubscriber.getAccount("momo")).thenReturn(proPayAccount);
     }
 
     @After
@@ -215,6 +220,8 @@ public class PaymentControllerTests {
 
     @Test
     public void checkChargeAccount() throws Exception{
+        Mockito.when(proPaySubscriber.chargeAccount("user", 1)).thenReturn(proPayAccount);
+        Mockito.when(proPaySubscriber.getAccount("user")).thenReturn(proPayAccount);
         mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("amount", "1"))
                 .andExpect(status().isOk())
@@ -234,7 +241,23 @@ public class PaymentControllerTests {
                 .andExpect(flash().attribute("message", "Amount can't be negative!"));
     }
 
+  @Test
+  public void checkChargeAccountFail() throws Exception {
+         mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                 .param("amount", "1"))
+                 .andExpect(status().is3xxRedirection())
+                 .andExpect(view().name("redirect:/chargeaccount"))
+                 .andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+    }
 
-
+    @Test
+    public void checkGetAccountFail() throws Exception {
+        Mockito.when(proPaySubscriber.chargeAccount("user", 1)).thenReturn(proPayAccount);
+        mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("amount", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/chargeaccount"))
+                .andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+    }
 
 }

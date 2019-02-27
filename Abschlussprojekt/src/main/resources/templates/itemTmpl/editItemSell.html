@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link href="../../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
+<head>
+	<meta charset="UTF-8">
+	<title>Edit Item</title>
+</head>
+<body>
+
+<div class="projekt_container">
+	<h1>Edit Item</h1>
+	<form method="post">
+		<tr>Name:
+			<div><input name="name" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.name}" type="text"></div>
+		</tr>
+		<tr>Description:
+			<div><input name="description" pattern="[a-zA-ZöäüÖÄÜß .,?!0-9]+" required th:value="${Item?.description}"
+						type="text"></div>
+		</tr>
+		<tr>Place:
+			<div><input name="place" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.place}" type="text">
+			</div>
+		</tr>
+		<tr>Retail Price:
+			<div><input name="retailPrice" pattern="[0-9]+" required th:value="${Item?.retailPrice}" type="text"></div>
+		</tr>
+		<button class="button" style="margin-top: 2%" type="submit"> Save Changes</button>
+	</form>
+</div>
+<a class="back_button" href="/profile">Back</a>
+</body>
+</html>

@@ -12,16 +12,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private PersonsRepo personsRepo;
+	@Autowired
+	private PersonsRepo personsRepo;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Person user = personsRepo.findByUsername(username);
-        if(user == null){
-            throw new UsernameNotFoundException("Invalid Username");
-        }
-        return new MyUserPrincipal(user);
-    }
+	public CustomUserDetailsService() {
+	}
+
+	public CustomUserDetailsService(PersonsRepo personsRepo) {
+		this.personsRepo = personsRepo;
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Person user = personsRepo.findByUsername(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("Invalid Username");
+		}
+		return new MyUserPrincipal(user);
+	}
 }
 
