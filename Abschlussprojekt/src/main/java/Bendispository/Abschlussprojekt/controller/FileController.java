@@ -64,16 +64,10 @@ public class FileController {
             UploadFile uploadFile = new UploadFile(fileName, multipart.getBytes());
             item.setUploadFile(uploadFile);
         }
-        Person loggedIn = authenticationService.getCurrentUser();
-        model.addAttribute("newItem", item);
 
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        item.setMarketType(MarketType.LEND);
-        itemRepo.save(item);
-        List<Item> itemsOwner = new ArrayList<>();
-        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-        personRepo.save(loggedIn);
+        model.addAttribute("newItem", item);
+        itemService.addItem(item);
+
         return "redirect:/item/" + item.getId() + "";
     }
 
@@ -93,16 +87,8 @@ public class FileController {
             item.setUploadFile(uploadFile);
         }
 
-        Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("newItem", item);
-
-        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        item.setMarketType(MarketType.SELL);
-        itemRepo.save(item);
-        List<Item> itemsOwner = new ArrayList<>();
-        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
-        loggedIn.setItems(itemsOwner);
-        personRepo.save(loggedIn);
+        itemService.addSellItem(item);
 
         return "redirect:/item/" + item.getId() + "";
     }
@@ -168,13 +154,9 @@ public class FileController {
 
     @RequestMapping(method=RequestMethod.GET, value="/deleteitem/{id}")
     public String deleteItem(@PathVariable("id") Long id,
-                             Model model) {
-        Item item = itemRepo.findById(id).orElse(null);
-        Person person = item.getOwner();
-        item.setOwner(null);
-        person.deleteItem(item);
-        itemRepo.deleteById(id);
-        personRepo.save(person);
+                             RedirectAttributes redirectAttributes) {
+        itemService.deleteItem(id);
+        redirectAttributes.addFlashAttribute("message", "Item has been deleted!");
         return "redirect:/";
     }
 
@@ -199,18 +181,11 @@ public class FileController {
 
     @PostMapping(path = "/edititem/{id}")
     public String editItemInDatabase(Model model,
-                                     @PathVariable Long id, Item inpItem){
+                                     @PathVariable Long id,
+                                     Item inputItem){
         Optional<Item> item = itemRepo.findById(id);
         model.addAttribute("Item", item.get());
-        Person loggedIn = authenticationService.getCurrentUser();
-        inpItem.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
-        List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
-        loggedIn.setItems(itemsOwner);
-        inpItem.setMarketType(item.get().getMarketType());
-        if(item.get().getUploadFile() != null) {
-            inpItem.setUploadFile(item.get().getUploadFile());
-        }
-        itemRepo.save(inpItem);
+        itemService.editItem(inputItem, item, id);
         return "redirect:/item/{id}";
     }
 }

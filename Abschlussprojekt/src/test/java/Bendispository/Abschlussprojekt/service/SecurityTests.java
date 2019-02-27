@@ -23,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -138,5 +139,20 @@ public class SecurityTests {
         Assert.assertEquals(principal,context.getAuthentication().getPrincipal());
     }
 
+    @Test
+    @WithMockUser(username = "mandypandy", password = "abcdabcd", roles = "USER")
+    public void testLoadUserByUsername() {
+
+        //ARRANGE
+        MyUserPrincipal principal1 = new MyUserPrincipal(dummy1);
+        personsRepo.save(dummy1);
+        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(personsRepo);
+
+        //ACT
+        UserDetails principal2 = customUserDetailsService.loadUserByUsername("mandypandy");
+
+        //ASSERT
+        Assert.assertEquals(principal1,principal2);
+    }
 }
 

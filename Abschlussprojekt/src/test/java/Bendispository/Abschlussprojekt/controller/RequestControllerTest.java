@@ -1,4 +1,4 @@
-package Bendispository.Abschlussprojekt.ControllerTests;
+package Bendispository.Abschlussprojekt.controller;
 
 
 import Bendispository.Abschlussprojekt.model.Request;
@@ -9,7 +9,6 @@ import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.service.*;
-import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;

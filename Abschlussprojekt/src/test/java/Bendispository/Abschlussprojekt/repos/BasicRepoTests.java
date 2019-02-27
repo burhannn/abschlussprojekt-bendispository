@@ -1,12 +1,9 @@
-package Bendispository.Abschlussprojekt.RepoTests;
+package Bendispository.Abschlussprojekt.repos;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.RequestStatus;
-import Bendispository.Abschlussprojekt.repos.ItemRepo;
-import Bendispository.Abschlussprojekt.repos.PersonsRepo;
-import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
