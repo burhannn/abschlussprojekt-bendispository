@@ -16,7 +16,10 @@ import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -136,7 +139,7 @@ public class RequestServiceTest {
     public void checkingRequestedAvailabilityNotAvailable(){
         doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
 
-        boolean check = requestService.checkRequestedAvailability(redirectAttributes, r1);
+        boolean check = requestService.checkRequestedAvailability(r1);
         assertEquals(true, check);
     }
 
@@ -144,7 +147,7 @@ public class RequestServiceTest {
     public void checkingRequestedAvailabilityIsAvailable(){
         doReturn(false).when(transactionService).itemIsAvailableOnTime(any(Request.class));
 
-        boolean check = requestService.checkRequestedAvailability(redirectAttributes, r1);
+        boolean check = requestService.checkRequestedAvailability(r1);
         assertEquals(false, check);
     }
 
@@ -152,7 +155,7 @@ public class RequestServiceTest {
     public void checkingRequesterBalanceSufficient(){
         doReturn(false).when(proPaySubscriber).checkDeposit(anyDouble(), eq(""));
 
-        boolean check = requestService.checkRequesterBalance(redirectAttributes, new Item(), "");
+        boolean check = requestService.checkRequesterBalance(new Item(), "");
         assertEquals(false, check);
     }
 
@@ -160,7 +163,8 @@ public class RequestServiceTest {
     public void checkingRequesterBalanceInsufficient(){
         doReturn(true).when(proPaySubscriber).checkDeposit(anyDouble(), eq(""));
 
-        boolean check = requestService.checkRequesterBalance(redirectAttributes, new Item(), "");
+        boolean check = requestService.checkRequesterBalance(new Item(), "");
         assertEquals(true, check);
     }
+
 }

@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
@@ -28,6 +29,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -83,6 +87,12 @@ public class RequestControllerTest {
     TransactionService transactionService;
     Person dummy1;
     Person dummy2;
+    Person dummy3;
+    Person dummyAdmin;
+
+    Rating rating1;
+    Rating rating2;
+    Rating rating3;
 
     Item dummyItem1;
     Item dummyItem2;
@@ -93,25 +103,55 @@ public class RequestControllerTest {
 
         dummy1 = new Person();
         dummy2 = new Person();
+        dummy3 = new Person();
+        dummyAdmin = new Person();
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
+        rating1 = new Rating();
+        rating2 = new Rating();
+        rating3 = new Rating();
+
+        rating1.setRatingPoints(5);
+        rating1.setRater(dummy1);
+        rating2.setRatingPoints(3);
+        rating2.setRater(dummy2);
+        rating3.setRatingPoints(1);
+        rating3.setRater(dummy3);
 
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
         dummy1.setCity("kölle");
         dummy1.setEmail("momo@gmail.com");
-        dummy1.setUsername("momo");
-        dummy1.setPassword("abcd");
+        dummy1.setUsername("user");
+        dummy1.setPassword("abcdabcd");
         dummy1.setId(1L);
+        dummy1.setRatings(Arrays.asList(rating2));
 
         dummy2.setFirstName("nina");
         dummy2.setLastName("fischi");
         dummy2.setCity("düssi");
         dummy2.setEmail("nini@gmail.com");
         dummy2.setUsername("nini");
+        dummy2.setPassword("abcdabcd");
         dummy2.setId(2L);
+        dummy2.setRatings(Arrays.asList(rating1));
 
+        dummy3.setFirstName("clara");
+        dummy3.setLastName("maassen");
+        dummy3.setCity("viersi");
+        dummy3.setEmail("clara@gmail.com");
+        dummy3.setUsername("claraaa");
+        dummy3.setPassword("abcdabcd");
+        dummy3.setId(6L);
+        dummy3.setRatings(Arrays.asList(rating3));
+
+        dummyAdmin.setId(0L);
+        dummyAdmin.setFirstName("random");
+        dummyAdmin.setLastName("random");
+        dummyAdmin.setUsername("admin");
+        dummyAdmin.setPassword("rootroot");
+        dummyAdmin.setEmail("admin@gmail.com");
 
         dummyItem1.setName("stuhl");
         dummyItem1.setDeposit(40);
@@ -132,30 +172,25 @@ public class RequestControllerTest {
         dummyItem3.setId(5L);
 
         List<Item> items1 = new ArrayList<Item>();
-
         items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         dummy1.setItems(items1);
-
         List<Item> items2 = new ArrayList<Item>();
         items2.addAll(Arrays.asList(dummyItem3));
         dummy2.setItems(items2);
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
-        personsRepo.saveAll(Arrays.asList(dummy1, dummy2));
+        personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
+        ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
 
-        Mockito.when(personsRepo.findById(1L))
-                .thenReturn(Optional.ofNullable(dummy1));
-        Mockito.when(personsRepo.findById(2L))
-                .thenReturn(Optional.ofNullable(dummy2));
-        Mockito.when(itemRepo.findById(3L))
-                .thenReturn(Optional.ofNullable(dummyItem1));
-        Mockito.when(itemRepo.findById(4L))
-                .thenReturn(Optional.ofNullable(dummyItem2));
-        Mockito.when(itemRepo.findById(5L))
-                .thenReturn(Optional.ofNullable(dummyItem3));
-
+        Mockito.when(personsRepo.findById(1L)).thenReturn(Optional.ofNullable(dummy1));
+        Mockito.when(personsRepo.findById(2L)).thenReturn(Optional.ofNullable(dummy2));
+        Mockito.when(itemRepo.findById(3L)).thenReturn(Optional.ofNullable(dummyItem1));
+        Mockito.when(itemRepo.findById(4L)).thenReturn(Optional.ofNullable(dummyItem2));
+        Mockito.when(itemRepo.findById(5L)).thenReturn(Optional.ofNullable(dummyItem3));
+        Mockito.when(personsRepo.findById(6L)).thenReturn(Optional.ofNullable(dummy3));
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
     }
 
 
@@ -163,13 +198,13 @@ public class RequestControllerTest {
     public void retrieve() throws Exception {
         mvc.perform(get("/profile/returneditems")).andExpect(status().isOk());
         mvc.perform(get("/profile/requests")).andExpect(status().isOk());
-        mvc.perform(get("/profile/rentedItems")).andExpect(status().isOk());
+        mvc.perform(get("/profile/renteditems")).andExpect(status().isOk());
     }
 
     @Test
     public void checkAddItemRequest() throws Exception {
 
-        mvc.perform(get("/item{id}/requestItem", 3L))
+        mvc.perform(get("/item/{id}/requestitem", 3L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("thisItem"))
@@ -181,6 +216,6 @@ public class RequestControllerTest {
         mvc.perform(get("/profile/requests", 3L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("requests"));
+                .andExpect(view().name("rentsTmpl/requests"));
     }
 } 

@@ -147,7 +147,22 @@ public class FileController {
             return "redirect:/item/{id}";
         }
 
-        requestService.addBuyRequest(model, redirectAttributes, id);
+        Request request = requestService.addBuyRequest(id);
+        if(request == null){
+            redirectAttributes.addFlashAttribute("message", "You don't have enough funds for this transaction!");
+            return "redirect:/item/{id}";
+        }
+
+        boolean isItemBought = requestService.buyItemAndTransferMoney(request);
+
+        if(!isItemBought){
+            redirectAttributes.addFlashAttribute("messageBalance",
+                    "There is a Problem with ProPay!");
+            return "redirect:/item/{id}";
+        }
+
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Item bought!");
 
         return "redirect:/item/{id}";
     }
