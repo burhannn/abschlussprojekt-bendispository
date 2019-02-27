@@ -20,15 +20,15 @@
         <div class="alert_error" th:text="|${message} ${itemname}|"></div>
     </div>
 <div class = "projekt_container" th:each="item,iterStart : ${OverviewAllItems}">
-    <div th:if = "${item?.marketType.name() == 'LEND'}" class="badge_lease">
+    <div th:if = "${item?.marketType?.name() == 'LEND'}" class="badge_lease">
         <span class="title">Lease</span></div>
-    <div th:unless = "${item?.marketType.name() == 'LEND'}" class="badge_buy">
+    <div th:unless = "${item?.marketType?.name() == 'LEND'}" class="badge_buy">
         <span class="title">Buy</span></div>
-    <h1 class="header_container" th:text= ${OverviewAllItems.get(iterStart.index).name}></h1>
+    <h1 class="header_container" th:text= ${OverviewAllItems?.get(iterStart?.index)?.name}></h1>
     <div>
-        <div class ="item_description" th:text="${OverviewAllItems.get(iterStart.index).description}"></div>
+        <div class ="item_description" th:text="${OverviewAllItems?.get(iterStart?.index)?.description}"></div>
     </div>
-    <a th:href="@{'/item/' + ${OverviewAllItems.get(iterStart.index).id}}">Show Details</a>
+    <a th:href="@{'/item/' + ${OverviewAllItems?.get(iterStart?.index)?.id}}">Show Details</a>
 </div>
 </body>
 </html>
