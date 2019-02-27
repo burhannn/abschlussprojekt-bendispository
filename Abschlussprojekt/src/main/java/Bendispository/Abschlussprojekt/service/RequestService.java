@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.service;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -62,26 +63,7 @@ public class RequestService {
         this.clock = clock;
     }
 
-    public void showRequests(Model model,
-                              Person me) {
-        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
-        myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
-        myRequests = deleteObsoleteRequests(myRequests);
-        model.addAttribute("myRequests", myRequests);
-
-        List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
-        requestsMyItems = deleteObsoleteRequests(requestsMyItems);
-        model.addAttribute("requestsMyItems", requestsMyItems);
-
-        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, AWAITING_SHIPMENT);
-        model.addAttribute("myBuyRequests", myBuyRequests);
-
-        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, AWAITING_SHIPMENT);
-        model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
-
-    }
-
-    protected List<Request> deleteObsoleteRequests(List<Request> myRequests) {
+    public List<Request> deleteObsoleteRequests(List<Request> myRequests) {
         List<Request> toRemove = new ArrayList<>();
         for(Request request : myRequests){
             if(request.getStartDate().isBefore(LocalDate.now(clock))) {
@@ -194,4 +176,26 @@ public class RequestService {
         requestRepo.save(request);
         return true;
     }
+
+    public boolean wasShipped(Request request, Integer shipped){
+        if (shipped != null) {
+            request.setStatus(RequestStatus.SHIPPED);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean wasDeniedOrAccepted(Integer requestMyItems, Request request){
+        if(requestMyItems == -1){
+            request.setStatus(RequestStatus.DENIED);
+            requestRepo.save(request);
+            return true;
+        }
+        if (transactionService.lenderApproved(request)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

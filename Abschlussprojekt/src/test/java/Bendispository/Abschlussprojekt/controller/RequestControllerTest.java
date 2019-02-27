@@ -99,6 +99,7 @@ public class RequestControllerTest {
     Item dummyItem1;
     Item dummyItem2;
     Item dummyItem3;
+    LeaseTransaction leaseTransaction;
 
     @Before
     public void setUp() {
@@ -113,6 +114,7 @@ public class RequestControllerTest {
         rating1 = new Rating();
         rating2 = new Rating();
         rating3 = new Rating();
+        leaseTransaction = new LeaseTransaction();
 
         rating1.setRatingPoints(5);
         rating1.setRater(dummy1);
@@ -189,6 +191,8 @@ public class RequestControllerTest {
 
         List<Request> requests = new ArrayList<>();
         List<LeaseTransaction> leaseTransactions = new ArrayList<>();
+        leaseTransaction.setId(6L);
+        leaseTransactions.add(leaseTransaction);
 
         Mockito.when(personsRepo.findById(1L))
                 .thenReturn(Optional.ofNullable(dummy1));
@@ -200,6 +204,8 @@ public class RequestControllerTest {
                 .thenReturn(Optional.ofNullable(dummyItem2));
         Mockito.when(itemRepo.findById(5L))
                 .thenReturn(Optional.ofNullable(dummyItem3));
+        Mockito.when(leaseTransactionRepo.findById(6L))
+                .thenReturn(Optional.ofNullable(leaseTransaction));
 
         Mockito.when(requestRepo.findByRequesterAndStatus(any(), any())).thenReturn(requests);
         Mockito.when(requestRepo.findByRequestedItemOwnerAndStatus(any(), any())).thenReturn(requests);
@@ -207,6 +213,7 @@ public class RequestControllerTest {
         Mockito.when(leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(dummy1)).thenReturn(leaseTransactions);
         Mockito.when(leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(dummy1)).thenReturn(leaseTransactions);
         Mockito.when(leaseTransactionRepo.findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(dummy1)).thenReturn(leaseTransactions);
+
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
     }
@@ -219,6 +226,36 @@ public class RequestControllerTest {
         mvc.perform(get("/profile/renteditems")).andExpect(status().isOk());
     }
 
+    @Test
+    public void checkIssueOverview() throws Exception{
+
+        mvc.perform(get("/profile/returneditems/{transactionId}/issue", 6L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("comment"))
+                .andExpect(model().attributeExists("transaction"))
+                .andExpect(view().name("issue"));
+    }
+    @Test
+    public void checkRentedItemsOverview() throws Exception {
+
+        mvc.perform(get("/profile/renteditems"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("myRentedItems"))
+                .andExpect(model().attributeExists("myLeasedItems"))
+                .andExpect(view().name("itemTmpl/rentedItems"));
+
+    }
+    @Test
+    public void checkReturnedItemsOverview() throws Exception {
+
+        mvc.perform(get("/profile/returneditems"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("transactionList"))
+                .andExpect(view().name("itemTmpl/returnedItems"));
+    }
     @Test
     public void checkAddItemRequest() throws Exception {
 
@@ -235,6 +272,10 @@ public class RequestControllerTest {
         mvc.perform(get("/profile/requests"))
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("myRequests"))
+                .andExpect(model().attributeExists("requestsMyItems"))
+                .andExpect(model().attributeExists("myBuyRequests"))
+                .andExpect(model().attributeExists("buyRequestsMyItems"))
                 .andExpect(view().name("rentsTmpl/requests"));
     }
 }

@@ -203,6 +203,14 @@ public class TransactionService {
         return paymentTransaction;
     }
 
+    public void notIntact(Long id, String comment, Person me){
+        LeaseTransaction leaseTransaction = leaseTransactionRepo
+                .findById(id)
+                .orElse(null);
+        leaseTransaction.setLeaseIsConcluded(true);
+        itemIsNotIntact(me, leaseTransaction, comment);
+    }
+
     public ConflictTransaction itemIsNotIntact(Person me, LeaseTransaction leaseTransaction, String commentary) {
         ConflictTransaction conflictTransaction = new ConflictTransaction();
         conflictTransaction.setLeaseTransaction(leaseTransaction);
@@ -221,4 +229,6 @@ public class TransactionService {
         }
         return false;
     }
+
+
 }

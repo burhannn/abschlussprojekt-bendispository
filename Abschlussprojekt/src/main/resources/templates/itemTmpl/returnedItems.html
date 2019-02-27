@@ -13,15 +13,15 @@
     <div th:each="transaction : ${transactionList}">
         <table style="margin-top: 2%">
             <tr style="text-align: left !important;">
-                <td class="item_name" th:text= "|Item: ${transaction.item.name}|"></td>
+                <td class="item_name" th:text= "|Item: ${transaction?.item?.name}|"></td>
             </tr>
             <!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
-            <td th:text="|Rented By: ${transaction.leaser.username}|"></td>
+            <td th:text="|Rented By: ${transaction?.leaser?.username}|"></td>
             <td>
                 <form method="post">
                     <input type="radio" name="itemIntact" value="-1">Damaged
                     <input type="radio" name="itemIntact" value="1">Ok
-                    <input type="hidden" value="0" th:value="${transaction.id}" name="transactionId">
+                    <input type="hidden" value="0" th:value="${transaction?.id}" name="transactionId">
                     <button type = "submit">Submit</button>
                 </form>
             </td>

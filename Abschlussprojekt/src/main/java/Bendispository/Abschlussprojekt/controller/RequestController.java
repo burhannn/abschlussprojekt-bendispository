@@ -4,13 +4,9 @@ import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
-import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
-import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
-import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import Bendispository.Abschlussprojekt.service.RequestService;
 import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +18,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static Bendispository.Abschlussprojekt.model.RequestStatus.AWAITING_SHIPMENT;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.DENIED;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.PENDING;
 
 @Controller
 public class RequestController {
@@ -112,8 +113,27 @@ public class RequestController {
     @GetMapping(path="/profile/requests")
     public String Requests(Model model){
         Person person = authenticationService.getCurrentUser();
-        requestService.showRequests(model, person);
+        showRequests(model, person);
         return "rentsTmpl/requests";
+    }
+
+    public void showRequests(Model model,
+                             Person me) {
+        List<Request> myRequests = requestRepo.findByRequesterAndStatus(me, PENDING);
+        myRequests.addAll(requestRepo.findByRequesterAndStatus(me, DENIED));
+        myRequests = requestService.deleteObsoleteRequests(myRequests);
+        model.addAttribute("myRequests", myRequests);
+
+        List<Request> requestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, PENDING);
+        requestsMyItems = requestService.deleteObsoleteRequests(requestsMyItems);
+        model.addAttribute("requestsMyItems", requestsMyItems);
+
+        List<Request> myBuyRequests = requestRepo.findByRequesterAndStatus(me, AWAITING_SHIPMENT);
+        model.addAttribute("myBuyRequests", myBuyRequests);
+
+        List<Request> buyRequestsMyItems = requestRepo.findByRequestedItemOwnerAndStatus(me, AWAITING_SHIPMENT);
+        model.addAttribute("buyRequestsMyItems", buyRequestsMyItems);
+
     }
 
     @PostMapping(path = "/profile/deleterequest/{id}")
@@ -131,30 +151,17 @@ public class RequestController {
         Request request = requestRepo.findById(requestID).orElse(null);
         Person person = authenticationService.getCurrentUser();
 
-        if (shipped != null) {
-            if (shipped == 1) {
-                request.setStatus(RequestStatus.SHIPPED);
-                requestService.showRequests(model, person);
-                return "rentsTmpl/requests";
-            }
+        if (requestService.wasShipped(request, shipped)) {
+            showRequests(model, person);
+            return "rentsTmpl/requests";
         }
 
-        if (requestMyItems != null) {
-            if(requestMyItems == -1){
-                request.setStatus(RequestStatus.DENIED);
-                requestRepo.save(request);
-                requestService.showRequests(model, person);
-                return "rentsTmpl/requests";
-            } else {
-                if (transactionService.lenderApproved(request)) {
-                    requestService.showRequests(model, person);
-                    return "rentsTmpl/requests";
-                }
-            }
+        if(requestService.wasDeniedOrAccepted(requestMyItems, request)){
+            showRequests(model, person);
+            return "rentsTmpl/requests";
         }
-
-        requestService.showRequests(model,person);
-        redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or something else went wrong!");
+        showRequests(model,person);
+        redirectAttributes.addFlashAttribute("message", "Funds not sufficient for deposit or ProPay is Offline!");
         return "redirect:/";
     }
 
@@ -235,13 +242,8 @@ public class RequestController {
     public String returnedItemIsNotIntactPost(Model model,
                                               @PathVariable Long id,
                                               String comment){
-        Long userId = authenticationService.getCurrentUser().getId();
-        Person me = personsRepo.findById(userId).orElse(null);
-        LeaseTransaction leaseTransaction = leaseTransactionRepo
-                .findById(id)
-                .orElse(null);
-        leaseTransaction.setLeaseIsConcluded(true);
-        transactionService.itemIsNotIntact(me, leaseTransaction, comment);
+        Person me = authenticationService.getCurrentUser();
+        transactionService.notIntact(id, comment, me);
         List<LeaseTransaction> transactionList =
               leaseTransactionRepo
                     .findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(me);
