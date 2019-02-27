@@ -96,14 +96,11 @@ public class ProfilController {
     }
 
     @PostMapping(path="/rating")
-    public String Rating(Model model,
-                         int rating,
-                         Long ratingID){
+    public String Rating(Model model, @RequestParam("rating") int rating, @RequestParam("ratingID") Long ratingID){
         if (rating != -1){
             Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
             rating1.setRatingPoints(rating);
             ratingRepo.save(rating1);
-
             if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
                 rating1.getRequest().getRequester().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequester());
@@ -111,7 +108,9 @@ public class ProfilController {
                 rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
             }
+            model.addAttribute("rating", rating1);
         }
+
         return "redirect:/";
     }
 
@@ -154,7 +153,7 @@ public class ProfilController {
         return "profileTmpl/profileDetails";
     }
 
-    @GetMapping(value="deleteuser/{username}")
+    @GetMapping(value = "deleteuser/{username}")
     public String deleteUser(@PathVariable String username){
         if(authenticationService.getCurrentUser().getUsername().equals("admin")){
             Person deletePerson = personRepo.findByUsername(username);
