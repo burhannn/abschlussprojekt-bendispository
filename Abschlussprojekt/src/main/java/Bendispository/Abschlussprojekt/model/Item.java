@@ -28,7 +28,7 @@ public class Item {
 	private boolean active = true;
 
 	@Digits(integer = 10, fraction = 2)
-	private double retailPrice;
+	private int retailPrice;
 
 	@Digits(integer = 10, fraction = 0)
 	private int deposit;
