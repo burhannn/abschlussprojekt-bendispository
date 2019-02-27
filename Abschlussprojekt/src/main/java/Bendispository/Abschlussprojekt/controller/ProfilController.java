@@ -98,7 +98,7 @@ public class ProfilController {
             Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
             rating1.setRatingPoints(rating);
             ratingRepo.save(rating1);
-            if(authenticationService.getCurrentUser().getId() == rating1.getRequest().getRequestedItem().getOwner().getId()){
+            if(authenticationService.getCurrentUser().getId().equals(rating1.getRequest().getRequestedItem().getOwner().getId())){
                 rating1.getRequest().getRequester().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequester());
             }else{

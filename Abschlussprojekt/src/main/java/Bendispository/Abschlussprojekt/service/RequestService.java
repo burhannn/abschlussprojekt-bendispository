@@ -191,10 +191,7 @@ public class RequestService {
             requestRepo.save(request);
             return true;
         }
-        if (transactionService.lenderApproved(request)) {
-            return true;
-        }
-        return false;
+        return transactionService.lenderApproved(request);
     }
 
 

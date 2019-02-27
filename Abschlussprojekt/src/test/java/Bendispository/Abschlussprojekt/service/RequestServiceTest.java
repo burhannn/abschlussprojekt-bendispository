@@ -81,6 +81,7 @@ public class RequestServiceTest {
     Item item;
     Person owner;
     Item item2;
+    Request rbuy;
 
     @Before
     public void sup(){
@@ -107,6 +108,11 @@ public class RequestServiceTest {
         r4.setStartDate(LocalDate.of(2019,1,4));
         r4.setEndDate(LocalDate.of(2019,1,5));
 
+        rbuy = new Request();
+        rbuy.setStartDate(LocalDate.of(2019,1,1));
+        rbuy.setEndDate(LocalDate.of(2019,1,2));
+        rbuy.setStatus(RequestStatus.AWAITING_SHIPMENT);
+
         user = new Person();
         user.setUsername("user");
         Mockito.doReturn(user).when(authenticationService).getCurrentUser();
@@ -123,6 +129,8 @@ public class RequestServiceTest {
 
         r1.setRequestedItem(item);
         r2.setRequestedItem(item2);
+        rbuy.setRequestedItem(item);
+
 
         requestRepo.saveAll(Arrays.asList(r1,r2,r3,r4));
         when(requestRepo.findAll()).thenReturn(Arrays.asList(r1,r2,r3,r4));
@@ -265,6 +273,44 @@ public class RequestServiceTest {
         boolean check = requestService.saveRequest(r2);
         assertEquals(true, check);
         Mockito.verify(requestRepo, times(1)).save(isA(Request.class));
+    }
+
+    @Test
+    public void wasShipped(){
+        boolean check = requestService.wasShipped(rbuy, -1);
+        assertEquals(true, check);
+        assertEquals(RequestStatus.SHIPPED, rbuy.getStatus());
+    }
+
+    @Test
+    public void wasNotShipped(){
+        boolean check = requestService.wasShipped(rbuy, null);
+        assertEquals(false, check);
+        assertEquals(RequestStatus.AWAITING_SHIPMENT, rbuy.getStatus());
+    }
+
+    @Test
+    public void wasDenied(){
+        boolean check = requestService.wasDeniedOrAccepted(-1, r2);
+        assertEquals(RequestStatus.DENIED, r2.getStatus());
+        verify(requestRepo, times(1)).save(isA(Request.class));
+        assertEquals(check, true);
+    }
+
+    @Test
+    public void wasAcceptedIssueWithProPayOrAccepting(){
+        Mockito.doReturn(false).when(transactionService).lenderApproved(any(Request.class));
+        boolean check = requestService.wasDeniedOrAccepted(1, r2);
+        assertEquals(RequestStatus.PENDING, r2.getStatus());
+        assertEquals(check, false);
+    }
+
+    @Test
+    public void wasAcceptedNoIssueWithProPayOrAccepting(){
+        Mockito.doReturn(true).when(transactionService).lenderApproved(any(Request.class));
+        boolean check = requestService.wasDeniedOrAccepted(1, r2);
+        assertEquals(RequestStatus.PENDING, r2.getStatus());
+        assertEquals(check, true);
     }
 
 }
