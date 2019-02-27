@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.controller;
 
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -41,9 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration
@@ -103,6 +102,7 @@ public class FileControllerTests {
     Item dummyItem1;
     Item dummyItem2;
     Item dummyItem3;
+    Item dummyItem4;
 
     @Before
     public void setUp(){
@@ -116,6 +116,7 @@ public class FileControllerTests {
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
+        dummyItem4 = new Item();
 
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
@@ -148,6 +149,7 @@ public class FileControllerTests {
         dummyItem1.setCostPerDay(10);
         dummyItem1.setId(3L);
         dummyItem1.setOwner(dummy1);
+        dummyItem1.setMarketType(MarketType.LEND);
 
         dummyItem2.setName("playstation");
         dummyItem2.setDeposit(250);
@@ -155,6 +157,7 @@ public class FileControllerTests {
         dummyItem2.setCostPerDay(120);
         dummyItem2.setId(4L);
         dummyItem2.setOwner(dummy2);
+        dummyItem2.setMarketType(MarketType.LEND);
 
         dummyItem3.setName("Kulli");
         dummyItem3.setDeposit(5);
@@ -162,6 +165,14 @@ public class FileControllerTests {
         dummyItem3.setCostPerDay(1);
         dummyItem3.setId(5L);
         dummyItem3.setOwner(dummy3);
+        dummyItem3.setMarketType(MarketType.LEND);
+
+        dummyItem4.setName("Bildschirm");
+        dummyItem4.setDescription("Full HD");
+        dummyItem4.setRetailPrice(50);
+        dummyItem4.setId(7L);
+        dummyItem4.setOwner(dummy3);
+        dummyItem4.setMarketType(MarketType.SELL);
 
         List<Item> items1 = new ArrayList<Item>();
 
@@ -169,13 +180,14 @@ public class FileControllerTests {
         dummy1.setItems(items1);
 
         List<Item> items2 = new ArrayList<Item>();
-        items2.addAll(Arrays.asList(dummyItem3));
+        items2.addAll(Arrays.asList(dummyItem3, dummyItem4));
         dummy2.setItems(items2);
 
         itemRepo.save(dummyItem1);
         itemRepo.save(dummyItem2);
         itemRepo.save(dummyItem3);
-        itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
+        itemRepo.save(dummyItem4);
+        itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3, dummyItem4));
         personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
 
 
@@ -193,6 +205,9 @@ public class FileControllerTests {
 
         Mockito.when(itemRepo.findById(5L))
                 .thenReturn(Optional.ofNullable(dummyItem3));
+
+        Mockito.when(itemRepo.findById(7L))
+                .thenReturn(Optional.ofNullable(dummyItem4));
 
         Mockito.when(personsRepo.findById(6L))
                 .thenReturn(Optional.ofNullable(dummy3));
@@ -220,6 +235,23 @@ public class FileControllerTests {
                 .param("place", "köln")
                 .param("deposit", "69")
                 .param("costPerDay", "69")
+                .sessionAttr("newItem", new Item()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/item/null"));
+    }
+
+    @Test
+    @WithMockUser(username = "momo", password = "abcdabcd")
+    public void checkAddSellItem() throws Exception {
+
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
+
+        mvc.perform(multipart("/addsellitem")
+                .file("file", new byte[0])
+                .param("name", "lasso")
+                .param("description", "komm hol das lasso raus")
+                .param("place", "köln")
+                .param("retailPrice", "69")
                 .sessionAttr("newItem", new Item()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/item/null"));
@@ -261,6 +293,17 @@ public class FileControllerTests {
                 .andExpect(model().attribute("itemProfile", hasProperty("deposit", equalTo(5))))
                 .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("schicker kulli"))))
                 .andExpect(model().attribute("itemProfile", hasProperty("costPerDay", equalTo(1))));
+
+        mvc.perform(get("/item/{id}", 7L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("itemProfile"))
+                .andExpect(view().name("itemTmpl/itemProfileSell"))
+                .andExpect(model().attribute("itemProfile", hasProperty("id", equalTo(7L))))
+                .andExpect(model().attribute("itemProfile", hasProperty("name", equalTo("Bildschirm"))))
+                .andExpect(model().attribute("itemProfile", hasProperty("retailPrice", equalTo(50))))
+                .andExpect(model().attribute("itemProfile", hasProperty("description", equalTo("Full HD"))));
+
     }
 
     @Test
@@ -270,6 +313,17 @@ public class FileControllerTests {
                 .andDo(print())
                 .andExpect(view().name("redirect:/"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+    }
+
+    @Test
+    @WithMockUser(username = "momo", password = "abcdabcd")
+    public void checkDeleteItem() throws Exception {
+
+        mvc.perform(get("/deleteitem/{id}", 3L))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"))
+                .andExpect(flash().attribute("message", "Item has been deleted!"));
     }
 
     @Test
@@ -287,5 +341,4 @@ public class FileControllerTests {
                 .andExpect(model().attribute("Item", hasProperty("description", equalTo("bin billig"))))
                 .andExpect(model().attribute("Item", hasProperty("costPerDay", equalTo(10))));
     }
-
 }
