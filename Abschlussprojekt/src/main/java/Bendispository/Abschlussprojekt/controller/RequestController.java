@@ -102,6 +102,7 @@ public class RequestController {
 		if (!saveRequest) {
 			redirectAttributes.addFlashAttribute("message",
 					"Item is not available during selected period, or something went wrong with ProPay!");
+			return "redirect:/item/{id}";
 		}
 
 		itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem", o));
