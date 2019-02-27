@@ -150,7 +150,7 @@ public class ProfilController {
         return "profileTmpl/profileDetails";
     }
 
-    @GetMapping(value = "deleteuser/{username}")
+    @GetMapping(value = "/deleteuser/{username}")
     public String deleteUser(@PathVariable String username){
         if(authenticationService.getCurrentUser().getUsername().equals("admin")){
             Person deletePerson = personRepo.findByUsername(username);
