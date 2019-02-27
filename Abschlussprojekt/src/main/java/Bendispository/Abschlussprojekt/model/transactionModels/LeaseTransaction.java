@@ -10,9 +10,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
-
 import java.util.List;
 
 @Data
@@ -20,55 +18,55 @@ import java.util.List;
 @Entity
 public class LeaseTransaction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Person leaser;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Person leaser;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Item item;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Item item;
 
-    private Long requestId;
+	private Long requestId;
 
-    private int depositId;
+	private int depositId;
 
-    private boolean itemIsReturned = false;
+	private boolean itemIsReturned = false;
 
-    private boolean itemIsIntact = true;
+	private boolean itemIsIntact = true;
 
-    private boolean leaseIsConcluded = false;
+	private boolean leaseIsConcluded = false;
 
-    private int lengthOfTimeframeViolation = 0;
+	private int lengthOfTimeframeViolation = 0;
 
-    private boolean timeframeViolation = false;
+	private boolean timeframeViolation = false;
 
-    // number of days
-    private int duration;
-    private LocalDate startDate;
-    private LocalDate endDate;
+	// number of days
+	private int duration;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<PaymentTransaction> payments = new ArrayList<PaymentTransaction>();
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<PaymentTransaction> payments = new ArrayList<PaymentTransaction>();
 
-    @OneToOne(cascade = CascadeType.PERSIST,
-              fetch = FetchType.EAGER)
-    private ConflictTransaction conflictTransaction;
+	@OneToOne(cascade = CascadeType.PERSIST,
+			fetch = FetchType.EAGER)
+	private ConflictTransaction conflictTransaction;
 
-    public void addLeaseTransaction(Request request, int depositId){
-        this.setItem(request.getRequestedItem());
-        this.setLeaser(request.getRequester());
-        this.setRequestId(request.getId());
-        this.setDuration(request.getDuration());
-        this.startDate = request.getStartDate();
-        this.endDate = request.getEndDate();
-        this.depositId = depositId;
-        request.getRequester().addLeaseTransaction(this);
-    }
+	public void addLeaseTransaction(Request request, int depositId) {
+		this.setItem(request.getRequestedItem());
+		this.setLeaser(request.getRequester());
+		this.setRequestId(request.getId());
+		this.setDuration(request.getDuration());
+		this.startDate = request.getStartDate();
+		this.endDate = request.getEndDate();
+		this.depositId = depositId;
+		request.getRequester().addLeaseTransaction(this);
+	}
 
-    public void addPaymentTransaction(PaymentTransaction paymentTransaction){
-        this.payments.add(paymentTransaction);
-    }
+	public void addPaymentTransaction(PaymentTransaction paymentTransaction) {
+		this.payments.add(paymentTransaction);
+	}
 }

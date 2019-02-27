@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link href="../../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
 <head>
-    <meta charset="UTF-8">
-    <title>Charge Account</title>
+	<meta charset="UTF-8">
+	<title>Charge Account</title>
 </head>
 <body>
 <div class="projekt_container">
-    <div th:if="${success}">
-        <div class="alert_success" th:text="${success}"></div>
-    </div>
-    <div th:if="${message}">
-        <div class="alert_error" th:text="${message}"></div>
-    </div>
-    <div th:text="|${person?.username}|"></div>
-    <div th:text="|Propay Account Balance: ${account?.amount}|"></div>
-    <form method = "post">
-            <div>Amount: <input type ="number" name = "amount" th:value="${amount}" placeholder="100€">
-            </div>
-            <button type="submit">Charge Account</button>
-    </form>
+	<div th:if="${success}">
+		<div class="alert_success" th:text="${success}"></div>
+	</div>
+	<div th:if="${message}">
+		<div class="alert_error" th:text="${message}"></div>
+	</div>
+	<div th:text="|${person?.username}|"></div>
+	<div th:text="|Propay Account Balance: ${account?.amount}|"></div>
+	<form method="post">
+		<div>Amount: <input name="amount" placeholder="100€" th:value="${amount}" type="number">
+		</div>
+		<button type="submit">Charge Account</button>
+	</form>
 </div>
-<a href="/profile" class="back_button">Back</a>
+<a class="back_button" href="/profile">Back</a>
 </body>
 </html>

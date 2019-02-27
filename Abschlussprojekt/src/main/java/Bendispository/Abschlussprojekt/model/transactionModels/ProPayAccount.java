@@ -5,12 +5,12 @@ import lombok.Data;
 @Data
 public class ProPayAccount {
 
-    private String account;
-    private double amount;
-    private Reservation[] reservations;
+	private String account;
+	private double amount;
+	private Reservation[] reservations;
 
-    public String toString(){
-        return "account: " + account + " amount: " + amount;
-    }
+	public String toString() {
+		return "account: " + account + " amount: " + amount;
+	}
 
 }

@@ -10,22 +10,23 @@ import javax.persistence.*;
 @Data
 public class Rating {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    @ManyToOne
-    private Request request;
+	@ManyToOne
+	private Request request;
 
-    @ManyToOne
-    private Person rater;
-    private Integer ratingPoints;
+	@ManyToOne
+	private Person rater;
+	private Integer ratingPoints;
 
-    public Rating(){}
+	public Rating() {
+	}
 
-    public Rating(Request request, Person rater, Integer ratingPoints){
-        this.request = request;
-        this.rater = rater;
-        this.ratingPoints = ratingPoints;
-    }
+	public Rating(Request request, Person rater, Integer ratingPoints) {
+		this.request = request;
+		this.rater = rater;
+		this.ratingPoints = ratingPoints;
+	}
 }

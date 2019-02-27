@@ -1,10 +1,9 @@
 package Bendispository.Abschlussprojekt.controller;
 
-import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
-import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -12,9 +11,9 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
+import Bendispository.Abschlussprojekt.service.*;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -242,7 +241,23 @@ public class PaymentControllerTests {
                 .andExpect(flash().attribute("message", "Amount can't be negative!"));
     }
 
+  @Test
+  public void checkChargeAccountFail() throws Exception {
+         mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                 .param("amount", "1"))
+                 .andExpect(status().is3xxRedirection())
+                 .andExpect(view().name("redirect:/chargeaccount"))
+                 .andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+    }
 
-
+    @Test
+    public void checkGetAccountFail() throws Exception {
+        Mockito.when(proPaySubscriber.chargeAccount("user", 1)).thenReturn(proPayAccount);
+        mvc.perform(post("/chargeaccount").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("amount", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/chargeaccount"))
+                .andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+    }
 
 }

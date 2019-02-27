@@ -10,9 +10,6 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Bendispository.Abschlussprojekt.model.RequestStatus.*;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.AWAITING_SHIPMENT;
 
 @Component
 public class RequestService {

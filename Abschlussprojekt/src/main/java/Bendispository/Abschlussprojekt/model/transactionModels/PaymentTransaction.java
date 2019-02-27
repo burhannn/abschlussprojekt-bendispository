@@ -9,39 +9,34 @@ import javax.persistence.*;
 @Entity
 public class PaymentTransaction {
 
-    // relies on ProPay
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+	// relies on ProPay
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+	@ManyToOne(cascade = CascadeType.ALL,
+			fetch = FetchType.EAGER)
+	LeaseTransaction leaseTransaction;
+	@ManyToOne
+	private Person leaser;
+	@ManyToOne
+	private Person lender;
+	private double amount;
+	private boolean paymentIsConcluded;
+	// DEPOSIT, DAMAGES, RENTPRICE
+	// DEPOSIT => was blocked
+	private PaymentType type;
 
-    @ManyToOne
-    private Person leaser;
+	public PaymentTransaction(Person leaser, Person lender, double amount) {
+		this.leaser = leaser;
+		this.lender = lender;
+		this.amount = amount;
+	}
 
-    @ManyToOne
-    private Person lender;
+	public PaymentTransaction() {
+	}
 
-    private double amount;
-
-    private boolean paymentIsConcluded;
-
-    // DEPOSIT, DAMAGES, RENTPRICE
-    // DEPOSIT => was blocked
-    private PaymentType type;
-
-    @ManyToOne(cascade = CascadeType.ALL,
-               fetch = FetchType.EAGER)
-    LeaseTransaction leaseTransaction;
-
-    public PaymentTransaction(Person leaser, Person lender, double amount){
-        this.leaser = leaser;
-        this.lender = lender;
-        this.amount = amount;
-    }
-
-    public PaymentTransaction(){}
-
-    public String toString(){
-        return "amount:" + amount + " paymentisconcluded:" + paymentIsConcluded + " type:" + type;
-    }
+	public String toString() {
+		return "amount:" + amount + " paymentisconcluded:" + paymentIsConcluded + " type:" + type;
+	}
 
 }
