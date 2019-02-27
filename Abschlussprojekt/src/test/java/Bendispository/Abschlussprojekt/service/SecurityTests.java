@@ -145,14 +145,36 @@ public class SecurityTests {
 
         //ARRANGE
         MyUserPrincipal principal1 = new MyUserPrincipal(dummy1);
+        boolean a,b,c,d;
+
         personsRepo.save(dummy1);
         CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(personsRepo);
 
         //ACT
         UserDetails principal2 = customUserDetailsService.loadUserByUsername("mandypandy");
+        a = principal2.isAccountNonExpired();
+        b = principal2.isAccountNonLocked();
+        c = principal2.isCredentialsNonExpired();
+        d = principal2.isEnabled();
 
         //ASSERT
         Assert.assertEquals(principal1,principal2);
+        assertThat(true).isIn(a,b,c,d);
+
+    }
+    @Test(expected = NullPointerException.class)
+    public void testEmptyUsername() {
+
+        //ARRANGE
+        CustomUserDetailsService customUserDetailsServiceLeer = new CustomUserDetailsService();
+
+        //ACT
+        UserDetails emptyprincipal = customUserDetailsServiceLeer.loadUserByUsername(null);
+
+        //ASSERT
+        Assert.assertNull(emptyprincipal);
+
     }
 }
+
 
