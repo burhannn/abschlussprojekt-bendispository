@@ -19,170 +19,170 @@ import java.time.Duration;
 @Component
 public class ProPaySubscriber {
 
-    final PersonsRepo personsRepo;
+	final PersonsRepo personsRepo;
 
-    final LeaseTransactionRepo leaseTransactionRepo;
+	final LeaseTransactionRepo leaseTransactionRepo;
 
-    @Autowired
-    public ProPaySubscriber(PersonsRepo personsRepo, LeaseTransactionRepo leaseTransactionRepo) {
-        super();
-        this.personsRepo = personsRepo;
-        this.leaseTransactionRepo = leaseTransactionRepo;
-    }
+	@Autowired
+	public ProPaySubscriber(PersonsRepo personsRepo, LeaseTransactionRepo leaseTransactionRepo) {
+		super();
+		this.personsRepo = personsRepo;
+		this.leaseTransactionRepo = leaseTransactionRepo;
+	}
 
-    public int makeDeposit(Request request){
-        Reservation reservation =
-                makeReservation(
-                        request.getRequester().getUsername(),
-                        request.getRequestedItem().getOwner().getUsername(),
-                        (double) request.getRequestedItem().getDeposit());
-        if(reservation == null) return -1;
-        return reservation.getId();
-    }
+	public int makeDeposit(Request request) {
+		Reservation reservation =
+				makeReservation(
+						request.getRequester().getUsername(),
+						request.getRequestedItem().getOwner().getUsername(),
+						(double) request.getRequestedItem().getDeposit());
+		if (reservation == null) return -1;
+		return reservation.getId();
+	}
 
-    protected Reservation makeReservation(String leaserName, String lenderName, double deposit) {
-        try {
-            final Mono<Reservation> mono = WebClient
-                    .create()
-                    .post()
-                    .uri(builder ->
-                            builder.scheme("https")
-                                    .host("propra-propay.herokuapp.com")
-                                    .pathSegment("reservation", "reserve", leaserName, lenderName)
-                                    .queryParam("amount", deposit)
-                                    .build())
-                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                    .retrieve()
-                    .bodyToMono(Reservation.class)
-                    .timeout(Duration.ofSeconds(2L))
-                    .retry(4L);
-            return mono.block();
-        } catch (Exception e){
-            return null;
-        }
-    }
+	protected Reservation makeReservation(String leaserName, String lenderName, double deposit) {
+		try {
+			final Mono<Reservation> mono = WebClient
+					.create()
+					.post()
+					.uri(builder ->
+							builder.scheme("https")
+									.host("propra-propay.herokuapp.com")
+									.pathSegment("reservation", "reserve", leaserName, lenderName)
+									.queryParam("amount", deposit)
+									.build())
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve()
+					.bodyToMono(Reservation.class)
+					.timeout(Duration.ofSeconds(2L))
+					.retry(4L);
+			return mono.block();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
-    public ProPayAccount releaseReservation(String username, int id) {
-        try {
-            final Mono<ProPayAccount> mono = WebClient
-                    .create()
-                    .post()
-                    .uri(builder ->
-                            builder.scheme("https")
-                                    .host("propra-propay.herokuapp.com")
-                                    .pathSegment("reservation", "release", username)
-                                    .queryParam("reservationId", id)
-                                    .build())
-                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                    .retrieve()
-                    .bodyToMono(ProPayAccount.class)
-                    .timeout(Duration.ofSeconds(2L))
-                    .retry(4L);
-            return mono.block();
-        } catch(Exception e){
-            return null;
-        }
-    }
+	public ProPayAccount releaseReservation(String username, int id) {
+		try {
+			final Mono<ProPayAccount> mono = WebClient
+					.create()
+					.post()
+					.uri(builder ->
+							builder.scheme("https")
+									.host("propra-propay.herokuapp.com")
+									.pathSegment("reservation", "release", username)
+									.queryParam("reservationId", id)
+									.build())
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve()
+					.bodyToMono(ProPayAccount.class)
+					.timeout(Duration.ofSeconds(2L))
+					.retry(4L);
+			return mono.block();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
-    public ProPayAccount releaseReservationAndPunishUser(String username, int id) {
-        try {
-            final Mono<ProPayAccount> mono = WebClient
-                    .create()
-                    .post()
-                    .uri(builder ->
-                            builder.scheme("https")
-                                    .host("propra-propay.herokuapp.com")
-                                    .pathSegment("reservation", "punish", username)
-                                    .queryParam("reservationId", id)
-                                    .build())
-                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                    .retrieve()
-                    .bodyToMono(ProPayAccount.class)
-                    .timeout(Duration.ofSeconds(2L))
-                    .retry(4L);
-            return mono.block();
-        } catch(Exception e){
-            return null;
-        }
-    }
+	public ProPayAccount releaseReservationAndPunishUser(String username, int id) {
+		try {
+			final Mono<ProPayAccount> mono = WebClient
+					.create()
+					.post()
+					.uri(builder ->
+							builder.scheme("https")
+									.host("propra-propay.herokuapp.com")
+									.pathSegment("reservation", "punish", username)
+									.queryParam("reservationId", id)
+									.build())
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve()
+					.bodyToMono(ProPayAccount.class)
+					.timeout(Duration.ofSeconds(2L))
+					.retry(4L);
+			return mono.block();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
-    public boolean checkDeposit(double requiredDeposit, String username){
-        ProPayAccount account = getAccount(username);
-        if(account == null || account.getAmount() < requiredDeposit)
-            return false;
-        return true;
-    }
+	public boolean checkDeposit(double requiredDeposit, String username) {
+		ProPayAccount account = getAccount(username);
+		if (account == null || account.getAmount() < requiredDeposit)
+			return false;
+		return true;
+	}
 
-    public ProPayAccount getAccount(String username) {
-        try {
-            final Mono<ProPayAccount> mono = WebClient
-                    .create()
-                    .get()
-                    .uri(builder ->
-                            builder.scheme("https")
-                                    .host("propra-propay.herokuapp.com")
-                                    .pathSegment("account", username)
-                                    .build())
-                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                    .retrieve()
-                    .bodyToMono(ProPayAccount.class)
-                    .timeout(Duration.ofSeconds(2L))
-                    .retry(4L);
-            return mono.block();
-        } catch(Exception e){
-            return null;
-        }
-    }
+	public ProPayAccount getAccount(String username) {
+		try {
+			final Mono<ProPayAccount> mono = WebClient
+					.create()
+					.get()
+					.uri(builder ->
+							builder.scheme("https")
+									.host("propra-propay.herokuapp.com")
+									.pathSegment("account", username)
+									.build())
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve()
+					.bodyToMono(ProPayAccount.class)
+					.timeout(Duration.ofSeconds(2L))
+					.retry(4L);
+			return mono.block();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
-    public ProPayAccount chargeAccount(String username, double value){
-        try {
-            final Mono<ProPayAccount> mono = WebClient
-                    .create()
-                    .post()
-                    .uri(builder ->
-                            builder.scheme("https")
-                                    .host("propra-propay.herokuapp.com")
-                                    .pathSegment("account", username)
-                                    .queryParam("amount", value)
-                                    .build())
-                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                    .retrieve()
-                    .bodyToMono(ProPayAccount.class)
-                    .timeout(Duration.ofSeconds(2L))
-                    .retry(4L);
-            return mono.block();
-        } catch(Exception e){
-            return null;
-        }
-    }
+	public ProPayAccount chargeAccount(String username, double value) {
+		try {
+			final Mono<ProPayAccount> mono = WebClient
+					.create()
+					.post()
+					.uri(builder ->
+							builder.scheme("https")
+									.host("propra-propay.herokuapp.com")
+									.pathSegment("account", username)
+									.queryParam("amount", value)
+									.build())
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve()
+					.bodyToMono(ProPayAccount.class)
+					.timeout(Duration.ofSeconds(2L))
+					.retry(4L);
+			return mono.block();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
-    public boolean transferMoney(String leaserName, String lenderName, double amount){
-        return executeTransfer(leaserName, lenderName, amount);
-    }
+	public boolean transferMoney(String leaserName, String lenderName, double amount) {
+		return executeTransfer(leaserName, lenderName, amount);
+	}
 
-    protected boolean executeTransfer(String leaserName, String lenderName, double value) {
-        URI uri = UriComponentsBuilder
-                .newInstance()
-                .scheme("https")
-                .host("propra-propay.herokuapp.com")
-                .pathSegment("account", leaserName, "transfer", lenderName)
-                .queryParam("amount", value)
-                .build()
-                .toUri();
-        try {
-            final Mono<HttpHeaders> mono = WebClient
-                  .create()
-                  .post()
-                  .uri(uri)
-                  .accept(MediaType.APPLICATION_JSON_UTF8)
-                  .retrieve()
-                  .bodyToMono(HttpHeaders.class)
-                  .timeout(Duration.ofSeconds(2L))
-                  .retry(4L);
-            mono.block();
-            return true;
-        } catch(Exception e){
-            return false;
-        }
-    }
+	protected boolean executeTransfer(String leaserName, String lenderName, double value) {
+		URI uri = UriComponentsBuilder
+				.newInstance()
+				.scheme("https")
+				.host("propra-propay.herokuapp.com")
+				.pathSegment("account", leaserName, "transfer", lenderName)
+				.queryParam("amount", value)
+				.build()
+				.toUri();
+		try {
+			final Mono<HttpHeaders> mono = WebClient
+					.create()
+					.post()
+					.uri(uri)
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve()
+					.bodyToMono(HttpHeaders.class)
+					.timeout(Duration.ofSeconds(2L))
+					.retry(4L);
+			mono.block();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }

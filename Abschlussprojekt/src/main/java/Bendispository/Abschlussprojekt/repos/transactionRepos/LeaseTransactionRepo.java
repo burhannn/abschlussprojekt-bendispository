@@ -9,22 +9,22 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LeaseTransactionRepo extends CrudRepository<LeaseTransaction, Long> {
-    List<LeaseTransaction> findAll();
+	List<LeaseTransaction> findAll();
 
-    Optional<LeaseTransaction> findByRequestId(Long id);
+	Optional<LeaseTransaction> findByRequestId(Long id);
 
-    List<LeaseTransaction> findAllByItemId(Long id);
+	List<LeaseTransaction> findAllByItemId(Long id);
 
-    List<LeaseTransaction> findAllByLeaserAndItemIsReturnedIsFalse(Person leaser);
+	List<LeaseTransaction> findAllByLeaserAndItemIsReturnedIsFalse(Person leaser);
 
-    List<LeaseTransaction> findAllByItemOwnerAndItemIsReturnedIsFalse(Person me);
+	List<LeaseTransaction> findAllByItemOwnerAndItemIsReturnedIsFalse(Person me);
 
-    List<LeaseTransaction> findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(Person me);
+	List<LeaseTransaction> findAllByItemIsReturnedIsTrueAndLeaseIsConcludedIsFalseAndItemOwner(Person me);
 
-    List<LeaseTransaction> findAllByItemIdAndEndDateGreaterThan(Long id, LocalDate now);
+	List<LeaseTransaction> findAllByItemIdAndEndDateGreaterThan(Long id, LocalDate now);
 
-    List<LeaseTransaction> findAllByLeaserAndLeaseIsConcludedIsTrue(Person leaser);
+	List<LeaseTransaction> findAllByLeaserAndLeaseIsConcludedIsTrue(Person leaser);
 
-    List<LeaseTransaction> findAllByItemOwnerAndLeaseIsConcludedIsTrue(Person owner);
+	List<LeaseTransaction> findAllByItemOwnerAndLeaseIsConcludedIsTrue(Person owner);
 
 }

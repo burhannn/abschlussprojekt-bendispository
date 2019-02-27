@@ -1,160 +1,179 @@
-button,a {
-    background-color: crimson;
-    color: white;
-    padding: 6px 8px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: monospace;
-    border: none;
-    margin: 0.5% 0%;
+button, a {
+	background-color: crimson;
+	color: white;
+	padding: 6px 8px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 15px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-family: monospace;
+	border: none;
+	margin: 0.5% 0%;
 }
-.back_button{
-    float: right;
-    background-color: blue;
-    width: 100px;
+
+.back_button {
+	float: right;
+	background-color: blue;
+	width: 100px;
 }
-.back_button:hover{
-    background-color: cornflowerblue;
+
+.back_button:hover {
+	background-color: cornflowerblue;
 }
+
 button:hover, a:hover {
-    background-color: red;
-    border: 2px solid white;
-}
-.projekt_container{
-    background-color: aliceblue;
-    border: 1px solid midnightblue;
-    display: inline-block;
-    border-radius: 5px;
-    margin: 3%;
-    padding: 2%;
-    width: 86%;
-    text-align: center;
-    position: relative;
-}
-.header_container{
-    text-align: center;
-    margin: 0% 0% 2%;
-}
-.header_overview{
-    font-size: 20px;
-    border-bottom: 0.5px solid darkgray;
-    margin: 9% 0% 0% 0%;
-    padding: 2%;
-    text-align: center;
-}
-.my_actions_profile{
-    float: right;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-}
-.open_ratings{
-    float: left;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-}
-body{
-    color: black;
-    font-family: Cambria !important;
-    font-size: 19px !important;
-    background-color: #ffffcc !important;
-    margin: 4% !important;
-}
-h1{
-    font-weight: 100;
-    font-size: 23px;
-}
-.projekt_container tr{
-    width: 86%;
-}
-.item_owner_description{
-    margin: 11%;
-}
-.item_description{
-    color: olive;
-}
-.profil_information{
-    text-align: left !important;
-    margin-top: 8%;
-}
-.my_items{
-    margin-top: 11%;
-}
-.item_name{
-    font-weight: 600;
+	background-color: red;
+	border: 2px solid white;
 }
 
-.alert_error{
-     padding: 10px;
-     border-radius: 5px;
-     background-color: #FFD2D2;
-     color: #D8000C;
-     margin: auto;
+.projekt_container {
+	background-color: aliceblue;
+	border: 1px solid midnightblue;
+	display: inline-block;
+	border-radius: 5px;
+	margin: 3%;
+	padding: 2%;
+	width: 86%;
+	text-align: center;
+	position: relative;
 }
 
-.alert_success{
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #DFF2BF;
-    color: #4F8A10;
-    margin: auto;
-}
-.my_profile_administration{
-    float: right;
-    position: absolute;
-    right: 20px;
-    top: 17px;
-    display: grid;
-}
-.item_owner_description img{
-    max-height: 145px;
-    max-width: 300px;
-    margin-bottom: 20px;
-}
-.scroll_box{
-    height: 150px;
-    width: 600px;
-    line-height: 1.5em;
-    overflow: auto;
-    padding: 0 0 0 4%;
-    background-color: ghostwhite;
-    box-shadow: inset 0 0 10px gray;
-    margin: auto auto auto auto;
-    font-size: 17px;
-    text-align: center;
+.header_container {
+	text-align: center;
+	margin: 0% 0% 2%;
 }
 
-.badge_lease{
-     font-family: Open Sans, sans-serif;
-     font-size: 17px;
-     color: white;
-     display: inline-flex;
-     height: 18px;
-     border: 1px solid #F08F90;
-     border-radius: 20px;
-     padding: 6px 12px;
-     justify-content: center;
-     align-items: center;
-     background: #F08F90;
-     margin-right: 90%;
+.header_overview {
+	font-size: 20px;
+	border-bottom: 0.5px solid darkgray;
+	margin: 9% 0% 0% 0%;
+	padding: 2%;
+	text-align: center;
 }
 
-.badge_buy{
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 17px;
-    color: white;
-    display: inline-flex;
-    height: 18px;
-    border: 1px solid #FFB61E;
-    border-radius: 20px;
-    padding: 6px 12px;
-    justify-content: center;
-    align-items: center;
-    background: #FFB61E;
-    margin-right: 90%;
+.my_actions_profile {
+	float: right;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+
+.open_ratings {
+	float: left;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+body {
+	color: black;
+	font-family: Cambria !important;
+	font-size: 19px !important;
+	background-color: #ffffcc !important;
+	margin: 4% !important;
+}
+
+h1 {
+	font-weight: 100;
+	font-size: 23px;
+}
+
+.projekt_container tr {
+	width: 86%;
+}
+
+.item_owner_description {
+	margin: 11%;
+}
+
+.item_description {
+	color: olive;
+}
+
+.profil_information {
+	text-align: left !important;
+	margin-top: 8%;
+}
+
+.my_items {
+	margin-top: 11%;
+}
+
+.item_name {
+	font-weight: 600;
+}
+
+.alert_error {
+	padding: 10px;
+	border-radius: 5px;
+	background-color: #FFD2D2;
+	color: #D8000C;
+	margin: auto;
+}
+
+.alert_success {
+	padding: 10px;
+	border-radius: 5px;
+	background-color: #DFF2BF;
+	color: #4F8A10;
+	margin: auto;
+}
+
+.my_profile_administration {
+	float: right;
+	position: absolute;
+	right: 20px;
+	top: 17px;
+	display: grid;
+}
+
+.item_owner_description img {
+	max-height: 145px;
+	max-width: 300px;
+	margin-bottom: 20px;
+}
+
+.scroll_box {
+	height: 150px;
+	width: 600px;
+	line-height: 1.5em;
+	overflow: auto;
+	padding: 0 0 0 4%;
+	background-color: ghostwhite;
+	box-shadow: inset 0 0 10px gray;
+	margin: auto auto auto auto;
+	font-size: 17px;
+	text-align: center;
+}
+
+.badge_lease {
+	font-family: Open Sans, sans-serif;
+	font-size: 17px;
+	color: white;
+	display: inline-flex;
+	height: 18px;
+	border: 1px solid #F08F90;
+	border-radius: 20px;
+	padding: 6px 12px;
+	justify-content: center;
+	align-items: center;
+	background: #F08F90;
+	margin-right: 90%;
+}
+
+.badge_buy {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 17px;
+	color: white;
+	display: inline-flex;
+	height: 18px;
+	border: 1px solid #FFB61E;
+	border-radius: 20px;
+	padding: 6px 12px;
+	justify-content: center;
+	align-items: center;
+	background: #FFB61E;
+	margin-right: 90%;
 }

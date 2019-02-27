@@ -2,38 +2,46 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-	<meta name="description" content="">
-	<meta name="author" content="">
+	<meta content="width=device-width, initial-scale=1, shrink-to-fit=yes" name="viewport">
+	<meta content="" name="description">
+	<meta content="" name="author">
 	<title>Registration</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
+	<link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+		  integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" rel="stylesheet">
+	<link crossorigin="anonymous" href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet"/>
 </head>
 <body>
 <a class="container" style="text-align: center">
 	<form class="form-signin" method="post">
 		<h2 class="form-signin-heading">Registration</h2>
 		<p>
-			<Input name="firstName" type="text" class="form-control" placeholder="First Name" pattern="[a-zA-ZöäüÖÄÜß]+" required th:value="${newPerson?.firstName}">
+			<Input class="form-control" name="firstName" pattern="[a-zA-ZöäüÖÄÜß]+" placeholder="First Name" required
+				   th:value="${newPerson?.firstName}" type="text">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="lastName" type="text" class="form-control" placeholder="Last Name" pattern="[a-zA-ZöäüÖÄÜß]+" required th:value="${newPerson?.lastName}">
+			<Input class="form-control" name="lastName" pattern="[a-zA-ZöäüÖÄÜß]+" placeholder="Last Name" required
+				   style="margin-top: -5px" th:value="${newPerson?.lastName}" type="text">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="email" type="text" class="form-control" placeholder="E-Mail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required th:value="${newPerson?.email}">
+			<Input class="form-control" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" placeholder="E-Mail" required
+				   style="margin-top: -5px" th:value="${newPerson?.email}" type="text">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="city" type="text" class="form-control" placeholder="City" required pattern="[a-zA-ZöäüÖÄÜß 0-9]+" th:value="${newPerson?.city}">
+			<Input class="form-control" name="city" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" placeholder="City" required style="margin-top: -5px"
+				   th:value="${newPerson?.city}" type="text">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="username" type="text" class="form-control" placeholder="Username" pattern="[a-zA-Z0-9öäüÖÄÜß]+" required th:value="${newPerson?.username}">
+			<Input class="form-control" name="username" pattern="[a-zA-Z0-9öäüÖÄÜß]+" placeholder="Username" required
+				   style="margin-top: -5px" th:value="${newPerson?.username}" type="text">
 		</p>
 		<p>
-			<Input style="margin-top: -5px" name="password" type="password" class="form-control" placeholder="Password" title="8 characters minimum" pattern=".{8,}" required th:value="${newPerson?.password}">
+			<Input class="form-control" name="password" pattern=".{8,}" placeholder="Password" required
+				   style="margin-top: -5px" th:value="${newPerson?.password}" title="8 characters minimum" type="password">
 		</p>
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Save & Create</button>
-		<a href="/login" style="margin-top: -10px" class="btn btn-lg btn-primary btn-block">Back</a>
+		<a class="btn btn-lg btn-primary btn-block" href="/login" style="margin-top: -10px">Back</a>
 
 	</form>
 </a>
-</body></html>
+</body>
+</html>

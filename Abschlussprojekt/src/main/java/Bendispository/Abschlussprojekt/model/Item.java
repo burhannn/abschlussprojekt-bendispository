@@ -5,7 +5,8 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 @Entity
@@ -17,29 +18,32 @@ public class Item {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Pattern(regexp="[a-zA-ZöäüÖÄÜß 0-9]+")
+	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß 0-9]+")
 	private String name;
 
-	@Pattern(regexp="[a-zA-ZöäüÖÄÜß .,?!0-9]+")
+	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß .,?!0-9]+")
 	private String description;
 
 	private MarketType marketType;
 
 	private boolean active = true;
 
-	@Digits(integer = 10, fraction = 2)
+	@Min(0)
+	@Max(10000000)
 	private int retailPrice;
 
-	@Digits(integer = 10, fraction = 0)
+	@Min(0)
+	@Max(10000000)
 	private int deposit;
 
 	@Embedded
 	private UploadFile uploadFile;
 
-	@Digits(integer = 10, fraction = 0)
+	@Min(0)
+	@Max(10000000)
 	private int costPerDay;
 
-	@Pattern(regexp="[a-zA-ZöäüÖÄÜß 0-9]+")
+	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß 0-9]+")
 	private String place;
 
 	@ManyToOne(cascade = CascadeType.PERSIST)
