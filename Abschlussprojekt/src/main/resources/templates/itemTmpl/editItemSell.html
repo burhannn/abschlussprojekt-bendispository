@@ -6,14 +6,14 @@
     <title>Edit Item</title>
 </head>
 <body>
+
 <div class = "projekt_container">
     <h1>Edit Item</h1>
     <form method = "post">
         <tr>Name:<div><input type ="text" name = "name" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.name}"></div></tr>
         <tr>Description:<div><input type ="text" name = "description" pattern="[a-zA-ZöäüÖÄÜß .,?!0-9]+" required th:value="${Item?.description}"></div></tr>
         <tr>Place:<div><input type ="text" name = "place" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${Item?.place}"></div></tr>
-        <tr>Deposit:<div><input type ="text" name = "deposit" pattern="[0-9]+" required th:value="${Item?.deposit}"></div></tr>
-        <tr>Cost Per Day:<div><input type ="text" name = "costPerDay" pattern="[0-9]+" required th:value="${Item?.costPerDay}"></div></tr>
+        <tr>Retail Price:<div><input type ="text" name = "retailPrice" pattern="[0-9]+" required th:value="${Item?.retailPrice}"></div></tr>
         <button type="submit" class="button" style="margin-top: 2%"> Save Changes</button>
     </form>
 </div>

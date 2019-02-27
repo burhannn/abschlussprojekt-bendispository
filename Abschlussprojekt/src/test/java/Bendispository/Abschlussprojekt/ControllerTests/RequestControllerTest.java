@@ -1,12 +1,14 @@
 package Bendispository.Abschlussprojekt.ControllerTests;
 
+
 import Bendispository.Abschlussprojekt.model.Request;
-import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.service.AuthenticationService;
 import Bendispository.Abschlussprojekt.service.ConflictService;
 import Bendispository.Abschlussprojekt.service.CustomUserDetailsService;
 import Bendispository.Abschlussprojekt.service.RequestService;
+import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.service.*;
 import Bendispository.Abschlussprojekt.controller.RequestController;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
@@ -20,7 +22,6 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransaction
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,18 +29,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -91,8 +86,16 @@ public class RequestControllerTest {
     @MockBean
     RequestService requestService;
 
+    @MockBean
+    TransactionService transactionService;
     Person dummy1;
     Person dummy2;
+    Person dummy3;
+    Person dummyAdmin;
+
+    Rating rating1;
+    Rating rating2;
+    Rating rating3;
 
     Item dummyItem1;
     Item dummyItem2;
@@ -103,9 +106,21 @@ public class RequestControllerTest {
 
         dummy1 = new Person();
         dummy2 = new Person();
+        dummy3 = new Person();
+        dummyAdmin = new Person();
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
+        rating1 = new Rating();
+        rating2 = new Rating();
+        rating3 = new Rating();
+
+        rating1.setRatingPoints(5);
+        rating1.setRater(dummy1);
+        rating2.setRatingPoints(3);
+        rating2.setRater(dummy2);
+        rating3.setRatingPoints(1);
+        rating3.setRater(dummy3);
 
         dummy1.setFirstName("mandy");
         dummy1.setLastName("moraru");
@@ -114,14 +129,32 @@ public class RequestControllerTest {
         dummy1.setUsername("momo");
         dummy1.setPassword("abcdabcd");
         dummy1.setId(1L);
+        dummy1.setRatings(Arrays.asList(rating2));
 
         dummy2.setFirstName("nina");
         dummy2.setLastName("fischi");
         dummy2.setCity("düssi");
         dummy2.setEmail("nini@gmail.com");
         dummy2.setUsername("nini");
+        dummy2.setPassword("abcdabcd");
         dummy2.setId(2L);
+        dummy2.setRatings(Arrays.asList(rating1));
 
+        dummy3.setFirstName("clara");
+        dummy3.setLastName("maassen");
+        dummy3.setCity("viersi");
+        dummy3.setEmail("clara@gmail.com");
+        dummy3.setUsername("claraaa");
+        dummy3.setPassword("abcdabcd");
+        dummy3.setId(6L);
+        dummy3.setRatings(Arrays.asList(rating3));
+
+        dummyAdmin.setId(0L);
+        dummyAdmin.setFirstName("random");
+        dummyAdmin.setLastName("random");
+        dummyAdmin.setUsername("admin");
+        dummyAdmin.setPassword("rootroot");
+        dummyAdmin.setEmail("admin@gmail.com");
 
         dummyItem1.setName("stuhl");
         dummyItem1.setDeposit(40);
@@ -145,17 +178,15 @@ public class RequestControllerTest {
         dummyItem3.setOwner(dummy2);
 
         List<Item> items1 = new ArrayList<Item>();
-
         items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         dummy1.setItems(items1);
-
         List<Item> items2 = new ArrayList<Item>();
         items2.addAll(Arrays.asList(dummyItem3));
         dummy2.setItems(items2);
 
         itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
-        personsRepo.saveAll(Arrays.asList(dummy1, dummy2));
-
+        personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
+        ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
         List<Request> requests = new ArrayList<>();
         List<LeaseTransaction> leaseTransactions = new ArrayList<>();

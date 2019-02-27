@@ -3,6 +3,7 @@ package Bendispository.Abschlussprojekt.Initializer;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
@@ -41,9 +42,11 @@ public class Initializer implements ServletContextInitializer {
         Item dummyItem2 = mkItem(44, 213123, "ich bin teuer", "playstation" , dummy_1, "düsseldorf");
         Item dummyItem3 = mkItem(1, 12, "ich bin billig", "stift", dummy_2, "wuppertal");
 
-        itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
+        Item dummyBuyItem1 = mkItemBuy(50, "Ich bin ein Bildschirm.", "Bildschirm", dummy_1, "Köln");
 
-        PersonAddItem(dummy_1, dummyItem1, dummyItem2);
+        itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3, dummyBuyItem1));
+
+        PersonAddItem(dummy_1, dummyItem1, dummyItem2, dummyBuyItem1);
         PersonAddItem(dummy_2, dummyItem3);
 
         personRepo.saveAll(Arrays.asList(dummy_1, dummy_2, admin));
@@ -73,6 +76,18 @@ public class Initializer implements ServletContextInitializer {
         item.setName(name);
         item.setOwner(person);
         item.setPlace(place);
+        item.setMarketType(MarketType.LEND);
+        return item;
+    }
+
+    private Item mkItemBuy(int retailPrice, String desc, String name, Person person, String place){
+        Item item = new Item();
+        item.setRetailPrice(retailPrice);
+        item.setDescription(desc);
+        item.setName(name);
+        item.setOwner(person);
+        item.setPlace(place);
+        item.setMarketType(MarketType.SELL);
         return item;
     }
 

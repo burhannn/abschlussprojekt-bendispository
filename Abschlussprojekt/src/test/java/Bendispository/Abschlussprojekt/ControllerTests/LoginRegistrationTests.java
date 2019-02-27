@@ -71,6 +71,12 @@ public class LoginRegistrationTests {
     @MockBean
     ItemService itemService;
 
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+
+    @MockBean
+    TransactionService transactionService;
+
     Person dummy1;
 
     @Before
@@ -107,7 +113,6 @@ public class LoginRegistrationTests {
                 .param("firstName", "clara")
                 .param("username", "clari")
                 .param("email", "clari@gmx.de")
-                .param("account", "0")
                 .param("city", "Düsseldorf")
                 .sessionAttr("newPerson", new Person()))
                 .andExpect(status().isOk())
@@ -129,7 +134,6 @@ public class LoginRegistrationTests {
                 .param("firstName", "clara")
                 .param("username", "momo")
                 .param("email", "clari@gmx.de")
-                .param("account", "0")
                 .param("city", "Düsseldorf")
                 .param("password", "abcd")
                 .sessionAttr("newPerson", new Person()))

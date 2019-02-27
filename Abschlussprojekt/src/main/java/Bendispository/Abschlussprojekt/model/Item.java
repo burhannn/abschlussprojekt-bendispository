@@ -1,5 +1,6 @@
 package Bendispository.Abschlussprojekt.model;
 
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import lombok.Data;
 import lombok.ToString;
 
@@ -19,16 +20,17 @@ public class Item {
 	@Pattern(regexp="[a-zA-ZöäüÖÄÜß 0-9]+")
 	private String name;
 
+	@Pattern(regexp="[a-zA-ZöäüÖÄÜß .,?!0-9]+")
 	private String description;
 
-	private boolean leaseOrSell;
+	private MarketType marketType;
 
-	private boolean forSale = true;
+	private boolean active = true;
 
-	//@Pattern(regexp="[0-9.,]+")
-	private double retailPrice;
+	@Digits(integer = 10, fraction = 2)
+	private int retailPrice;
 
-	@Digits(integer = 100, fraction = 0)
+	@Digits(integer = 10, fraction = 0)
 	private int deposit;
 
 	@Embedded

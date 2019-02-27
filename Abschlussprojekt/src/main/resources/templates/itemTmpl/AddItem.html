@@ -6,18 +6,13 @@
     <title>Title</title>
 </head>
 <body>
-
 <div class = "projekt_container">
     <h1>I want to offer a new Item:</h1>
 	<form method = "post" enctype="multipart/form-data">
-		<tr><div>
-			Lease <input type ="radio" name = "leaseOrSell" value="false">
-			Sell  <input type ="radio" name = "leaseOrSell" value="true"></div></tr>
 		<tr>Name:<div><input type ="text" name = "name" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${newItem?.name}"></div></tr>
-		<tr>Description:<div><input type ="text" name = "description" th:value="${newItem?.description}"></div></tr>
+		<tr>Description:<div><input type ="text" name = "description" pattern="[a-zA-ZöäüÖÄÜß .,?!0-9]+" required th:value="${newItem?.description}"></div></tr>
 		<tr>Deposit:<div><input type ="text" name = "deposit" pattern="[0-9]+" required th:value="${newItem?.deposit}"></div></tr>
 		<tr>Cost Per Day:<div><input type ="text" name = "costPerDay" pattern="[0-9]+" required th:value="${newItem?.costPerDay}"></div></tr>
-		<tr>Retail Price:<div><input type ="text" name = "retailPrice" pattern="[0-9]+" required th:value="${newItem?.retailPrice}"></div></tr>
 		<tr>Place:<div><input type = "text" name = "place" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${newItem?.place}"></div></tr>
 		<tr>Upload File:<div><input type ="file" name = "file"></div></tr>
 		<button type="submit" class="button" style="margin-top: 2%">Add Item</button>

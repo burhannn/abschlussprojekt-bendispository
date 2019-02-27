@@ -77,11 +77,16 @@ public class ProfilControllerTests {
     RequestService requestService;
     @MockBean
     ItemService itemService;
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+    @MockBean
+    TransactionService transactionService;
 
 
     Person dummy1;
     Person dummy2;
     Person dummy3;
+    Person dummyAdmin;
 
     Item dummyItem1;
     Item dummyItem2;
@@ -100,6 +105,7 @@ public class ProfilControllerTests {
         dummy1 = new Person();
         dummy2 = new Person();
         dummy3 = new Person();
+        dummyAdmin = new Person();
         dummyItem1 = new Item();
         dummyItem2 = new Item();
         dummyItem3 = new Item();
@@ -140,6 +146,13 @@ public class ProfilControllerTests {
         dummy3.setPassword("abcdabcd");
         dummy3.setId(6L);
         dummy3.setRatings(Arrays.asList(rating3));
+
+        dummyAdmin.setId(0L);
+        dummyAdmin.setFirstName("random");
+        dummyAdmin.setLastName("random");
+        dummyAdmin.setUsername("admin");
+        dummyAdmin.setPassword("rootroot");
+        dummyAdmin.setEmail("admin@gmail.com");
 
         dummyItem1.setName("stuhl");
         dummyItem1.setDeposit(40);
@@ -198,7 +211,7 @@ public class ProfilControllerTests {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
-        Mockito.when(itemRepo.findByOwnerNotAndForSaleTrue(dummy3))
+        Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy3))
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
         mvc.perform(get("/"))
@@ -340,18 +353,27 @@ public class ProfilControllerTests {
     }
 
     @Test
-    public void checkEditOtherPersonNotPossible() throws Exception{
-        //....
-       }
-
-    @Test
+    @Ignore
+    @WithMockUser(username = "admin", password = "rootroot", roles = "ADMIN")
     public void checkdeletePersonByAdmin() throws Exception{
-        //....
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+
+        mvc.perform(get("deleteuser/{username}", dummy1.getUsername()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("redirect:/profilub"));
     }
 
+
     @Test
+    @WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
     public void checkdeletePersonNotByAdminFail() throws Exception {
-        //....
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+        mvc.perform(get("deleteuser/{username}", dummy2.getUsername()))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

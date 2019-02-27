@@ -34,12 +34,8 @@ public class RequestController {
     private final LeaseTransactionRepo leaseTransactionRepo;
     private final PersonsRepo personsRepo;
     private final TransactionService transactionService;
-    private final PaymentTransactionRepo paymentTransactionRepo;
-    private final ProPaySubscriber proPaySubscriber;
     private final AuthenticationService authenticationService;
     private final RequestService requestService;
-    private final RatingRepo ratingRepo;
-    private final ConflictTransactionRepo conflictTransactionRepo;
     private Clock clock;
 
     @Autowired
@@ -47,30 +43,16 @@ public class RequestController {
                              ItemRepo itemRepo,
                              LeaseTransactionRepo leaseTransactionRepo,
                              PersonsRepo personsRepo,
-                             PaymentTransactionRepo paymentTransactionRepo,
-                             RatingRepo ratingrepo,
-                             ConflictTransactionRepo conflictTransactionRepo,
                              RequestService requestService,
-                             Clock clock) {
-        this.ratingRepo = ratingrepo;
+                             Clock clock,
+                             AuthenticationService authenticationService,
+                             TransactionService transactionService) {
         this.requestRepo = requestRepo;
         this.itemRepo = itemRepo;
         this.leaseTransactionRepo = leaseTransactionRepo;
         this.personsRepo = personsRepo;
-        this.paymentTransactionRepo = paymentTransactionRepo;
-        this.conflictTransactionRepo = conflictTransactionRepo;
-        this.authenticationService = new AuthenticationService(personsRepo);
-        this.proPaySubscriber = new ProPaySubscriber(personsRepo,
-                                                     leaseTransactionRepo);
-        this.transactionService =
-                new TransactionService(
-                        leaseTransactionRepo,
-                        requestRepo,
-                        proPaySubscriber,
-                        paymentTransactionRepo,
-                        conflictTransactionRepo,
-                        ratingRepo,
-                        clock);
+        this.authenticationService = authenticationService;
+        this.transactionService = transactionService;
         this.clock = clock;
         this.requestService = requestService;
     }
@@ -106,11 +88,25 @@ public class RequestController {
                                      RedirectAttributes redirectAttributes
                                      ){
 
-        return requestService
-                .addRequest(
-                        model,
-                        redirectAttributes,
-                        startDate, endDate, id);
+        Request request = requestService
+                .addRequest(startDate, endDate, id);
+        if(request == null){
+            redirectAttributes.addFlashAttribute("message",
+                    "Invalid date!");
+            return "redirect:/item/{id}/requestitem";
+        }
+
+        boolean saveRequest = requestService.saveRequest(request);
+
+        if(!saveRequest){
+            redirectAttributes.addFlashAttribute("message",
+                    "Item is not available during selected period, or something went wrong with ProPay!");
+        }
+
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Request has been sent!");
+
+        return "redirect:/item/{id}";
     }
 
     @GetMapping(path="/profile/requests")

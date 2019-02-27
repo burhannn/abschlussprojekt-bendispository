@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RequestRepo;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -57,8 +57,7 @@ public class FileController {
     @PostMapping(path = "/additem", consumes = {"multipart/form-data"})
     public String addItemsToDatabase(Model model,
                                      @Valid @RequestParam("file") MultipartFile multipart,
-                                     Item item,
-                                     boolean leaseOrSell) throws IOException, SQLException {
+                                     Item item) throws IOException {
 
         String fileName = StringUtils.cleanPath(multipart.getOriginalFilename());
         if(!fileName.isEmpty()){
@@ -69,11 +68,42 @@ public class FileController {
         model.addAttribute("newItem", item);
 
         item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
+        item.setMarketType(MarketType.LEND);
         itemRepo.save(item);
         List<Item> itemsOwner = new ArrayList<>();
         itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
         loggedIn.setItems(itemsOwner);
         personRepo.save(loggedIn);
+        return "redirect:/item/" + item.getId() + "";
+    }
+
+    @GetMapping(path = "/addsellitem")
+    public String addSellItemPage() {
+        return "itemTmpl/addItemSell";
+    }
+
+    @PostMapping(path = "/addsellitem", consumes = {"multipart/form-data"})
+    public String addSellItemToDatabase(Model model,
+                                        @Valid @RequestParam("file") MultipartFile multipartFile,
+                                        Item item) throws IOException {
+
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        if(!fileName.isEmpty()){
+            UploadFile uploadFile = new UploadFile(fileName, multipartFile.getBytes());
+            item.setUploadFile(uploadFile);
+        }
+
+        Person loggedIn = authenticationService.getCurrentUser();
+        model.addAttribute("newItem", item);
+
+        item.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
+        item.setMarketType(MarketType.SELL);
+        itemRepo.save(item);
+        List<Item> itemsOwner = new ArrayList<>();
+        itemsOwner.addAll(itemRepo.findByOwner(loggedIn));
+        loggedIn.setItems(itemsOwner);
+        personRepo.save(loggedIn);
+
         return "redirect:/item/" + item.getId() + "";
     }
 
@@ -88,12 +118,15 @@ public class FileController {
         model.addAttribute("itemProfile", item);
         model.addAttribute("itemOwner", item.getOwner());
         model.addAttribute("loggedInPerson", authenticationService.getCurrentUser());
-        //model.addAttribute("isAvailable", itemService.itemIsAvailable(id));
+
         if(item.getUploadFile() != null){
             model.addAttribute("pic", Base64.getEncoder().encodeToString((item.getUploadFile().getData())));
         }else{
             model.addAttribute("pic",null);
         }
+
+        if (item.getMarketType() == MarketType.SELL)
+            return "itemTmpl/itemProfileSell";
 
         return "itemTmpl/itemProfile";
     }
@@ -113,7 +146,22 @@ public class FileController {
             return "redirect:/item/{id}";
         }
 
-        requestService.addBuyRequest(model, redirectAttributes, id);
+        Request request = requestService.addBuyRequest(id);
+        if(request == null){
+            redirectAttributes.addFlashAttribute("message", "You don't have enough funds for this transaction!");
+            return "redirect:/item/{id}";
+        }
+
+        boolean isItemBought = requestService.buyItemAndTransferMoney(request);
+
+        if(!isItemBought){
+            redirectAttributes.addFlashAttribute("messageBalance",
+                    "There is a Problem with ProPay!");
+            return "redirect:/item/{id}";
+        }
+
+        itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem",o));
+        redirectAttributes.addFlashAttribute("success", "Item bought!");
 
         return "redirect:/item/{id}";
     }
@@ -140,6 +188,9 @@ public class FileController {
         Person loggedIn = authenticationService.getCurrentUser();
         model.addAttribute("Item", item);
         if(loggedIn.getUsername().equals(item.getOwner().getUsername())){
+            if(item.getMarketType().equals(MarketType.SELL)) {
+                return "itemTmpl/editItemSell";
+            }
             return "itemTmpl/editItem";
         }
 
@@ -155,10 +206,11 @@ public class FileController {
         inpItem.setOwner(personRepo.findByUsername(loggedIn.getUsername()));
         List<Item> itemsOwner = itemRepo.findByOwner(loggedIn);
         loggedIn.setItems(itemsOwner);
+        inpItem.setMarketType(item.get().getMarketType());
         if(item.get().getUploadFile() != null) {
             inpItem.setUploadFile(item.get().getUploadFile());
         }
         itemRepo.save(inpItem);
-        return "redirect:/";
+        return "redirect:/item/{id}";
     }
 }
