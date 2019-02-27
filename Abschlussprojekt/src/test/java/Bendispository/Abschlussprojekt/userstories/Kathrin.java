@@ -5,7 +5,9 @@ import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -15,10 +17,21 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class Kathrin {
 
-    @Before
-    public void sup(){
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+
+    @Test
+    public void kathrinsLife(){
         //user kathrin mit geld erstellen
+        Person kathrin = new Person();
+        List<Rating> ratings = new ArrayList<>();
+        mkPerson("kathrin@kathrin.de", "kathrin", "Kathrin", "Gottlieb", "Wuppertal", "abcdabcd", ratings);
+
+        proPaySubscriber.chargeAccount(kathrin.getUsername(), 500.0);
+
         //hacksler product mit besitzer erstellen
+
+
         //leih anfrage wird angenommen
         //assert that amount is reserved on kathrins account
         //geliehenes produkt wird zurueck gegeben
