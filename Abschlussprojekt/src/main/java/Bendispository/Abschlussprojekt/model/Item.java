@@ -24,7 +24,7 @@ public class Item {
 
 	private MarketType marketType;
 
-	private boolean forSale = true;
+	private boolean active = true;
 
 	//@Pattern(regexp="[0-9.,]+")
 	private double retailPrice;
