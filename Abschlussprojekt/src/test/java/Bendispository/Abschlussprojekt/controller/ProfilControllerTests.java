@@ -2,10 +2,7 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.service.*;
-import Bendispository.Abschlussprojekt.controller.ProfilController;
-
 import Bendispository.Abschlussprojekt.model.Rating;
-
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -27,11 +24,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.ui.Model;
 import org.springframework.web.context.WebApplicationContext;
-
 import java.util.*;
-
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -101,8 +95,11 @@ public class ProfilControllerTests {
     Request dummyRequest3;
     Request dummyRequest4;
 
-    List<Request> requestList1 = new ArrayList<>();
-    List<Request> requestList2 = new ArrayList<>();
+    List<Request> requestList1;
+    List<Request> requestList2;
+
+    List<Item> items1;
+    List<Item> items2;
 
     @Before
     public void setUp(){
@@ -117,6 +114,8 @@ public class ProfilControllerTests {
 
         requestList1 = new ArrayList<>();
         requestList2 = new ArrayList<>();
+        items1 = new ArrayList<>();
+        items2 = new ArrayList<>();
 
         dummy1 = new Person();
         dummy2 = new Person();
@@ -203,10 +202,10 @@ public class ProfilControllerTests {
         requestList1.addAll(Arrays.asList(dummyRequest1, dummyRequest2));
         requestList2.addAll(Arrays.asList(dummyRequest3, dummyRequest4));
 
-        List<Item> items1 = new ArrayList<Item>();
+        items1 = new ArrayList<Item>();
         items1.addAll(Arrays.asList(dummyItem1, dummyItem2));
         dummy1.setItems(items1);
-        List<Item> items2 = new ArrayList<Item>();
+        items2 = new ArrayList<Item>();
         items2.addAll(Arrays.asList(dummyItem3));
         dummy2.setItems(items2);
 
@@ -277,6 +276,39 @@ public class ProfilControllerTests {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
+
+        mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("OverviewAllItems"))
+                .andExpect(model().attributeExists("loggedInPerson"))
+                .andExpect(view().name("OverviewAllItems"))
+                .andExpect(model().attribute("OverviewAllItems", hasSize(1)))
+                .andExpect(model().attribute("OverviewAllItems", hasItem(
+                        allOf(
+                                hasProperty("id", equalTo(5L)),
+                                hasProperty("name", equalTo("Kulli")),
+                                hasProperty("description", equalTo("schicker kulli"))
+                        )
+                )));
+    }
+    /*
+    for(LeaseTransaction leaseTransaction : leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(loggedIn)){
+        if(transactionService.isTimeViolation(leaseTransaction)){
+            model.addAttribute("message",
+                    "You have to return an Item!");
+            model.addAttribute("itemname", leaseTransaction.getItem().getName());
+        }
+    }
+    */
+
+    //TODO
+    @Test
+    public void checkOverviewWithExpiredItems() throws Exception {
+
+        Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+        Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+        Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
 
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
@@ -293,9 +325,6 @@ public class ProfilControllerTests {
                 )));
     }
 
-
-
-    //tests für profile anderer User
     @Test
     public void checkMyProfile() throws Exception {
 
@@ -407,15 +436,14 @@ public class ProfilControllerTests {
     }
 
     @Test
-    @Ignore
     @WithMockUser(username = "admin", password = "rootroot", roles = "ADMIN")
     public void checkdeletePersonByAdmin() throws Exception{
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
 
-        mvc.perform(get("deleteuser/{username}", "string"))
+        mvc.perform(get("/deleteuser/{username}", "user"))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/profilub"));
     }
 
@@ -425,12 +453,13 @@ public class ProfilControllerTests {
     public void checkdeletePersonNotByAdminFail() throws Exception {
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
-        mvc.perform(get("deleteuser/{username}", dummy2.getUsername()))
+        mvc.perform(get("/deleteuser/{username}", dummy2.getUsername()))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"));
     }
-    /*
 
+    /*
         List<Request> purchases = requestRepo.findByRequesterAndStatus(loggedIn, RequestStatus.SHIPPED);
         List<Request> sales = requestRepo.findByRequestedItemOwnerAndStatus(loggedIn, RequestStatus.SHIPPED);
 
@@ -438,6 +467,7 @@ public class ProfilControllerTests {
         List<LeaseTransaction> lent = leaseTransactionRepo.findAllByItemOwnerAndLeaseIsConcludedIsTrue(loggedIn);
 
     }*/
+
     @Test
     public void checkProfileHistory() throws Exception {
 
