@@ -77,6 +77,10 @@ public class ProfilControllerTests {
     RequestService requestService;
     @MockBean
     ItemService itemService;
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+    @MockBean
+    TransactionService transactionService;
 
 
     Person dummy1;
@@ -207,7 +211,7 @@ public class ProfilControllerTests {
 
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
-        Mockito.when(itemRepo.findByOwnerNotAndForSaleTrue(dummy3))
+        Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy3))
                 .thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
         mvc.perform(get("/"))

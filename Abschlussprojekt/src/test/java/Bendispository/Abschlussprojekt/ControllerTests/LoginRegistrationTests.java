@@ -71,6 +71,12 @@ public class LoginRegistrationTests {
     @MockBean
     ItemService itemService;
 
+    @MockBean
+    ProPaySubscriber proPaySubscriber;
+
+    @MockBean
+    TransactionService transactionService;
+
     Person dummy1;
 
     @Before
