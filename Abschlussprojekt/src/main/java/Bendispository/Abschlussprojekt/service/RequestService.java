@@ -154,7 +154,7 @@ public class RequestService {
             return false;
         }
 
-        item.setForSale(false);
+        item.setActive(false);
         requestRepo.save(request);
         return true;
     }

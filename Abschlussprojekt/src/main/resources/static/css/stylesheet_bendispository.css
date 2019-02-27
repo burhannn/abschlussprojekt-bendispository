@@ -128,3 +128,33 @@ h1{
     font-size: 17px;
     text-align: center;
 }
+
+.badge_lease{
+     font-family: Open Sans, sans-serif;
+     font-size: 17px;
+     color: white;
+     display: inline-flex;
+     height: 18px;
+     border: 1px solid #F08F90;
+     border-radius: 20px;
+     padding: 6px 12px;
+     justify-content: center;
+     align-items: center;
+     background: #F08F90;
+     margin-right: 90%;
+}
+
+.badge_buy{
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 17px;
+    color: white;
+    display: inline-flex;
+    height: 18px;
+    border: 1px solid #FFB61E;
+    border-radius: 20px;
+    padding: 6px 12px;
+    justify-content: center;
+    align-items: center;
+    background: #FFB61E;
+    margin-right: 90%;
+}
