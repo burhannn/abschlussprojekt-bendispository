@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link href="../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
 <head>
-    <meta charset="UTF-8">
-    <title>Explain Issue</title>
+	<meta charset="UTF-8">
+	<title>Explain Issue</title>
 </head>
 <body>
 <div class="projekt_container">
-    <div th:if="${success}">
-        <div class="alert_success" th:text="${success}"></div>
-    </div>
-    <form method = "post">Comment:
-        <textarea name = "comment" th:value="${comment}" placeholder="Explain your Issue" cols="20" rows="5"></textarea>
-        <button type="submit">Submit Issue</button>
-    </form>
+	<div th:if="${success}">
+		<div class="alert_success" th:text="${success}"></div>
+	</div>
+	<form method="post">Comment:
+		<textarea cols="20" name="comment" placeholder="Explain your Issue" rows="5" th:value="${comment}"></textarea>
+		<button type="submit">Submit Issue</button>
+	</form>
 </div>
-<a href="/profile/returneditems" class="back_button">Back</a>
+<a class="back_button" href="/profile/returneditems">Back</a>
 </body>
 </html>

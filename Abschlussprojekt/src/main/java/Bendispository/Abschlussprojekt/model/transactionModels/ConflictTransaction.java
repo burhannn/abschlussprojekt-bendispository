@@ -10,20 +10,14 @@ import javax.persistence.*;
 @Entity
 public class ConflictTransaction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-
-    private boolean leaserGotTheDepositBack;
-
-    private boolean lenderAccepted;
-
-    private boolean leaserAccepted;
-
-    private int validationTime;
-
-    private String commentary;
-
-    @OneToOne(cascade = CascadeType.PERSIST)
-    LeaseTransaction leaseTransaction;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+	@OneToOne(cascade = CascadeType.PERSIST)
+	LeaseTransaction leaseTransaction;
+	private boolean leaserGotTheDepositBack;
+	private boolean lenderAccepted;
+	private boolean leaserAccepted;
+	private int validationTime;
+	private String commentary;
 }

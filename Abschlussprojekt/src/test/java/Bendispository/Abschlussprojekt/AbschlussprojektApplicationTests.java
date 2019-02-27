@@ -14,6 +14,6 @@ public class AbschlussprojektApplicationTests {
 
 	@Test
 	public void applicationContextTest() {
-		AbschlussprojektApplication.main(new String[] {});
+		AbschlussprojektApplication.main(new String[]{});
 	}
 }

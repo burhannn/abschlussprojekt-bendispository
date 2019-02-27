@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<link href="../../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
 <head>
-    <meta charset="UTF-8">
-    <title>Edit Profile</title>
+	<meta charset="UTF-8">
+	<title>Edit Profile</title>
 </head>
 <body>
 
-<div class = "projekt_container">
-    <h1>Edit Profile</h1>
-    <form method = "post">
-        <tr>First name:<div><input type ="text" pattern="[a-zA-ZöäüÖÄÜß]+" required name = "Firstname" th:value="${person?.firstName}"></div></tr>
-        <tr>Last name:<div><input type ="text" pattern="[a-zA-ZöäüÖÄÜß]+" required name = "Lastname" th:value="${person?.lastName}"></div></tr>
-        <tr>Password:<div><input type ="text" pattern=".{8,}" required name = "Password" th:value="${person?.password}"></div></tr>
-        <tr>Email:<div><input type ="text" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required name = "Email" th:value="${person?.email}"></div></tr>
-        <tr>City:<div><input type ="text" required pattern="[a-zA-ZöäüÖÄÜß 0-9]+" name = "City" th:value="${person?.city}"></div></tr>
-        <button type="submit" class="button" style="margin-top: 2%"> Save Changes</button>
-    </form>
+<div class="projekt_container">
+	<h1>Edit Profile</h1>
+	<form method="post">
+		<tr>First name:
+			<div><input name="Firstname" pattern="[a-zA-ZöäüÖÄÜß]+" required th:value="${person?.firstName}"
+						type="text"></div>
+		</tr>
+		<tr>Last name:
+			<div><input name="Lastname" pattern="[a-zA-ZöäüÖÄÜß]+" required th:value="${person?.lastName}" type="text">
+			</div>
+		</tr>
+		<tr>Password:
+			<div><input name="Password" pattern=".{8,}" required th:value="${person?.password}" type="text"></div>
+		</tr>
+		<tr>Email:
+			<div><input name="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required th:value="${person?.email}"
+						type="text"></div>
+		</tr>
+		<tr>City:
+			<div><input name="City" pattern="[a-zA-ZöäüÖÄÜß 0-9]+" required th:value="${person?.city}" type="text">
+			</div>
+		</tr>
+		<button class="button" style="margin-top: 2%" type="submit"> Save Changes</button>
+	</form>
 </div>
 <form action="/profile">
-    <button class="back_button" type="submit">Back</button>
+	<button class="back_button" type="submit">Back</button>
 </form>
 
 

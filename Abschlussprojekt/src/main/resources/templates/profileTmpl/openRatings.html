@@ -1,29 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml" lang="">
-<link rel="stylesheet" href="../../static/css/stylesheet_bendispository.css" th:href="@{/css/stylesheet_bendispository.css}">
+<html lang="" xmlns:th="http://www.w3.org/1999/xhtml">
+<link href="../../static/css/stylesheet_bendispository.css" rel="stylesheet"
+	  th:href="@{/css/stylesheet_bendispository.css}">
 <body>
 <div class="header_overview">Open Ratings
 </div>
-<div th:if="${openRatings.size() == 0}" class="projekt_container">Currently no open ratings</div>
-<div class = "projekt_container" th:each="item,iterStart : ${openRatings}">
-    <h1 class="header_container" th:text= ${openRatings?.get(iterStart?.index)?.request?.requestedItem?.name}></h1>
-    <div>
-        <div class ="item_description" th:text="${openRatings?.get(iterStart?.index)?.request?.requestedItem?.owner?.username}"></div>
-            <form th:if="${openRatings?.get(iterStart?.index)?.ratingPoints == null}" method="post" action="/rating">
-                <td>Give your Rating:</td>
-                <input type="radio" name="rating" value="1">1
-                <input type="radio" name="rating" value="2">2
-                <input type="radio" name="rating" value="3">3
-                <input type="radio" name="rating" value="4">4
-                <input type="radio" name="rating" value="5">5
-                <input type="hidden" name="rating" value="-1" checked>
-                <input type="hidden" value="0" th:value="${openRatings?.get(iterStart?.index)?.id}" name="ratingID">
-                <button type = "submit">Submit</button>
-            </form>
-            <div th:if="${openRatings?.get(iterStart?.index)?.ratingPoints != null}" th:text="|Rating: ${openRatings?.get(iterStart?.index)?.ratingPoints}|">
-            </div>
-    </div>
+<div class="projekt_container" th:if="${openRatings.size() == 0}">Currently no open ratings</div>
+<div class="projekt_container" th:each="item,iterStart : ${openRatings}">
+	<h1 class="header_container" th:text=${openRatings?.get(iterStart?.index)?.request?.requestedItem?.name}></h1>
+	<div>
+		<div class="item_description"
+			 th:text="${openRatings?.get(iterStart?.index)?.request?.requestedItem?.owner?.username}"></div>
+		<form action="/rating" method="post" th:if="${openRatings?.get(iterStart?.index)?.ratingPoints == null}">
+			<td>Give your Rating:</td>
+			<input name="rating" type="radio" value="1">1
+			<input name="rating" type="radio" value="2">2
+			<input name="rating" type="radio" value="3">3
+			<input name="rating" type="radio" value="4">4
+			<input name="rating" type="radio" value="5">5
+			<input checked name="rating" type="hidden" value="-1">
+			<input name="ratingID" th:value="${openRatings?.get(iterStart?.index)?.id}" type="hidden" value="0">
+			<button type="submit">Submit</button>
+		</form>
+		<div th:if="${openRatings?.get(iterStart?.index)?.ratingPoints != null}"
+			 th:text="|Rating: ${openRatings?.get(iterStart?.index)?.ratingPoints}|">
+		</div>
+	</div>
 </div>
-<a href="/" class="back_button">Back</a>
+<a class="back_button" href="/">Back</a>
 </body>
 </html>

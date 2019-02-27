@@ -10,9 +10,6 @@ import Bendispository.Abschlussprojekt.repos.RequestRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,179 +20,172 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Bendispository.Abschlussprojekt.model.RequestStatus.*;
+import static Bendispository.Abschlussprojekt.model.RequestStatus.AWAITING_SHIPMENT;
 
 @Component
 public class RequestService {
 
-    PersonsRepo personsRepo;
+	private final AuthenticationService authenticationService;
+	private final ItemRepo itemRepo;
+	private final ProPaySubscriber proPaySubscriber;
+	private final TransactionService transactionService;
+	PersonsRepo personsRepo;
+	RequestRepo requestRepo;
+	LeaseTransactionRepo leaseTransactionRepo;
+	private Clock clock;
 
-    RequestRepo requestRepo;
+	@Autowired
+	public RequestService(PersonsRepo personsRepo,
+						  RequestRepo requestRepo,
+						  ItemRepo itemRepo,
+						  AuthenticationService authenticationService,
+						  Clock clock,
+						  TransactionService transactionService,
+						  ProPaySubscriber proPaySubscriber,
+						  LeaseTransactionRepo leaseTransactionRepo) {
+		this.personsRepo = personsRepo;
+		this.requestRepo = requestRepo;
+		this.itemRepo = itemRepo;
+		this.authenticationService = authenticationService;
+		this.proPaySubscriber = proPaySubscriber;
+		this.transactionService = transactionService;
+		this.leaseTransactionRepo = leaseTransactionRepo;
+		this.clock = clock;
+	}
 
-    LeaseTransactionRepo leaseTransactionRepo;
+	public List<Request> deleteObsoleteRequests(List<Request> myRequests) {
+		List<Request> toRemove = new ArrayList<>();
+		for (Request request : myRequests) {
+			if (request.getStartDate().isBefore(LocalDate.now(clock))) {
+				toRemove.add(request);
+			}
+		}
+		requestRepo.deleteAll(toRemove);
+		return myRequests.stream().filter(i -> !(toRemove.contains(i))).collect(Collectors.toList());
+	}
 
-    private final AuthenticationService authenticationService;
+	public boolean checkRequestedDate(String startDate,
+									  String endDate) {
 
-    private final ItemRepo itemRepo;
+		LocalDate startdate, enddate;
 
-    private final ProPaySubscriber proPaySubscriber;
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			startdate = LocalDate.parse(startDate, formatter);
+			enddate = LocalDate.parse(endDate, formatter);
+		} catch (DateTimeParseException e) {
+			return false;
+		}
 
-    private final TransactionService transactionService;
+		if (startdate.isAfter(enddate) || startdate.isEqual(enddate))
+			return false;
 
-    private Clock clock;
+		if (startdate.isBefore(LocalDate.now(clock)))
+			return false;
 
-    @Autowired
-    public RequestService(PersonsRepo personsRepo,
-                          RequestRepo requestRepo,
-                          ItemRepo itemRepo,
-                          AuthenticationService authenticationService,
-                          Clock clock,
-                          TransactionService transactionService,
-                          ProPaySubscriber proPaySubscriber,
-                          LeaseTransactionRepo leaseTransactionRepo){
-        this.personsRepo = personsRepo;
-        this.requestRepo = requestRepo;
-        this.itemRepo = itemRepo;
-        this.authenticationService = authenticationService;
-        this.proPaySubscriber = proPaySubscriber;
-        this.transactionService = transactionService;
-        this.leaseTransactionRepo = leaseTransactionRepo;
-        this.clock = clock;
-    }
+		return true;
+	}
 
-    public List<Request> deleteObsoleteRequests(List<Request> myRequests) {
-        List<Request> toRemove = new ArrayList<>();
-        for(Request request : myRequests){
-            if(request.getStartDate().isBefore(LocalDate.now(clock))) {
-                toRemove.add(request);
-            }
-        }
-        requestRepo.deleteAll(toRemove);
-        return myRequests.stream().filter(i -> !(toRemove.contains(i))).collect(Collectors.toList());
-    }
+	public boolean checkRequestedAvailability(Request request) {
+		return transactionService.itemIsAvailableOnTime(request);
+	}
 
-    public boolean checkRequestedDate(String startDate,
-                                      String endDate) {
+	public boolean checkRequesterBalance(Item item, String username) {
+		return proPaySubscriber.checkDeposit(item.getDeposit(), username);
+	}
 
-        LocalDate startdate, enddate;
+	public Request addBuyRequest(Long id) {
 
-        try{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            startdate = LocalDate.parse(startDate, formatter);
-            enddate = LocalDate.parse(endDate, formatter);
-        } catch(DateTimeParseException e){
-            return false;
-        }
+		Person currentUser = authenticationService.getCurrentUser();
+		Item item = itemRepo.findById(id).orElse(null);
 
-        if (startdate.isAfter(enddate) || startdate.isEqual(enddate))
-            return false;
+		String username = currentUser.getUsername();
 
-        if (startdate.isBefore(LocalDate.now(clock)))
-            return false;
+		if (!checkRequesterBalance(item, username))
+			return null;
 
-        return true;
-    }
+		Request request = new Request();
+		request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
+		request.setStatus(AWAITING_SHIPMENT);
+		request.setRequestedItem(item);
 
-    public boolean checkRequestedAvailability(Request request) {
-        return transactionService.itemIsAvailableOnTime(request);
-    }
+		return request;
+	}
 
-    public boolean checkRequesterBalance(Item item, String username) {
-        return proPaySubscriber.checkDeposit(item.getDeposit(), username);
-    }
+	public boolean buyItemAndTransferMoney(Request request) {
+		Person currentUser = authenticationService.getCurrentUser();
+		String username = currentUser.getUsername();
+		Item item = request.getRequestedItem();
 
-    public Request addBuyRequest(Long id) {
+		if (!proPaySubscriber
+				.transferMoney(
+						username,
+						item.getOwner().getUsername(),
+						item.getRetailPrice())) {
+			return false;
+		}
 
-        Person currentUser = authenticationService.getCurrentUser();
-        Item item = itemRepo.findById(id).orElse(null);
+		item.setActive(false);
+		requestRepo.save(request);
+		return true;
+	}
 
-        String username = currentUser.getUsername();
+	public Request addRequest(String startDate, String endDate, Long id) {
 
-        if (!checkRequesterBalance(item, username))
-            return null;
+		if (!checkRequestedDate(startDate, endDate)) {
+			return null;
+		}
 
-        Request request = new Request();
-        request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
-        request.setStatus(AWAITING_SHIPMENT);
-        request.setRequestedItem(item);
+		LocalDate startdate, enddate;
 
-        return request;
-    }
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		startdate = LocalDate.parse(startDate, formatter);
+		enddate = LocalDate.parse(endDate, formatter);
 
-    public boolean buyItemAndTransferMoney(Request request){
-        Person currentUser = authenticationService.getCurrentUser();
-        String username = currentUser.getUsername();
-        Item item = request.getRequestedItem();
+		Person currentUser = authenticationService.getCurrentUser();
+		Item item = itemRepo.findById(id).orElse(null);
 
-        if (!proPaySubscriber
-                .transferMoney(
-                        username,
-                        item.getOwner().getUsername(),
-                        item.getRetailPrice())) {
-            return false;
-        }
+		Request request = new Request();
+		request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
+		request.setStartDate(startdate);
+		request.setEndDate(enddate);
+		request.setDuration(Period.between(startdate, enddate).getDays());
+		request.setRequestedItem(item);
 
-        item.setActive(false);
-        requestRepo.save(request);
-        return true;
-    }
+		return request;
+	}
 
-    public Request addRequest(String startDate, String endDate, Long id) {
+	public boolean saveRequest(Request request) {
+		Person currentUser = authenticationService.getCurrentUser();
+		String username = currentUser.getUsername();
 
-        if(!checkRequestedDate(startDate, endDate)){
-            return null;
-        }
+		if (!checkRequestedAvailability(request) ||
+				!checkRequesterBalance(request.getRequestedItem(), username)) {
+			return false;
+		}
+		requestRepo.save(request);
+		return true;
+	}
 
-        LocalDate startdate, enddate;
+	public boolean wasShipped(Request request, Integer shipped) {
+		if (shipped != null) {
+			request.setStatus(RequestStatus.SHIPPED);
+			return true;
+		}
+		return false;
+	}
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        startdate = LocalDate.parse(startDate, formatter);
-        enddate = LocalDate.parse(endDate, formatter);
-
-        Person currentUser = authenticationService.getCurrentUser();
-        Item item = itemRepo.findById(id).orElse(null);
-
-        Request request = new Request();
-        request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
-        request.setStartDate(startdate);
-        request.setEndDate(enddate);
-        request.setDuration(Period.between(startdate, enddate).getDays());
-        request.setRequestedItem(item);
-
-        return request;
-    }
-
-    public boolean saveRequest(Request request){
-        Person currentUser = authenticationService.getCurrentUser();
-        String username = currentUser.getUsername();
-
-        if (!checkRequestedAvailability(request) ||
-                !checkRequesterBalance(request.getRequestedItem(), username)){
-            return false;
-        }
-        requestRepo.save(request);
-        return true;
-    }
-
-    public boolean wasShipped(Request request, Integer shipped){
-        if (shipped != null) {
-            request.setStatus(RequestStatus.SHIPPED);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean wasDeniedOrAccepted(Integer requestMyItems, Request request){
-        if(requestMyItems == -1){
-            request.setStatus(RequestStatus.DENIED);
-            requestRepo.save(request);
-            return true;
-        }
-        if (transactionService.lenderApproved(request)) {
-            return true;
-        }
-        return false;
-    }
+	public boolean wasDeniedOrAccepted(Integer requestMyItems, Request request) {
+		if (requestMyItems == -1) {
+			request.setStatus(RequestStatus.DENIED);
+			requestRepo.save(request);
+			return true;
+		}
+		if (transactionService.lenderApproved(request)) {
+			return true;
+		}
+		return false;
+	}
 
 
 }

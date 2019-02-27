@@ -2,141 +2,133 @@ package Bendispository.Abschlussprojekt.service;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.transactionModels.*;
-
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.*;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sun.tools.internal.xjc.reader.Ring.add;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ItemServiceTest {
 
-    @MockBean
-    ItemRepo itemRepo;
+	@MockBean
+	ItemRepo itemRepo;
 
-    @MockBean
-    PersonsRepo personsRepo;
+	@MockBean
+	PersonsRepo personsRepo;
 
-    @MockBean
-    AuthenticationService authenticationService;
+	@MockBean
+	AuthenticationService authenticationService;
 
-    Item itemSell;
-    Item itemBuy;
-    Person person1;
-    private ItemService itemService;
-    private Clock clock;
+	Item itemSell;
+	Item itemBuy;
+	Person person1;
+	private ItemService itemService;
+	private Clock clock;
 
-    @Before
-    public void setUp(){
-        MockitoAnnotations.initMocks(this);
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
 
-        person1 = new Person();
-        itemSell = new Item();
-        itemBuy = new Item();
+		person1 = new Person();
+		itemSell = new Item();
+		itemBuy = new Item();
 
-        person1.setFirstName("mandy");
-        person1.setLastName("moraru");
-        person1.setCity("kölle");
-        person1.setEmail("momo@gmail.com");
-        person1.setUsername("momo");
-        person1.setPassword("abcdabcd");
-        person1.setId(1L);
+		person1.setFirstName("mandy");
+		person1.setLastName("moraru");
+		person1.setCity("kölle");
+		person1.setEmail("momo@gmail.com");
+		person1.setUsername("momo");
+		person1.setPassword("abcdabcd");
+		person1.setId(1L);
 
-        itemSell.setName("stuhl");
-        itemSell.setDeposit(40);
-        itemSell.setDescription("bin billig");
-        itemSell.setCostPerDay(10);
-        itemSell.setId(2L);
-        itemSell.setOwner(person1);
-        itemSell.setMarketType(MarketType.LEND);
+		itemSell.setName("stuhl");
+		itemSell.setDeposit(40);
+		itemSell.setDescription("bin billig");
+		itemSell.setCostPerDay(10);
+		itemSell.setId(2L);
+		itemSell.setOwner(person1);
+		itemSell.setMarketType(MarketType.LEND);
 
-        itemBuy.setName("stuhl");
-        itemBuy.setDeposit(40);
-        itemBuy.setDescription("bin billig");
-        itemBuy.setCostPerDay(10);
-        itemBuy.setId(3L);
-        itemBuy.setOwner(person1);
-        itemBuy.setMarketType(MarketType.LEND);
+		itemBuy.setName("stuhl");
+		itemBuy.setDeposit(40);
+		itemBuy.setDescription("bin billig");
+		itemBuy.setCostPerDay(10);
+		itemBuy.setId(3L);
+		itemBuy.setOwner(person1);
+		itemBuy.setMarketType(MarketType.LEND);
 
-        List<Item> items1 = new ArrayList<Item>();
+		List<Item> items1 = new ArrayList<Item>();
 
-        items1.addAll(Arrays.asList(itemSell, itemBuy));
-        person1.setItems(items1);
+		items1.addAll(Arrays.asList(itemSell, itemBuy));
+		person1.setItems(items1);
 
 
-        itemRepo.saveAll(Arrays.asList(itemSell, itemBuy));
-        personsRepo.saveAll(Arrays.asList(person1));
+		itemRepo.saveAll(Arrays.asList(itemSell, itemBuy));
+		personsRepo.saveAll(Arrays.asList(person1));
 
-        when(personsRepo.findById(1L))
-                .thenReturn(Optional.ofNullable(person1));
+		when(personsRepo.findById(1L))
+				.thenReturn(Optional.ofNullable(person1));
 
-        when(itemRepo.findById(2L))
-                .thenReturn(Optional.ofNullable(itemSell));
+		when(itemRepo.findById(2L))
+				.thenReturn(Optional.ofNullable(itemSell));
 
-        doReturn(Optional.of(itemBuy)).when(itemRepo).findById(anyLong());
+		doReturn(Optional.of(itemBuy)).when(itemRepo).findById(anyLong());
 
-        when(authenticationService.getCurrentUser()).thenReturn(person1);
-        itemService = new ItemService(itemRepo, personsRepo, authenticationService, clock);
-    }
+		when(authenticationService.getCurrentUser()).thenReturn(person1);
+		itemService = new ItemService(itemRepo, personsRepo, authenticationService, clock);
+	}
 
-    @After
-    public void delete(){
-        personsRepo.deleteAll();
-        itemRepo.deleteAll();
-    }
+	@After
+	public void delete() {
+		personsRepo.deleteAll();
+		itemRepo.deleteAll();
+	}
 
-    @Test
-    @WithMockUser(username = "momo", password = "abcdabcd")
-    public void checkAddItem() {
-        itemService.addItem(itemSell, MarketType.SELL);
-        Mockito.verify(itemRepo, times(1)).save(itemSell);
-    }
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkAddItem() {
+		itemService.addItem(itemSell, MarketType.SELL);
+		Mockito.verify(itemRepo, times(1)).save(itemSell);
+	}
 
-    @Test
-    @WithMockUser(username = "momo", password = "abcdabcd")
-    public void checkDeleteItem() {
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkDeleteItem() {
 
-        itemService.deleteItem(3L);
-        Mockito.verify(itemRepo, times(1)).deleteById(anyLong());
-    }
+		itemService.deleteItem(3L);
+		Mockito.verify(itemRepo, times(1)).deleteById(anyLong());
+	}
 
-    @Test
-    @WithMockUser(username = "momo", password = "abcdabcd")
-    public void checkEditItem() {
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkEditItem() {
 
-        Item inputItem = new Item();
-        inputItem.setRetailPrice(60);
+		Item inputItem = new Item();
+		inputItem.setRetailPrice(60);
 
-        itemService.editItem(inputItem, Optional.ofNullable(itemSell), 3L);
-        Mockito.verify(itemRepo, times(1)).save(inputItem);
-    }
+		itemService.editItem(inputItem, Optional.ofNullable(itemSell), 3L);
+		Mockito.verify(itemRepo, times(1)).save(inputItem);
+	}
 
 }

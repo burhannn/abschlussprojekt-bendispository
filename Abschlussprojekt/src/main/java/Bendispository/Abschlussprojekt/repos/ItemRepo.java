@@ -6,10 +6,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface ItemRepo extends CrudRepository<Item,Long> {
-    List<Item> findAll();
+public interface ItemRepo extends CrudRepository<Item, Long> {
+	List<Item> findAll();
 
-    List<Item> findByOwner(Person loggedIn);
+	List<Item> findByOwner(Person loggedIn);
 
-    List<Item> findByOwnerNotAndActiveTrue(Person loggedIn);
+	List<Item> findByOwnerNotAndActiveTrue(Person loggedIn);
 }
