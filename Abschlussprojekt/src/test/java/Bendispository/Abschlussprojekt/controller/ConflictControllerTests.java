@@ -222,7 +222,7 @@ public class ConflictControllerTests {
 		mvc.perform(post("/conflicts")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("conflictId", "6")
-				.param("beneficiary", "-1"))
+				.param("beneficiary", "0"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(view().name("rentsTmpl/conflictTransaction"))
