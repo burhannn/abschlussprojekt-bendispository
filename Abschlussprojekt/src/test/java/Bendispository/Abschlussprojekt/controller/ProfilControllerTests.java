@@ -1,6 +1,7 @@
 package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
+import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -175,18 +177,21 @@ public class ProfilControllerTests {
 		dummyItem1.setDescription("bin billig");
 		dummyItem1.setCostPerDay(10);
 		dummyItem1.setId(3L);
+		dummyItem1.setOwner(dummy1);
 
 		dummyItem2.setName("playstation");
 		dummyItem2.setDeposit(250);
 		dummyItem2.setDescription("bin teuer");
 		dummyItem2.setCostPerDay(120);
 		dummyItem2.setId(4L);
+		dummyItem2.setOwner(dummy1);
 
 		dummyItem3.setName("Kulli");
 		dummyItem3.setDeposit(5);
 		dummyItem3.setDescription("schicker kulli");
 		dummyItem3.setCostPerDay(1);
 		dummyItem3.setId(5L);
+		dummyItem3.setOwner(dummy2);
 
 		dummyRequest1.setRequester(dummy1);
 		dummyRequest1.setId(9L);
@@ -290,17 +295,33 @@ public class ProfilControllerTests {
 						)
 				)));
 	}
-    /*
-    for(LeaseTransaction leaseTransaction : leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(loggedIn)){
-        if(transactionService.isTimeViolation(leaseTransaction)){
-            model.addAttribute("message",
-                    "You have to return an Item!");
-            model.addAttribute("itemname", leaseTransaction.getItem().getName());
-        }
-    }
-    */
 
-	//TODO
+	@Test
+	public void checkOverviewToReturnItem() throws Exception {
+		Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
+		LeaseTransaction leaseTransaction1 = new LeaseTransaction();
+		leaseTransaction1.setItem(dummyItem3);
+		Mockito.when(leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(dummy1)).thenReturn(Arrays.asList(leaseTransaction1));
+		Mockito.when(transactionService.isTimeViolation(leaseTransaction1)).thenReturn(true);
+
+		mvc.perform(get("/"))
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("message", "You have to return an Item!"))
+				.andExpect(model().attributeExists("OverviewAllItems"))
+				.andExpect(model().attributeExists("loggedInPerson"))
+				.andExpect(view().name("OverviewAllItems"))
+				.andExpect(model().attribute("OverviewAllItems", hasSize(1)))
+				.andExpect(model().attribute("OverviewAllItems", hasItem(
+						allOf(
+								hasProperty("id", equalTo(5L)),
+								hasProperty("name", equalTo("Kulli")),
+								hasProperty("description", equalTo("schicker kulli"))
+						)
+				)));
+	}
+
 	@Test
 	public void checkOverviewWithExpiredItems() throws Exception {
 
@@ -434,6 +455,23 @@ public class ProfilControllerTests {
 	}
 
 	@Test
+	public void checkEditPersonPost() throws Exception {
+
+		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+		mvc.perform(post("/editprofile", "mandy", "candy", "abcdabcd", "candy@gmail.com", "koln")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("Firstname", "mandy")
+				.param("Lastname", "candy")
+				.param("Password", "abcdabcd")
+				.param("Email", "candy@gmail.com")
+				.param("City", "koln")
+				.with(csrf()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/profile"));
+	}
+
+	@Test
 	@WithMockUser(username = "admin", password = "rootroot", roles = "ADMIN")
 	public void checkdeletePersonByAdmin() throws Exception {
 		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
@@ -498,21 +536,23 @@ public class ProfilControllerTests {
 	}
 
 	@Test
-	@Ignore
 	public void checkRating() throws Exception {
 		Request request = new Request();
-
-		Mockito.when(ratingRepo.findById(1L)).thenReturn(Optional.ofNullable(rating1));
+		request.setRequestedItem(dummyItem3);
+		request.setId(11L);
+		request.setRequester(dummy1);
 		rating1.setRequest(request);
 
-		mvc.perform(post("/rating", 5, 10L).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.requestAttr("rating", 5)
-				.requestAttr("ratingID", 10L)
-				.sessionAttr("rating", new Rating()))
-				.andExpect(status().isOk())
+		Mockito.when(ratingRepo.findById(10L)).thenReturn(Optional.ofNullable(rating1));
+
+		mvc.perform(post("/rating", "10", "1")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("ratingID", "10")
+				.param("rating", "1"))
+				.andExpect(status().is3xxRedirection())
 				.andExpect(model().attributeExists("rating"))
 				.andExpect(model().attribute("rating", hasSize(1)))
-				.andExpect(view().name("/rating"))
+				.andExpect(view().name("redirect:/"))
 				.andExpect(model().attribute("rating", hasItem(
 						allOf(
 								hasProperty("id", equalTo(10L)),

@@ -60,7 +60,6 @@ public class ProfilController {
             if(transactionService.isTimeViolation(leaseTransaction)){
                 model.addAttribute("message",
                         "You have to return an Item!");
-                model.addAttribute("itemname", leaseTransaction.getItem().getName());
             }
         }
         List<Item> allOtherItems = itemRepo.findByOwnerNotAndActiveTrue(loggedIn);
@@ -98,7 +97,7 @@ public class ProfilController {
             Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
             rating1.setRatingPoints(rating);
             ratingRepo.save(rating1);
-            if(authenticationService.getCurrentUser().getId().equals(rating1.getRequest().getRequestedItem().getOwner().getId())){
+            if(authenticationService.getCurrentUser().equals(rating1.getRequest().getRequestedItem().getOwner())){
                 rating1.getRequest().getRequester().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequester());
             }else{
