@@ -1,11 +1,9 @@
 package Bendispository.Abschlussprojekt.controller;
 
 
-import Bendispository.Abschlussprojekt.model.Item;
-import Bendispository.Abschlussprojekt.model.Person;
-import Bendispository.Abschlussprojekt.model.Rating;
-import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
+import Bendispository.Abschlussprojekt.model.transactionModels.ProPayAccount;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -21,6 +19,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,6 +32,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -78,7 +78,11 @@ public class RequestControllerTest {
 	Item dummyItem1;
 	Item dummyItem2;
 	Item dummyItem3;
+	Request request;
 	LeaseTransaction leaseTransaction;
+	ProPayAccount proPayAccount1;
+	ProPayAccount proPayAccount2;
+	List<Request> requests;
 	@Autowired
 	private WebApplicationContext wac;
 
@@ -95,6 +99,9 @@ public class RequestControllerTest {
 		rating1 = new Rating();
 		rating2 = new Rating();
 		rating3 = new Rating();
+		proPayAccount1 = new ProPayAccount();
+		proPayAccount2 = new ProPayAccount();
+		request = new Request();
 		leaseTransaction = new LeaseTransaction();
 
 		rating1.setRatingPoints(5);
@@ -112,6 +119,8 @@ public class RequestControllerTest {
 		dummy1.setPassword("abcdabcd");
 		dummy1.setId(1L);
 		dummy1.setRatings(Arrays.asList(rating2));
+		proPayAccount1.setAccount("momo");
+		proPayAccount1.setAmount(100);
 
 		dummy2.setFirstName("nina");
 		dummy2.setLastName("fischi");
@@ -121,6 +130,8 @@ public class RequestControllerTest {
 		dummy2.setPassword("abcdabcd");
 		dummy2.setId(2L);
 		dummy2.setRatings(Arrays.asList(rating1));
+		proPayAccount1.setAccount("nini");
+		proPayAccount1.setAmount(100);
 
 		dummy3.setFirstName("clara");
 		dummy3.setLastName("maassen");
@@ -170,10 +181,14 @@ public class RequestControllerTest {
 		personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
 		ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
-		List<Request> requests = new ArrayList<>();
+		requests = new ArrayList<>();
 		List<LeaseTransaction> leaseTransactions = new ArrayList<>();
 		leaseTransaction.setId(6L);
 		leaseTransactions.add(leaseTransaction);
+		request.setId(7L);
+		request.setRequestedItem(dummyItem1);
+		request.setRequester(dummy2);
+		requests.add(request);
 
 		Mockito.when(personsRepo.findById(1L))
 				.thenReturn(Optional.ofNullable(dummy1));
@@ -187,9 +202,12 @@ public class RequestControllerTest {
 				.thenReturn(Optional.ofNullable(dummyItem3));
 		Mockito.when(leaseTransactionRepo.findById(6L))
 				.thenReturn(Optional.ofNullable(leaseTransaction));
+		Mockito.when(requestRepo.findById(7L))
+				.thenReturn(Optional.ofNullable(request));
 
 		Mockito.when(requestRepo.findByRequesterAndStatus(any(), any())).thenReturn(requests);
 		Mockito.when(requestRepo.findByRequestedItemOwnerAndStatus(any(), any())).thenReturn(requests);
+		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem3, RequestStatus.PENDING)).thenReturn(requests);
 
 		Mockito.when(leaseTransactionRepo.findAllByLeaserAndItemIsReturnedIsFalse(dummy1)).thenReturn(leaseTransactions);
 		Mockito.when(leaseTransactionRepo.findAllByItemOwnerAndItemIsReturnedIsFalse(dummy1)).thenReturn(leaseTransactions);
@@ -199,6 +217,169 @@ public class RequestControllerTest {
 
 	}
 
+	@Test
+	public void checkReturnedItemIsNotIntactPost() throws Exception {
+		mvc.perform(post("/profile/returneditems/{id}/issue", 6)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("comment", "Ich bin sauer"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("itemTmpl/returnedItems"))
+				.andExpect(model().attributeExists("transactionList"));
+	}
+
+	@Test
+	public void checkReturnedItemSuccess() throws Exception {
+		Mockito.when(transactionService.itemIsIntact(leaseTransaction)).thenReturn(true);
+		mvc.perform(post("/profile/returneditems")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("transactionId", "6")
+				.param("itemIntact", "1"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("itemTmpl/returnedItems"))
+				.andExpect(model().attributeExists("transactionList"));
+	}
+
+	@Test
+	public void checkReturnedItemFail() throws Exception {
+		Mockito.when(transactionService.itemIsIntact(leaseTransaction)).thenReturn(false);
+		mvc.perform(post("/profile/returneditems")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("transactionId", "6")
+				.param("itemIntact", "1"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/profile/returneditems"))
+				.andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
+	}
+
+	@Test
+	public void checkReturnedItemIsIntact() throws Exception {
+		mvc.perform(post("/profile/returneditems")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("transactionId", "6")
+				.param("itemIntact", "-1"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/profile/returneditems/" + 6 + "/issue"));
+	}
+
+	@Test
+	public void checkRentedItemsFail() throws Exception {
+		Mockito.when(transactionService.itemReturnedToLender(leaseTransaction)).thenReturn(false);
+		mvc.perform(post("/profile/renteditems")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("id", "6"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/profile/renteditems"))
+				.andExpect(flash().attribute("message", "Something wrong with ProPay!"));
+	}
+
+	@Test
+	public void checkRentedItems() throws Exception {
+		Mockito.when(transactionService.itemReturnedToLender(leaseTransaction)).thenReturn(true);
+		mvc.perform(post("/profile/renteditems")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("id", "6"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("itemTmpl/rentedItems"))
+				.andExpect(model().attributeExists("myRentedItems"))
+				.andExpect(model().attributeExists("myLeasedItems"));
+	}
+	@Test
+	public void RequestFail() throws Exception {
+		Mockito.when(requestService.wasShipped(request, 1)).thenReturn(false);
+		Mockito.when(requestService.wasDeniedOrAccepted(1, request)).thenReturn(false);
+		mvc.perform(post("/profile/requests")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("requestID", "7")
+				.param("requestMyItems", "1")
+				.param("shipped", "0"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/"))
+				.andExpect(flash().attribute("message", "Funds not sufficient for deposit or ProPay is Offline!"));
+	}
+
+	@Test
+	public void RequestWasDeniedOrAccepted() throws Exception {
+		Mockito.when(requestService.wasShipped(request, 1)).thenReturn(false);
+		Mockito.when(requestService.wasDeniedOrAccepted(1, request)).thenReturn(true);
+		mvc.perform(post("/profile/requests")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("requestID", "7")
+				.param("requestMyItems", "1")
+				.param("shipped", "0"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("rentsTmpl/requests"));
+	}
+
+	@Test
+	public void RequestWasShipped() throws Exception {
+		Mockito.when(requestService.wasShipped(request, 1)).thenReturn(true);
+		mvc.perform(post("/profile/requests")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("requestID", "7")
+				.param("requestMyItems", "1")
+				.param("shipped", "1"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(view().name("rentsTmpl/requests"));
+	}
+
+	@Test
+	public void checkDeleteRequest() throws Exception {
+		Request request1 = new Request();
+		request1.setId(8L);
+		mvc.perform(post("/profile/deleterequest/{id}", 8L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/"));
+	}
+
+	@Test
+	public void  requestSuccess() throws Exception {
+		Mockito.when(requestService.addRequest("27.02.2020", "28.02.2020", 5L)).thenReturn(request);
+		Mockito.when(requestService.saveRequest(request)).thenReturn(true);
+		mvc.perform(post("/item/{id}/requestitem", 5L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("startDate", "27.02.2020")
+				.param("endDate", "28.02.2020"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"))
+				.andExpect(flash().attribute("success", "Request has been sent!"));
+	}
+
+	@Test
+	public void  requestFailed() throws Exception {
+		Mockito.when(requestService.addRequest("27.02.2020", "28.02.2020", 5L)).thenReturn(request);
+		mvc.perform(post("/item/{id}/requestitem", 5L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("startDate", "27.02.2020")
+				.param("endDate", "28.02.2020"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"))
+				.andExpect(flash().attribute("message", "Item is not available during selected period, or something went wrong with ProPay!"));
+	}
+
+	@Test
+	public void  wrongDate() throws Exception {
+		mvc.perform(post("/item/{id}/requestitem", 5L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("startDate", "28.02.2020")
+				.param("endDate", "27.02.2020"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}/requestitem"))
+				.andExpect(flash().attribute("message", "Invalid date!"));
+	}
 	@Test
 	public void retrieve() throws Exception {
 
@@ -241,8 +422,27 @@ public class RequestControllerTest {
 	}
 
 	@Test
+	public void checkNotRentItemTwice() throws Exception {
+
+		mvc.perform(get("/item/{id}/requestitem", 5L))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"))
+				.andExpect(flash().attribute("message", "You cannot request the same item twice!"));
+	}
+
+	@Test
+	public void checkRentNotOwnItem() throws Exception {
+		mvc.perform(get("/item/{id}/requestitem", 3L))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"));
+	}
+
+	@Test
 	public void checkAddItemRequest() throws Exception {
 
+		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem3, RequestStatus.PENDING)).thenReturn(Arrays.asList());
 		mvc.perform(get("/item/{id}/requestitem", 5L))
 				.andDo(print())
 				.andExpect(status().isOk())
