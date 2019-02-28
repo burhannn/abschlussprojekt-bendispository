@@ -10,10 +10,7 @@ import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactio
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -36,6 +33,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -106,6 +105,7 @@ public class ProfilControllerTests {
 		mvc = MockMvcBuilders.webAppContextSetup(context)
 				.apply(springSecurity())
 				.build();
+		List<Rating> ratings = new ArrayList<>();
 
 		dummyRequest1 = new Request();
 		dummyRequest2 = new Request();
@@ -128,8 +128,7 @@ public class ProfilControllerTests {
 		rating2 = new Rating();
 		rating3 = new Rating();
 
-		rating1.setRatingPoints(5);
-		rating1.setId(10L);
+		rating1.setId((long) 1);
 		rating1.setRater(dummy1);
 		rating2.setRatingPoints(3);
 		rating2.setId(20L);
@@ -145,7 +144,7 @@ public class ProfilControllerTests {
 		dummy1.setUsername("user");
 		dummy1.setPassword("abcdabcd");
 		dummy1.setId(1L);
-		dummy1.setRatings(Arrays.asList(rating2));
+		dummy1.setRatings(ratings);
 
 		dummy2.setFirstName("nina");
 		dummy2.setLastName("fischi");
@@ -154,7 +153,7 @@ public class ProfilControllerTests {
 		dummy2.setUsername("nini");
 		dummy2.setPassword("abcdabcd");
 		dummy2.setId(2L);
-		dummy2.setRatings(Arrays.asList(rating1));
+		dummy2.setRatings(ratings);
 
 		dummy3.setFirstName("clara");
 		dummy3.setLastName("maassen");
@@ -163,7 +162,7 @@ public class ProfilControllerTests {
 		dummy3.setUsername("claraaa");
 		dummy3.setPassword("abcdabcd");
 		dummy3.setId(6L);
-		dummy3.setRatings(Arrays.asList(rating3));
+		dummy3.setRatings(ratings);
 
 		dummyAdmin.setId(0L);
 		dummyAdmin.setFirstName("random");
@@ -217,14 +216,15 @@ public class ProfilControllerTests {
 		ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
 
-		Mockito.when(personsRepo.findById(1L)).thenReturn(Optional.ofNullable(dummy1));
-		Mockito.when(personsRepo.findById(2L)).thenReturn(Optional.ofNullable(dummy2));
-		Mockito.when(itemRepo.findById(3L)).thenReturn(Optional.ofNullable(dummyItem1));
-		Mockito.when(itemRepo.findById(4L)).thenReturn(Optional.ofNullable(dummyItem2));
-		Mockito.when(itemRepo.findById(5L)).thenReturn(Optional.ofNullable(dummyItem3));
-		Mockito.when(personsRepo.findById(6L)).thenReturn(Optional.ofNullable(dummy3));
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-		Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+		when(personsRepo.findById(1L)).thenReturn(Optional.ofNullable(dummy1));
+		when(personsRepo.findById(2L)).thenReturn(Optional.ofNullable(dummy2));
+		when(itemRepo.findById(3L)).thenReturn(Optional.ofNullable(dummyItem1));
+		when(itemRepo.findById(4L)).thenReturn(Optional.ofNullable(dummyItem2));
+		when(itemRepo.findById(5L)).thenReturn(Optional.ofNullable(dummyItem3));
+		when(personsRepo.findById(6L)).thenReturn(Optional.ofNullable(dummy3));
+		when(ratingRepo.findById((long) 1)).thenReturn(Optional.ofNullable(rating1));
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		when(personsRepo.findByUsername("user")).thenReturn(dummy1);
 	}
 
 	@After
@@ -242,9 +242,9 @@ public class ProfilControllerTests {
 	@Test
 	public void checkOverviewItemsFromOthersAreShownNoOwnItems() throws Exception {
 
-		Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy3);
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy3);
-		Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy3))
+		when(personsRepo.findByUsername("user")).thenReturn(dummy3);
+		when(authenticationService.getCurrentUser()).thenReturn(dummy3);
+		when(itemRepo.findByOwnerNotAndActiveTrue(dummy3))
 				.thenReturn(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 
 		mvc.perform(get("/"))
@@ -277,9 +277,9 @@ public class ProfilControllerTests {
 	@Test
 	public void checkOverviewItemsFromOthersAreShownWithoutOwnItems() throws Exception {
 
-		Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-		Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
+		when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
 
 		mvc.perform(get("/"))
 				.andExpect(status().isOk())
@@ -325,9 +325,9 @@ public class ProfilControllerTests {
 	@Test
 	public void checkOverviewWithExpiredItems() throws Exception {
 
-		Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-		Mockito.when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
+		when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		when(itemRepo.findByOwnerNotAndActiveTrue(dummy1)).thenReturn(items2);
 
 		mvc.perform(get("/"))
 				.andExpect(status().isOk())
@@ -406,9 +406,9 @@ public class ProfilControllerTests {
 	@Test
 	public void checkUsersUebersicht() throws Exception {
 
-		Mockito.when(personsRepo.findAll())
+		when(personsRepo.findAll())
 				.thenReturn(Arrays.asList(dummy2, dummy3));
-		Mockito.when(personsRepo.findAllByUsernameNotAndUsernameNot(
+		when(personsRepo.findAllByUsernameNotAndUsernameNot(
 				authenticationService.getCurrentUser().getUsername(), "admin")).thenReturn(Arrays.asList(dummy2, dummy3));
 
 		mvc.perform(get("/profilub"))
@@ -440,7 +440,7 @@ public class ProfilControllerTests {
 	@Test
 	public void checkEditPerson() throws Exception {
 
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
 		mvc.perform(get("/editprofile").contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("FirstName", "mandy")
@@ -474,8 +474,8 @@ public class ProfilControllerTests {
 	@Test
 	@WithMockUser(username = "admin", password = "rootroot", roles = "ADMIN")
 	public void checkdeletePersonByAdmin() throws Exception {
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
-		Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
+		when(authenticationService.getCurrentUser()).thenReturn(dummyAdmin);
+		when(personsRepo.findByUsername("user")).thenReturn(dummy1);
 
 		mvc.perform(get("/deleteuser/{username}", "user"))
 				.andDo(print())
@@ -487,7 +487,7 @@ public class ProfilControllerTests {
 	@Test
 	@WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
 	public void checkdeletePersonNotByAdminFail() throws Exception {
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
 		mvc.perform(get("/deleteuser/{username}", dummy2.getUsername()))
 				.andDo(print())
@@ -507,9 +507,9 @@ public class ProfilControllerTests {
 	@Test
 	public void checkProfileHistory() throws Exception {
 
-		Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
-		Mockito.when(requestRepo.findByRequesterAndStatus(dummy1, RequestStatus.SHIPPED)).thenReturn(requestList1);
-		Mockito.when(requestRepo.findByRequestedItemOwnerAndStatus(dummy1, RequestStatus.SHIPPED)).thenReturn(requestList2);
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+		when(requestRepo.findByRequesterAndStatus(dummy1, RequestStatus.SHIPPED)).thenReturn(requestList1);
+		when(requestRepo.findByRequestedItemOwnerAndStatus(dummy1, RequestStatus.SHIPPED)).thenReturn(requestList2);
 
 		mvc.perform(get("/profile/history"))
 				.andExpect(status().isOk())
@@ -526,41 +526,59 @@ public class ProfilControllerTests {
 
 	@Test
 	public void checkOpenratings() throws Exception {
-		Mockito.when(ratingRepo.findAllByRater(dummy1)).thenReturn(dummy1.getRatings());
+		when(ratingRepo.findAllByRater(dummy1)).thenReturn(dummy1.getRatings());
 
 		mvc.perform(get("/openratings"))
 				.andExpect(status().isOk())
 				.andExpect(model().attributeExists("openRatings"))
-				.andExpect(model().attribute("openRatings", hasSize(1)))
+				.andExpect(model().attribute("openRatings", hasSize(0)))
 				.andExpect(view().name("profileTmpl/openRatings"));
 	}
 
 	@Test
-	public void checkRating() throws Exception {
+	public void checkRatingLeaser() throws Exception {
 		Request request = new Request();
-		request.setRequestedItem(dummyItem3);
-		request.setId(11L);
+
 		request.setRequester(dummy1);
+		request.setRequestedItem(dummyItem3);
 		rating1.setRequest(request);
 
-		Mockito.when(ratingRepo.findById(10L)).thenReturn(Optional.ofNullable(rating1));
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
-		mvc.perform(post("/rating", "10", "1")
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("ratingID", "10")
-				.param("rating", "1"))
+		Assert.assertEquals(dummy2.getAverageRatings(),-1);
+		Assert.assertEquals(dummy1.getAverageRatings(),-1);
+
+		mvc.perform(post("/rating")
+				.param("rating", "4")
+				.param("ratingID","1"))
 				.andExpect(status().is3xxRedirection())
-				.andExpect(model().attributeExists("rating"))
-				.andExpect(model().attribute("rating", hasSize(1)))
-				.andExpect(view().name("redirect:/"))
-				.andExpect(model().attribute("rating", hasItem(
-						allOf(
-								hasProperty("id", equalTo(10L)),
-								hasProperty("rater", equalTo(dummy1)),
-								hasProperty("ratingPoints", equalTo(5))))));
+				.andExpect(view().name("redirect:/"));
 
+		Assert.assertEquals(dummy2.getAverageRatings(),4);
+		//Assert.assertEquals(dummy1.getAverageRatings(),-1);
 	}
 
+	@Test
+	public void checkRatingOwner() throws Exception {
+		Request request = new Request();
+		request.setRequester(dummy2);
+		request.setRequestedItem(dummyItem1);
+		rating1.setRequest(request);
+
+		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
+
+		Assert.assertEquals(dummy2.getAverageRatings(),-1);
+		Assert.assertEquals(dummy1.getAverageRatings(),-1);
+
+		mvc.perform(post("/rating")
+				.param("rating", "4")
+				.param("ratingID","1"))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/"));
+
+		Assert.assertEquals(dummy2.getAverageRatings(),4);
+		//Assert.assertEquals(dummy1.getAverageRatings(),-1);
+	}
 }
 
 

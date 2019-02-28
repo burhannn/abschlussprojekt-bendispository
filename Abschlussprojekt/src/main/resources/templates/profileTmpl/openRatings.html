@@ -10,7 +10,8 @@
 	<h1 class="header_container" th:text=${openRatings?.get(iterStart?.index)?.request?.requestedItem?.name}></h1>
 	<div>
 		<div class="item_description"
-			 th:text="${openRatings?.get(iterStart?.index)?.request?.requestedItem?.owner?.username}"></div>
+			 th:text="|Owner: ${openRatings?.get(iterStart?.index)?.request?.requestedItem?.owner?.username}
+			 			Borrower: ${openRatings?.get(iterStart?.index)?.request?.requester?.username}|"></div>
 		<form action="/rating" method="post" th:if="${openRatings?.get(iterStart?.index)?.ratingPoints == null}">
 			<td>Give your Rating:</td>
 			<input name="rating" type="radio" value="1">1

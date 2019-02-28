@@ -219,7 +219,7 @@ public class FileControllerTests {
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
 		mvc.perform(multipart("/additem")
-				.file("file", new byte[0])
+				.file("file", file.getBytes())
 				.param("name", "lasso")
 				.param("description", "komm hol das lasso raus")
 				.param("place", "köln")
@@ -237,7 +237,7 @@ public class FileControllerTests {
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
 		mvc.perform(multipart("/addsellitem")
-				.file("file", new byte[0])
+				.file("file", file.getBytes())
 				.param("name", "lasso")
 				.param("description", "komm hol das lasso raus")
 				.param("place", "köln")
