@@ -18,7 +18,7 @@
 	<a href="/openratings">Open Ratings</a>
 </div>
 <div th:if="${message}">
-	<div class="alert_error" th:text="|${message} ${itemname}|"></div>
+	<div class="alert_error" th:text="|${message}|"></div>
 </div>
 <div class="projekt_container" th:each="item,iterStart : ${OverviewAllItems}">
 	<div class="badge_lease" th:if="${item?.marketType?.name() == 'LEND'}">
