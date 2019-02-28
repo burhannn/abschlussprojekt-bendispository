@@ -93,19 +93,19 @@ public class ProfilController {
     }
 
     @PostMapping(path="/rating")
-    public String Rating(Model model, @RequestParam("rating") int rating, @RequestParam("ratingID") Long ratingID){
+    public String Rating(@RequestParam("rating") int rating, @RequestParam("ratingID") Long ratingID){
         if (rating != -1){
             Rating rating1 = ratingRepo.findById(ratingID).orElse(null);
             rating1.setRatingPoints(rating);
             ratingRepo.save(rating1);
-            if(authenticationService.getCurrentUser().getId().equals(rating1.getRequest().getRequestedItem().getOwner().getId())){
+
+            if(rating1.getRater().getId().equals(rating1.getRequest().getRequestedItem().getOwner().getId())){
                 rating1.getRequest().getRequester().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequester());
             }else{
                 rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
             }
-            model.addAttribute("rating", rating1);
         }
 
         return "redirect:/";
