@@ -17,7 +17,7 @@
 	<div th:text="|${person?.username}|"></div>
 	<div th:text="|Propay Account Balance: ${account?.amount}|"></div>
 	<form method="post">
-		<div>Amount: <input name="amount" placeholder="100€" pattern="[0-9]+" required th:value="${amount}" type="number">
+		<div>Amount: <input name="amount" placeholder="100€" required th:value="${amount}" type="number">
 		</div>
 		<button type="submit">Charge Account</button>
 	</form>
