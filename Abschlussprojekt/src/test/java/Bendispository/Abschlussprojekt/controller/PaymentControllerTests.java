@@ -184,7 +184,6 @@ public class PaymentControllerTests {
         Mockito.when(personsRepo.findById(6L)).thenReturn(Optional.ofNullable(dummy3));
         Mockito.when(authenticationService.getCurrentUser()).thenReturn(dummy1);
         Mockito.when(personsRepo.findByUsername("user")).thenReturn(dummy1);
-        Mockito.when(proPaySubscriber.getAccount("momo")).thenReturn(proPayAccount);
     }
 
     @After

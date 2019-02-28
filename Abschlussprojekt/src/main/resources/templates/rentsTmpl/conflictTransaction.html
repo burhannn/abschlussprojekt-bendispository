@@ -14,19 +14,19 @@
 	<div th:each="conflict : ${allConflicts}">
 		<table style="margin-top: 2%">
 			<tr style="text-align: left !important;">
-				<td class="item_name" th:text="|Item: ${conflict.leaseTransaction.item.name}|"></td>
+				<td class="item_name" th:text="|Item: ${conflict?.leaseTransaction?.item?.name}|"></td>
 			</tr>
 			<!--Requested by: ${request.requester.username} muss noch unten rein wenn login fertig-->
-			<td th:text="|Rented By: ${conflict.leaseTransaction.leaser.username}|"></td>
-			<td th:text="|Owned By: ${conflict.leaseTransaction.item.owner.username}|"></td>
-			<td th:text="|Owner Commentary: ${conflict.commentary}|"></td>
+			<td th:text="|Rented By: ${conflict?.leaseTransaction?.leaser?.username}|"></td>
+			<td th:text="|Owned By: ${conflict?.leaseTransaction?.item?.owner?.username}|"></td>
+			<td th:text="|Owner Commentary: ${conflict?.commentary}|"></td>
 			<td>
 				<form method="post">
-					<input name="beneficiary" th:text="${conflict.leaseTransaction.leaser.username}" type="radio"
+					<input name="beneficiary" th:text="${conflict?.leaseTransaction?.leaser?.username}" type="radio"
 						   value="-1">
-					<input name="beneficiary" th:text="${conflict.leaseTransaction.item.owner.username}" type="radio"
+					<input name="beneficiary" th:text="${conflict?.leaseTransaction?.item?.owner?.username}" type="radio"
 						   value="1">
-					<input name="conflictId" th:value="${conflict.id}" type="hidden" value="0">
+					<input name="conflictId" th:value="${conflict?.id}" type="hidden" value="0">
 					<button type="submit">Submit</button>
 				</form>
 			</td>
