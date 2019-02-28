@@ -56,6 +56,8 @@
 				<td class="item_name" th:text="|Requested by: ${request.requester.username}|"></td>
 			</tr>
 			<td th:text="|Status: ${request.status}|"></td>
+			<td th:text="|From: ${request.startDate}|"></td>
+			<td th:text="|To: ${request.endDate}|"></td>
 			<div th:if="${request.status.name() == 'PENDING'}">
 				<form method="post">
 					<input name="requestMyItems" type="radio" value="-1">reject
