@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -211,13 +212,12 @@ public class ConflictControllerTests {
         		.andExpect(view().name("redirect:/conflicts"))
         		.andExpect(flash().attribute("message", "Something went wrong with ProPay!"));
 	}
-
-
 	@Test
 	@WithMockUser(username = "admin", password = "rootroot")
 	public void checkSolveConflict() throws Exception {
 		Mockito.when(authenticationService.getCurrentUser()).thenReturn(admin);
 		Mockito.when(proPaySubscriber.releaseReservation("nini", 7)).thenReturn(proPayAccount2);
+		doReturn(true).when(conflictService).resolveConflict(conflictTransaction,false);
 
 		mvc.perform(post("/conflicts")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
