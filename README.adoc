@@ -1,3 +1,10 @@
+== Starten der Anwendung
+
+Vorbereitung, zu beachten: "application.properties" muss für den Einsatz mit Docker auf "spring.profiles.active=prod" gesetzt werden.
+
+Zum Starten der Anwendung: Im Hauptordner den Befehl "docker-compose up --build" ausführen.
+
+
 = Softwareentwicklung im Team: Blockpraktikum
 WS18/19
 :icons: font
