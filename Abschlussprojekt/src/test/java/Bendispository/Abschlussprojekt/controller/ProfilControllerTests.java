@@ -230,7 +230,7 @@ public class ProfilControllerTests {
 
 		itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 		personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
-		//ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
+		ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
 
 		when(personsRepo.findById(1L)).thenReturn(Optional.ofNullable(dummy1));
@@ -500,7 +500,6 @@ public class ProfilControllerTests {
 				.andExpect(view().name("redirect:/profilub"));
 	}
 
-
 	@Test
 	@WithMockUser(username = "user", password = "abcdabcd", roles = "USER")
 	public void checkdeletePersonNotByAdminFail() throws Exception {
@@ -511,15 +510,6 @@ public class ProfilControllerTests {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/"));
 	}
-
-    /*
-        List<Request> purchases = requestRepo.findByRequesterAndStatus(loggedIn, RequestStatus.SHIPPED);
-        List<Request> sales = requestRepo.findByRequestedItemOwnerAndStatus(loggedIn, RequestStatus.SHIPPED);
-
-        List<LeaseTransaction> leased = leaseTransactionRepo.findAllByLeaserAndLeaseIsConcludedIsTrue(loggedIn);
-        List<LeaseTransaction> lent = leaseTransactionRepo.findAllByItemOwnerAndLeaseIsConcludedIsTrue(loggedIn);
-
-    }*/
 
 	@Test
 	public void checkProfileHistory() throws Exception {
@@ -536,8 +526,6 @@ public class ProfilControllerTests {
 				.andExpect(model().attributeExists("lent"))
 				.andExpect(model().attribute("purchases", hasSize(2)))
 				.andExpect(model().attribute("sales", hasSize(2)))
-				//.andExpect(model().attribute("leased", hasSize(2)))
-				//.andExpect(model().attribute("lent", hasSize(2)))
 				.andExpect(view().name("historia"));
 	}
 

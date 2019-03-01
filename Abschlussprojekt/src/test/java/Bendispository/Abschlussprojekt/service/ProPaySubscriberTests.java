@@ -192,48 +192,4 @@ public class ProPaySubscriberTests {
 				proPaySubscriber.transferMoney("checkov", "check", 2.1);
 		assertEquals(false, check);
 	}
-/*
-        @Test
-        public void checkGetAccount(){
-            ProPaySubscriber proPaySubscriber = mock(ProPaySubscriber.class);
-            when(proPaySubscriber.getAccount(dummy1.getUsername())).thenReturn(proPayAccount1);
-
-            ProPayAccount account = proPaySubscriber.getAccount("iamanoriginalname");
-            Reservation[] reservations = account.getReservations();
-
-            assertEquals("iamanoriginalname", account.getAccount());
-            assertEquals(30, account.getAmount(), 0.001);
-            assertEquals(7, reservations[0].getId());
-            assertEquals(15, reservations[0].getAmount(), 0.001);
-            assertEquals(8, reservations[1].getId());
-            assertEquals(25, reservations[1].getAmount(), 0.001);
-        }
-
-        @Test
-        public void makeDepositAndReservationCallCorrect(){
-            ProPaySubscriber proPaySubscriber = mock(ProPaySubscriber.class);
-            when(proPaySubscriber.makeReservation(anyString(), anyString(), anyDouble())).thenReturn(r1);
-
-            Reservation reservation =
-                    proPaySubscriber.makeReservation(
-                            request.getRequester().getUsername(),
-                            request.getRequestedItem().getOwner().getUsername(),
-                            request.getRequestedItem().getDeposit());
-            assertEquals(7, reservation.getId());
-            assertEquals(15.0, reservation.getAmount(), 0.001);
-        }
-
-
-
-        @Test
-        public void releaseReservationCallCorrect(){
-            ProPaySubscriber proPaySubscriber = mock(ProPaySubscriber.class);
-            when(proPaySubscriber.releaseReservation(anyString(), anyInt())).thenReturn(proPayAccount2);
-
-            ProPayAccount account =
-                    proPaySubscriber.releaseReservation(dummy1.getUsername(), 8);
-            assertEquals(1, account.getReservations().length);
-        }*/
-
-
 }
