@@ -471,6 +471,7 @@ public class RequestControllerTest {
 
 	@Test
 	public void checkRequestOverview() throws Exception {
+
 		mvc.perform(get("/profile/requests"))
 				.andDo(print())
 				.andExpect(status().isOk())

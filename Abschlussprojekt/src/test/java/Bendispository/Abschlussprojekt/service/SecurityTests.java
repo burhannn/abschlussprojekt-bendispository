@@ -129,7 +129,6 @@ public class SecurityTests {
 		String result = principal.getPassword();
 
 		//ASSERT
-
 		assertThat(encoder.matches("abcdabcd", result)).isTrue();
 		Assert.assertEquals(authService.getCurrentUser(), dummy1);
 		Assert.assertEquals(principal, context.getAuthentication().getPrincipal());
