@@ -33,7 +33,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 public class RequestServiceTest {
 
     @MockBean

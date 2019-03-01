@@ -28,7 +28,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 public class ItemServiceTest {
 
 	@MockBean
