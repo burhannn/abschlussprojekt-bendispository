@@ -148,8 +148,10 @@ public class FileController {
 	@RequestMapping(method = RequestMethod.GET, value = "/deleteitem/{id}")
 	public String deleteItem(@PathVariable("id") Long id,
 							 RedirectAttributes redirectAttributes) {
-		itemService.deleteItem(id);
-		redirectAttributes.addFlashAttribute("message", "Item has been deleted!");
+		if(itemRepo.findById(id).get().isActive()) {
+			itemService.deleteItem(id);
+			redirectAttributes.addFlashAttribute("message", "Item has been deleted!");
+		}
 		return "redirect:/";
 	}
 
@@ -162,7 +164,7 @@ public class FileController {
 		Item item = itemRepo.findById(id).orElse(null);
 		Person loggedIn = authenticationService.getCurrentUser();
 		model.addAttribute("Item", item);
-		if (loggedIn.getUsername().equals(item.getOwner().getUsername())) {
+		if (loggedIn.getUsername().equals(item.getOwner().getUsername()) && item.isActive()) {
 			if (item.getMarketType().equals(MarketType.SELL)) {
 				return "itemTmpl/editItemSell";
 			}
@@ -177,7 +179,11 @@ public class FileController {
 									 @PathVariable Long id,
 									 Item inputItem) {
 		Optional<Item> item = itemRepo.findById(id);
+		inputItem.setDeposit(item.get().getDeposit());
+		inputItem.setCostPerDay(item.get().getCostPerDay());
+		inputItem.setRetailPrice(item.get().getRetailPrice());
 		model.addAttribute("Item", item.get());
+
 		itemService.editItem(inputItem, item, id);
 		return "redirect:/item/{id}";
 	}

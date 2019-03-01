@@ -91,19 +91,32 @@ public class RequestController {
 
 		Request request = requestService
 				.addRequest(startDate, endDate, id);
+
 		if (request == null) {
 			redirectAttributes.addFlashAttribute("message",
 					"Invalid date!");
 			return "redirect:/item/{id}/requestitem";
 		}
 
-		boolean saveRequest = requestService.saveRequest(request);
+		boolean checkRequestedAvailability = requestService.checkRequestedAvailability(request);
 
-		if (!saveRequest) {
+		if (!checkRequestedAvailability) {
 			redirectAttributes.addFlashAttribute("message",
-					"Item is not available during selected period, or something went wrong with ProPay!");
+					"Item is not available during selected period!");
 			return "redirect:/item/{id}";
 		}
+
+		Person currentUser = authenticationService.getCurrentUser();
+		String username = currentUser.getUsername();
+		boolean checkRequesterBalance = requestService.checkRequesterBalance(request.getRequestedItem(), username);
+
+		if (!checkRequesterBalance) {
+			redirectAttributes.addFlashAttribute("messageBalance",
+					"You don't have enough funds for this transaction!");
+			return "redirect:/item/{id}";
+		}
+
+		requestService.saveRequest(request);
 
 		itemRepo.findById(id).ifPresent(o -> model.addAttribute("thisItem", o));
 		redirectAttributes.addFlashAttribute("success", "Request has been sent!");

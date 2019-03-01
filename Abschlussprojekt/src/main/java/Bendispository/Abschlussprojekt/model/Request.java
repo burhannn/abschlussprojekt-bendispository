@@ -28,6 +28,10 @@ public class Request {
 			fetch = FetchType.EAGER)
 	private Item requestedItem;
 
+	private String itemName;
+
+	private String ownerName;
+
 	private int duration;
 
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

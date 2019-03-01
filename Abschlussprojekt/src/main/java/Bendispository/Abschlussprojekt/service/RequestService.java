@@ -115,6 +115,8 @@ public class RequestService {
         request.setRequester(personsRepo.findByUsername(currentUser.getUsername()));
         request.setStatus(AWAITING_SHIPMENT);
         request.setRequestedItem(item);
+        request.setItemName(item.getName());
+        request.setOwnerName(username);
 
         return request;
     }
@@ -158,20 +160,14 @@ public class RequestService {
         request.setEndDate(enddate);
         request.setDuration(Period.between(startdate, enddate).getDays());
         request.setRequestedItem(item);
+        request.setItemName(item.getName());
+        request.setOwnerName(currentUser.getUsername());
 
         return request;
     }
 
-    public boolean saveRequest(Request request){
-        Person currentUser = authenticationService.getCurrentUser();
-        String username = currentUser.getUsername();
-
-        if (!checkRequestedAvailability(request) ||
-                !checkRequesterBalance(request.getRequestedItem(), username)){
-            return false;
-        }
+    public void saveRequest(Request request){
         requestRepo.save(request);
-        return true;
     }
 
     public boolean wasShipped(Request request, Integer shipped){

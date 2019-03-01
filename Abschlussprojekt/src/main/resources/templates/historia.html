@@ -7,17 +7,14 @@
 	<a href="/profile">My Profile</a>
 	<a href="/additem">Add Item</a>
 	<a href="/profilub">Overview Users</a>
-	<a href="/loggedout">Logout</a>
 </div>
 <div class="projekt_container">
 	<h2>Your Purchases</h2>
 	<div th:each="purchase : ${purchases}">
 		<hr width="50%">
-		Item: <a th:href="|@{'/item/' + ${purchase?.requestedItem?.id}}|"
-				 th:text="${purchase?.requestedItem?.name}"></a>
+		<div th:text="|Item: ${purchase?.itemName}|"></div>
 		<div>
-			Seller: <a th:href="|@{'/profile/' + ${purchase?.requestedItem?.owner?.id}}|"
-					   th:text="${purchase?.requestedItem?.owner?.username}"></a>
+			<div th:text="|Seller: ${purchase?.ownerName}|"></div>
 		</div>
 	</div>
 </div>
@@ -25,9 +22,9 @@
 	<h2>Your Sales</h2>
 	<div th:each="sale : ${sales}">
 		<hr width="50%">
-		Item: <a th:href="|@{'/item/' + ${sale?.requestedItem?.id}}|" th:text="${sale?.requestedItem?.name}"></a>
+		<div th:text="|Item: ${sale?.itemName}|"></div>
 		<div>
-			Buyer: <a th:href="|@{'/profile/' + ${sale?.requester?.id}}|" th:text="${sale?.requester?.username}"></a>
+			<div th:text="|Buyer: ${sale?.ownerName}|"></div>
 		</div>
 	</div>
 </div>
@@ -35,11 +32,10 @@
 	<h2>Leased By You</h2>
 	<div th:each="lease1 : ${leased}">
 		<hr width="50%">
-		Item: <a th:href="|@{'/item/' + ${lease1?.item?.id}}|" th:text="${lease1?.item?.name}"></a>
+		<div th:text="|Item: ${lease1?.itemName}|"></div>
 		<div>
 			<div class="item_description">
-				Owner: <a th:href="|@{'/profile/' + ${lease1?.item?.owner?.id}}|"
-						  th:text="${lease1?.item?.owner?.username}"></a>
+				<div th:text="|Owner: ${lease1?.ownerName}|"></div>
 			</div>
 			<div class="item_description"
 				 th:text="|Date: ${#temporals?.format(lease1?.startDate, 'yyyy-MM-dd')} - ${#temporals?.format(lease1?.endDate, 'yyyy-MM-dd')}|"></div>
@@ -53,10 +49,10 @@
 	<h2>Lent Away</h2>
 	<div th:each="lease2 : ${lent}">
 		<hr width="50%">
-		Item: <a th:href="|@{'/item/' + ${lease2?.item?.id}}|" th:text="${lease2?.item?.name}"></a>
+		<div th:text="|Item: ${lease2?.itemName}|"></div>
 		<div>
 			<div class="item_description">
-				Leaser: <a th:href="|@{'/profile/' + ${lease2?.leaser?.id}}|" th:text="${lease2?.leaser?.username}"></a>
+				<div th:text="|Leaser: ${lease2?.ownerName}|"></div>
 			</div>
 			<div class="item_description"
 				 th:text="|Date: ${#temporals?.format(lease2?.startDate, 'yyyy-MM-dd')} - ${#temporals?.format(lease2?.endDate, 'yyyy-MM-dd')}|"></div>

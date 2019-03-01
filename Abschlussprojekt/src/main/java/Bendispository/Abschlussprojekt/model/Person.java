@@ -20,10 +20,10 @@ public class Person {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß]+")
+	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß ]+")
 	private String lastName;
 
-	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß]+")
+	@Pattern(regexp = "[a-zA-ZöäüÖÄÜß ]+")
 	private String firstName;
 
 	@Pattern(regexp = "[a-zA-Z0-9öäüÖÄÜß]+")
