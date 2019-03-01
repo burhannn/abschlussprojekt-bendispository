@@ -134,7 +134,7 @@ public class ProfilController {
     @GetMapping(path= "/profile/{id}")
     public String profileOther(Model model,
                                @PathVariable Long id){
-        Optional<Person> person = personRepo.findById(id);
+        Person person = personRepo.findById(id).orElse(null);
         personRepo.findById(id).ifPresent(o -> model.addAttribute("person",o));
         return "profileTmpl/profileOther";
     }

@@ -21,14 +21,14 @@
 		<a href="/chargeaccount">Charge Account</a>
 	</div>
 	<div class="my_rating" th:if="${person?.getAverageRatings()} != -1">
-		<tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
-		<tr>
-			<div>
-				<img height="50" src="../../static/img/star.png"
-					 th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{img/star.png}" width="50">
-			</div>
-		</tr>
-	</div>
+	<tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
+	<tr>
+		<div>
+			<img height="50" src="../../static/img/star.png"
+				 th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{/img/star.png}" width="50">
+		</div>
+	</tr>
+</div>
 	<div class="my_rating" th:if="${person.getAverageRatings()} == -1">
 		<tr>Rating: No rating existing yet</tr>
 	</div>
@@ -59,7 +59,7 @@
 				<hr align="left" width="95%">
 			</div>
 		</div>
-		<div class="my_items">My Items:
+		<div th:if="${person?.items?.size()} != 0" class="my_items">My Items:
 			<div th:each="item : ${person.items}">
 				<div th:if="${item.active}">
 					<tr>
