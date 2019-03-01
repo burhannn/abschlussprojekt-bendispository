@@ -7,6 +7,18 @@
 <body>
 <div class="projekt_container">
 	<h1 th:text="${person?.username}"></h1>
+	<div class="my_rating" th:if="${person?.getAverageRatings()} != -1">
+		<tr th:text="|Rating: ${person?.getAverageRatings()}|"></tr>
+		<tr>
+			<div>
+				<img height="50" src="../../static/img/star.png"
+					 th:each="i : ${#numbers.sequence( 1,person?.getAverageRatings())}" th:src="@{/img/star.png}" width="50">
+			</div>
+		</tr>
+	</div>
+	<div class="my_rating" th:if="${person.getAverageRatings()} == -1">
+		<tr>Rating: No rating existing yet</tr>
+	</div>
 	<div class="profil_information">
 		<tr>
 			<div th:text="|Email: ${person?.email}|"></div>
@@ -14,7 +26,7 @@
 		<tr>
 			<div th:text="|City: ${person?.city}|"></div>
 		</tr>
-		<div class="my_items">Offered Items:
+		<div th:if="${person?.items?.size()} != 0" class="my_items">Offered Items:
 			<div th:each="item : ${person?.items}">
 				<tr>
 					<td><a th:href="@{'/item/' + ${item?.id}}" th:text="${item?.name}"></a></td>
