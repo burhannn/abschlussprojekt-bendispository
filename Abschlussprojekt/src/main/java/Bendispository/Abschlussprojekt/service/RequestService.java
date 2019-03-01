@@ -166,16 +166,8 @@ public class RequestService {
         return request;
     }
 
-    public boolean saveRequest(Request request){
-        Person currentUser = authenticationService.getCurrentUser();
-        String username = currentUser.getUsername();
-
-        if (!checkRequestedAvailability(request) ||
-                !checkRequesterBalance(request.getRequestedItem(), username)){
-            return false;
-        }
+    public void saveRequest(Request request){
         requestRepo.save(request);
-        return true;
     }
 
     public boolean wasShipped(Request request, Integer shipped){
