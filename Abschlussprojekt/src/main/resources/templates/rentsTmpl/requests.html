@@ -54,6 +54,8 @@
 			<tr style="text-align: left !important;">
 				<td class="item_name" th:text="|Item: ${request.requestedItem.name}|"></td>
 				<td class="item_name" th:text="|Requested by: ${request.requester.username}|"></td>
+				<div class = "item_name"> Requested by: <a th:href="@{'/profile/' + ${request.requester.id}}"
+									   th:text="|${request.requester.username}|"></a></div>
 			</tr>
 			<td th:text="|Status: ${request.status}|"></td>
 			<td th:text="|From: ${request.startDate}|"></td>
