@@ -177,7 +177,11 @@ public class FileController {
 									 @PathVariable Long id,
 									 Item inputItem) {
 		Optional<Item> item = itemRepo.findById(id);
+		inputItem.setDeposit(item.get().getDeposit());
+		inputItem.setCostPerDay(item.get().getCostPerDay());
+		inputItem.setRetailPrice(item.get().getRetailPrice());
 		model.addAttribute("Item", item.get());
+
 		itemService.editItem(inputItem, item, id);
 		return "redirect:/item/{id}";
 	}
