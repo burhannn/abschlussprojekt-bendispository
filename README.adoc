@@ -1,8 +1,13 @@
 == Starten der Anwendung
 
-Vorbereitung, zu beachten: "application.properties" muss für den Einsatz mit Docker auf "spring.profiles.active=prod" gesetzt werden.
 
 Zum Starten der Anwendung: Im Hauptordner den Befehl "docker-compose up --build" ausführen.
+
+Zur Vorbereitung ist zu beachten:
+
+- "application.properties" muss für den Einsatz mit Docker auf "spring.profiles.active=prod" gesetzt werden.
+
+- Im jeweiligen Profil "application-dev.properties" oder "application-prod.properties" sollte "spring.jpa.hibernate.ddl-auto=xxx" beachtet werden. Optimale Optionen sind "update" für den Produktiveinsatz und "create-drop" zum Testen.
 
 
 = Softwareentwicklung im Team: Blockpraktikum
