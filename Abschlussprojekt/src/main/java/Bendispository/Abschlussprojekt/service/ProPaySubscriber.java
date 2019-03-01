@@ -23,6 +23,10 @@ public class ProPaySubscriber {
 
 	final LeaseTransactionRepo leaseTransactionRepo;
 
+	private static final String SCHEME = "http";
+	private static final String HOST = "propay:8888";
+
+
 	@Autowired
 	public ProPaySubscriber(PersonsRepo personsRepo, LeaseTransactionRepo leaseTransactionRepo) {
 		super();
@@ -46,8 +50,8 @@ public class ProPaySubscriber {
 					.create()
 					.post()
 					.uri(builder ->
-							builder.scheme("https")
-									.host("propra-propay.herokuapp.com")
+							builder.scheme(SCHEME)
+									.host(HOST)
 									.pathSegment("reservation", "reserve", leaserName, lenderName)
 									.queryParam("amount", deposit)
 									.build())
@@ -68,8 +72,8 @@ public class ProPaySubscriber {
 					.create()
 					.post()
 					.uri(builder ->
-							builder.scheme("https")
-									.host("propra-propay.herokuapp.com")
+							builder.scheme(SCHEME)
+									.host(HOST)
 									.pathSegment("reservation", "release", username)
 									.queryParam("reservationId", id)
 									.build())
@@ -90,8 +94,8 @@ public class ProPaySubscriber {
 					.create()
 					.post()
 					.uri(builder ->
-							builder.scheme("https")
-									.host("propra-propay.herokuapp.com")
+							builder.scheme(SCHEME)
+									.host(HOST)
 									.pathSegment("reservation", "punish", username)
 									.queryParam("reservationId", id)
 									.build())
@@ -119,8 +123,8 @@ public class ProPaySubscriber {
 					.create()
 					.get()
 					.uri(builder ->
-							builder.scheme("https")
-									.host("propra-propay.herokuapp.com")
+							builder.scheme(SCHEME)
+									.host(HOST)
 									.pathSegment("account", username)
 									.build())
 					.accept(MediaType.APPLICATION_JSON_UTF8)
@@ -140,8 +144,8 @@ public class ProPaySubscriber {
 					.create()
 					.post()
 					.uri(builder ->
-							builder.scheme("https")
-									.host("propra-propay.herokuapp.com")
+							builder.scheme(SCHEME)
+									.host(HOST)
 									.pathSegment("account", username)
 									.queryParam("amount", value)
 									.build())
@@ -163,8 +167,8 @@ public class ProPaySubscriber {
 	protected boolean executeTransfer(String leaserName, String lenderName, double value) {
 		URI uri = UriComponentsBuilder
 				.newInstance()
-				.scheme("https")
-				.host("propra-propay.herokuapp.com")
+				.scheme(SCHEME)
+				.host(HOST)
 				.pathSegment("account", leaserName, "transfer", lenderName)
 				.queryParam("amount", value)
 				.build()
