@@ -1,6 +1,5 @@
 == Starten der Anwendung
 
-
 Zum Starten der Anwendung: Im Hauptordner den Befehl "docker-compose up --build" ausführen.
 
 Zur Vorbereitung ist zu beachten:
@@ -9,6 +8,23 @@ Zur Vorbereitung ist zu beachten:
 
 - Im jeweiligen Profil "application-dev.properties" oder "application-prod.properties" sollte "spring.jpa.hibernate.ddl-auto=xxx" beachtet werden. Optimale Optionen sind "update" für den Produktiveinsatz und "create-drop" zum Testen.
 
+== Starten von Tests
+
+Wenn application.properties auf production eingestellt ist, werden die Tests mit Travis ausgeführt.
+
+Wenn application.properties auf development eingestellt ist, können die Tests mit einer IDE gestartet werden.
+ 
+== Voreingestellte User
+
+Es gibt folgende schon existierende Benutzerkonten:
+
+- Username: "admin", Passwort: "rootroot". Dieser hat Adminrechte.
+
+- Username: "mandypandy", Passwort: "abcdabcd".
+
+- Username: "pandycandy", Passwort: "abcdabcd".
+
+Weitere Benutzer können jederzeit neu registriert werden.
 
 = Softwareentwicklung im Team: Blockpraktikum
 WS18/19
