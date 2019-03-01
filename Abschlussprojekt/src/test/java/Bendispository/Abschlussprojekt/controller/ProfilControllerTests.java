@@ -2,6 +2,7 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.*;
 import Bendispository.Abschlussprojekt.model.transactionModels.LeaseTransaction;
+import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
 import Bendispository.Abschlussprojekt.repos.RatingRepo;
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -87,6 +87,7 @@ public class ProfilControllerTests {
 	Item dummyItem2;
 	Item dummyItem3;
 	Rating rating1;
+	Request request;
 	Rating rating2;
 	Rating rating3;
 	Request dummyRequest1;
@@ -95,6 +96,9 @@ public class ProfilControllerTests {
 	Request dummyRequest4;
 	List<Request> requestList1;
 	List<Request> requestList2;
+	List<Rating> ratings1;
+	List<Rating> ratings2;
+	List<Rating> ratings3;
 	List<Item> items1;
 	List<Item> items2;
 	@Autowired
@@ -105,12 +109,16 @@ public class ProfilControllerTests {
 		mvc = MockMvcBuilders.webAppContextSetup(context)
 				.apply(springSecurity())
 				.build();
-		List<Rating> ratings = new ArrayList<>();
+		ratings1 = new ArrayList<>();
+		ratings2 = new ArrayList<>();
+		ratings3 = new ArrayList<>();
 
 		dummyRequest1 = new Request();
 		dummyRequest2 = new Request();
 		dummyRequest3 = new Request();
 		dummyRequest4 = new Request();
+		request = new Request();
+		rating1 = new Rating();
 
 		requestList1 = new ArrayList<>();
 		requestList2 = new ArrayList<>();
@@ -124,12 +132,20 @@ public class ProfilControllerTests {
 		dummyItem1 = new Item();
 		dummyItem2 = new Item();
 		dummyItem3 = new Item();
-		rating1 = new Rating();
 		rating2 = new Rating();
 		rating3 = new Rating();
 
+
+		request.setId((long)1);
+		request.setRequester(dummy1);
+		request.setRequestedItem(dummyItem3); //dummy2 owner
+		requestRepo.save(request);
+
+		rating1.setRequest(request); // dummy1 rater
 		rating1.setId((long) 1);
 		rating1.setRater(dummy1);
+		ratingRepo.save(rating1);
+
 		rating2.setRatingPoints(3);
 		rating2.setId(20L);
 		rating2.setRater(dummy2);
@@ -144,7 +160,7 @@ public class ProfilControllerTests {
 		dummy1.setUsername("user");
 		dummy1.setPassword("abcdabcd");
 		dummy1.setId(1L);
-		dummy1.setRatings(ratings);
+		dummy1.setRatings(ratings1);
 
 		dummy2.setFirstName("nina");
 		dummy2.setLastName("fischi");
@@ -153,7 +169,7 @@ public class ProfilControllerTests {
 		dummy2.setUsername("nini");
 		dummy2.setPassword("abcdabcd");
 		dummy2.setId(2L);
-		dummy2.setRatings(ratings);
+		dummy2.setRatings(ratings2);
 
 		dummy3.setFirstName("clara");
 		dummy3.setLastName("maassen");
@@ -162,7 +178,7 @@ public class ProfilControllerTests {
 		dummy3.setUsername("claraaa");
 		dummy3.setPassword("abcdabcd");
 		dummy3.setId(6L);
-		dummy3.setRatings(ratings);
+		dummy3.setRatings(ratings3);
 
 		dummyAdmin.setId(0L);
 		dummyAdmin.setFirstName("random");
@@ -191,6 +207,7 @@ public class ProfilControllerTests {
 		dummyItem3.setCostPerDay(1);
 		dummyItem3.setId(5L);
 		dummyItem3.setOwner(dummy2);
+		dummyItem3.setMarketType(MarketType.SELL);
 
 		dummyRequest1.setRequester(dummy1);
 		dummyRequest1.setId(9L);
@@ -213,7 +230,7 @@ public class ProfilControllerTests {
 
 		itemRepo.saveAll(Arrays.asList(dummyItem1, dummyItem2, dummyItem3));
 		personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
-		ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
+		//ratingRepo.saveAll(Arrays.asList(rating1, rating2, rating3));
 
 
 		when(personsRepo.findById(1L)).thenReturn(Optional.ofNullable(dummy1));
@@ -536,16 +553,10 @@ public class ProfilControllerTests {
 	}
 
 	@Test
-	public void checkRatingLeaser() throws Exception {
-		Request request = new Request();
-
-		request.setRequester(dummy1);
-		request.setRequestedItem(dummyItem3);
-		rating1.setRequest(request);
-
+	public void checkRatingOwner() throws Exception {
 		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
-		Assert.assertEquals(dummy2.getAverageRatings(),-1);
+		Assert.assertEquals(dummy2.getAverageRatings(),-1);	//no ratings existing
 		Assert.assertEquals(dummy1.getAverageRatings(),-1);
 
 		mvc.perform(post("/rating")
@@ -554,12 +565,12 @@ public class ProfilControllerTests {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/"));
 
-		Assert.assertEquals(dummy2.getAverageRatings(),4);
-		//Assert.assertEquals(dummy1.getAverageRatings(),-1);
+		Assert.assertEquals(dummy2.getAverageRatings(),4);	//dummy2=owner received Rating
+		Assert.assertEquals(dummy1.getAverageRatings(),-1);
 	}
 
 	@Test
-	public void checkRatingOwner() throws Exception {
+	public void checkRatingBorrower() throws Exception {
 		Request request = new Request();
 		request.setRequester(dummy2);
 		request.setRequestedItem(dummyItem1);
@@ -567,7 +578,7 @@ public class ProfilControllerTests {
 
 		when(authenticationService.getCurrentUser()).thenReturn(dummy1);
 
-		Assert.assertEquals(dummy2.getAverageRatings(),-1);
+		Assert.assertEquals(dummy2.getAverageRatings(),-1); //no ratings existing
 		Assert.assertEquals(dummy1.getAverageRatings(),-1);
 
 		mvc.perform(post("/rating")
@@ -576,9 +587,7 @@ public class ProfilControllerTests {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/"));
 
-		Assert.assertEquals(dummy2.getAverageRatings(),4);
-		//Assert.assertEquals(dummy1.getAverageRatings(),-1);
+		Assert.assertEquals(dummy2.getAverageRatings(),4);	//dummy2=borrower received Rating
+		Assert.assertEquals(dummy1.getAverageRatings(),-1);
 	}
 }
-
-

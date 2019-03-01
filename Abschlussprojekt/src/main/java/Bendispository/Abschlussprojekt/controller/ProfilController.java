@@ -101,12 +101,11 @@ public class ProfilController {
             if(rating1.getRater().getId().equals(rating1.getRequest().getRequestedItem().getOwner().getId())){
                 rating1.getRequest().getRequester().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequester());
-            }else{
+            }else if(rating1.getRater().getId().equals(rating1.getRequest().getRequester().getId())){
                 rating1.getRequest().getRequestedItem().getOwner().addRating(rating1);
                 personRepo.save(rating1.getRequest().getRequestedItem().getOwner());
             }
         }
-
         return "redirect:/";
     }
 
