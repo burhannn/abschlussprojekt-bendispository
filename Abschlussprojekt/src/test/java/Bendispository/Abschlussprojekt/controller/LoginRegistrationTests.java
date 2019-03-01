@@ -110,6 +110,7 @@ public class LoginRegistrationTests {
 
 	@Test
 	public void checkLoginFail() throws Exception {
+
 		mvc.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("username", "")
 				.param("password", ""))
@@ -155,6 +156,7 @@ public class LoginRegistrationTests {
 
 	@Test
 	public void retrieve() throws Exception {
+
 		mvc.perform(get("/registration")).andExpect(status().isOk());
 		mvc.perform(get("/login")).andExpect(status().isOk());
 		mvc.perform(get("/loggedOut")).andExpect(status().isOk());

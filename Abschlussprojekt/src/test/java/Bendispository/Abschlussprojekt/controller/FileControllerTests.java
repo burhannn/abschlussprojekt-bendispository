@@ -221,6 +221,7 @@ public class FileControllerTests {
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void checkEditItemInDatabase() throws Exception {
+
 		mvc.perform(post("/edititem/{id}", 3L)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
 				.andDo(print())
@@ -233,6 +234,7 @@ public class FileControllerTests {
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void retrieve() throws Exception {
+
 		mvc.perform(get("/additem")).andExpect(status().isOk());
 		mvc.perform(get("/addsellitem")).andExpect(status().isOk());
 	}
@@ -240,6 +242,7 @@ public class FileControllerTests {
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void checkItemBuyRequestSuccess() throws Exception {
+
 		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList());
 		Mockito.when(requestService.addBuyRequest(4L)).thenReturn(new Request());
 		Mockito.when(requestService.buyItemAndTransferMoney(new Request())).thenReturn(true);
@@ -254,6 +257,7 @@ public class FileControllerTests {
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void checkItemBuyRequestIsNotBought() throws Exception {
+
 		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList());
 		Mockito.when(requestService.addBuyRequest(4L)).thenReturn(new Request());
 		Mockito.when(requestService.buyItemAndTransferMoney(new Request())).thenReturn(false);
@@ -268,6 +272,7 @@ public class FileControllerTests {
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void checkItemBuyRequestNotRentTwice() throws Exception {
+
 		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList(request));
 		mvc.perform(post("/item/{id}", 4L)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
@@ -280,6 +285,7 @@ public class FileControllerTests {
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void checkItemBuyRequestFail() throws Exception {
+
 		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList());
 		mvc.perform(post("/item/{id}", 4L)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
@@ -294,7 +300,6 @@ public class FileControllerTests {
 	public void checkAddItem() throws Exception {
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-
 		mvc.perform(multipart("/additem")
 				.file("file", file.getBytes())
 				.param("name", "lasso")
@@ -312,7 +317,6 @@ public class FileControllerTests {
 	public void checkAddSellItem() throws Exception {
 
 		MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
-
 		mvc.perform(multipart("/addsellitem")
 				.file("file", file.getBytes())
 				.param("name", "lasso")

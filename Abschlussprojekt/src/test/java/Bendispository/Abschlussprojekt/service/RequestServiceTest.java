@@ -137,8 +137,6 @@ public class RequestServiceTest {
         requestRepo.saveAll(Arrays.asList(r1,r2,r3,r4));
         when(requestRepo.findAll()).thenReturn(Arrays.asList(r1,r2,r3,r4));
         Mockito.doReturn(user).when(personsRepo).findByUsername(anyString());
-        //when(redirectAttributes.addFlashAttribute(anyString(),anyString())).thenReturn(redirectAttributes);
-
     }
 
     @Test
@@ -324,5 +322,4 @@ public class RequestServiceTest {
         assertEquals(RequestStatus.PENDING, r2.getStatus());
         assertEquals(check, true);
     }
-
 }
