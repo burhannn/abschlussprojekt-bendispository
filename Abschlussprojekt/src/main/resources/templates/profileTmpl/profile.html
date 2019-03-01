@@ -61,9 +61,11 @@
 		</div>
 		<div class="my_items">My Items:
 			<div th:each="item : ${person.items}">
-				<tr>
-					<td><a th:href="@{'/item/' + ${item.id}}" th:text="${item.name}"></a></td>
-				</tr>
+				<div th:if="${item.active}">
+					<tr>
+						<td><a th:href="@{'/item/' + ${item.id}}" th:text="${item.name}"></a></td>
+					</tr>
+				</div>
 			</div>
 		</div>
 	</div>
