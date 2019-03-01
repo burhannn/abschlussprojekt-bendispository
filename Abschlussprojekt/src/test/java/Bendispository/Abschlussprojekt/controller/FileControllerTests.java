@@ -2,6 +2,8 @@ package Bendispository.Abschlussprojekt.controller;
 
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
+import Bendispository.Abschlussprojekt.model.Request;
+import Bendispository.Abschlussprojekt.model.RequestStatus;
 import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
@@ -19,6 +21,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -35,11 +38,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -84,6 +89,8 @@ public class FileControllerTests {
 	Item dummyItem2;
 	Item dummyItem3;
 	Item dummyItem4;
+	Request request;
+
 	@Autowired
 	private WebApplicationContext context;
 
@@ -93,6 +100,7 @@ public class FileControllerTests {
 				.apply(springSecurity())
 				.build();
 
+		Request request = new Request();
 		dummy1 = new Person();
 		dummy2 = new Person();
 		dummy3 = new Person();
@@ -133,6 +141,7 @@ public class FileControllerTests {
 		dummyItem1.setId(3L);
 		dummyItem1.setOwner(dummy1);
 		dummyItem1.setMarketType(MarketType.LEND);
+		dummyItem1.setRetailPrice(100);
 
 		dummyItem2.setName("playstation");
 		dummyItem2.setDeposit(250);
@@ -174,6 +183,10 @@ public class FileControllerTests {
 		personsRepo.saveAll(Arrays.asList(dummy1, dummy2, dummy3));
 
 
+		request.setId(8L);
+		request.setRequestedItem(dummyItem2);
+		request.setRequester(dummy1);
+
 		Mockito.when(personsRepo.findById(1L))
 				.thenReturn(Optional.ofNullable(dummy1));
 
@@ -207,9 +220,73 @@ public class FileControllerTests {
 
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkEditItemInDatabase() throws Exception {
+		mvc.perform(post("/edititem/{id}", 3L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"));
+
+
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void retrieve() throws Exception {
 		mvc.perform(get("/additem")).andExpect(status().isOk());
 		mvc.perform(get("/addsellitem")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkItemBuyRequestSuccess() throws Exception {
+		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList());
+		Mockito.when(requestService.addBuyRequest(4L)).thenReturn(new Request());
+		Mockito.when(requestService.buyItemAndTransferMoney(new Request())).thenReturn(true);
+		mvc.perform(post("/item/{id}", 4L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name( "redirect:/item/{id}"))
+				.andExpect(flash().attribute("success", "Item bought!"));
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkItemBuyRequestIsNotBought() throws Exception {
+		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList());
+		Mockito.when(requestService.addBuyRequest(4L)).thenReturn(new Request());
+		Mockito.when(requestService.buyItemAndTransferMoney(new Request())).thenReturn(false);
+		mvc.perform(post("/item/{id}", 4L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name( "redirect:/item/{id}"))
+				.andExpect(flash().attribute("messageBalance", "There is a Problem with ProPay!"));
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkItemBuyRequestNotRentTwice() throws Exception {
+		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList(request));
+		mvc.perform(post("/item/{id}", 4L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name( "redirect:/item/{id}"))
+				.andExpect(flash().attribute("message", "You cannot buy the same item twice!"));
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkItemBuyRequestFail() throws Exception {
+		Mockito.when(requestRepo.findByRequesterAndRequestedItemAndStatus(dummy1, dummyItem2, RequestStatus.AWAITING_SHIPMENT)).thenReturn(Arrays.asList());
+		mvc.perform(post("/item/{id}", 4L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name( "redirect:/item/{id}"))
+				.andExpect(flash().attribute("message", "You don't have enough funds for this transaction!"));
 	}
 
 	@Test
@@ -318,8 +395,36 @@ public class FileControllerTests {
 
 	@Test
 	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkEditItemSell() throws Exception {
+
+		dummyItem1.setMarketType(MarketType.SELL);
+		mvc.perform(get("/edititem/{id}", 3L))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("Item"))
+				.andExpect(view().name("itemTmpl/editItemSell"))
+				.andExpect(model().attribute("Item", hasProperty("id", equalTo(3L))))
+				.andExpect(model().attribute("Item", hasProperty("name", equalTo("stuhl"))))
+				.andExpect(model().attribute("Item", hasProperty("deposit", equalTo(40))))
+				.andExpect(model().attribute("Item", hasProperty("description", equalTo("bin billig"))))
+				.andExpect(model().attribute("Item", hasProperty("costPerDay", equalTo(10))));
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
+	public void checkEditItemWrongUser() throws Exception {
+
+		mvc.perform(get("/edititem/{id}", 4L))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/"));
+	}
+
+	@Test
+	@WithMockUser(username = "momo", password = "abcdabcd")
 	public void checkEditItem() throws Exception {
 
+		dummyItem1.setMarketType(MarketType.LEND);
 		mvc.perform(get("/edititem/{id}", 3L))
 				.andDo(print())
 				.andExpect(status().isOk())

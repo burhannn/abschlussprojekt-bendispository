@@ -28,6 +28,10 @@ public class LeaseTransaction {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Item item;
 
+	private String itemName;
+
+	private String ownerName;
+
 	private Long requestId;
 
 	private int depositId;
@@ -63,6 +67,8 @@ public class LeaseTransaction {
 		this.startDate = request.getStartDate();
 		this.endDate = request.getEndDate();
 		this.depositId = depositId;
+		this.itemName = request.getItemName();
+		this.ownerName = request.getOwnerName();
 		request.getRequester().addLeaseTransaction(this);
 	}
 

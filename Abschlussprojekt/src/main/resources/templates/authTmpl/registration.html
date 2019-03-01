@@ -15,11 +15,11 @@
 	<form class="form-signin" method="post">
 		<h2 class="form-signin-heading">Registration</h2>
 		<p>
-			<Input class="form-control" name="firstName" pattern="[a-zA-ZöäüÖÄÜß]+" placeholder="First Name" required
+			<Input class="form-control" name="firstName" pattern="[a-zA-ZöäüÖÄÜß ]+" placeholder="First Name" required
 				   th:value="${newPerson?.firstName}" type="text">
 		</p>
 		<p>
-			<Input class="form-control" name="lastName" pattern="[a-zA-ZöäüÖÄÜß]+" placeholder="Last Name" required
+			<Input class="form-control" name="lastName" pattern="[a-zA-ZöäüÖÄÜß ]+" placeholder="Last Name" required
 				   style="margin-top: -5px" th:value="${newPerson?.lastName}" type="text">
 		</p>
 		<p>

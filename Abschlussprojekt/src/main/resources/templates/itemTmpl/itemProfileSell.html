@@ -30,17 +30,18 @@
 		<tr>
 			<div th:text="| Retail Price: ${itemProfile?.retailPrice}€|"></div>
 		</tr>
-		<!-- <tr><div th:if="${itemProfile?.uploadFile} != null" th:text = "| File: ${itemProfile?.uploadFile.fileName}|"></div></tr>-->
 	</div>
 	<div> Owner: <a th:href="@{'/profile/' + ${itemOwner?.id}}">Profile</a></div>
-	<form method="post">
-		<button th:unless="${itemOwner?.username == loggedInPerson?.username}" type="submit">Request to buy
-		</button>
-	</form>
+	<div th:if="${itemProfile?.active}">
+		<form method="post">
+			<button th:unless="${itemOwner?.username == loggedInPerson?.username}" type="submit">Request to buy
+			</button>
+		</form>
+	</div>
 	<br>
-	<a th:href="@{'/edititem/' + ${itemProfile?.id}}" th:if="${itemOwner?.username == loggedInPerson?.username}">Edit
+	<a th:href="@{'/edititem/' + ${itemProfile?.id}}" th:if="${itemOwner?.username == loggedInPerson?.username && itemProfile?.active}">Edit
 		Item</a><br>
-	<a th:href="@{'/deleteitem/' + ${itemProfile?.id}}" th:if="${itemOwner?.username == loggedInPerson?.username}">Delete
+	<a th:href="@{'/deleteitem/' + ${itemProfile?.id}}" th:if="${itemOwner?.username == loggedInPerson?.username && itemProfile?.active}">Delete
 		Item</a>
 </div>
 <a href="/profile/requests">Requests</a>
