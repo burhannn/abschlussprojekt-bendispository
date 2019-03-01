@@ -3,17 +3,25 @@ package Bendispository.Abschlussprojekt.Initializer;
 import Bendispository.Abschlussprojekt.model.Item;
 import Bendispository.Abschlussprojekt.model.Person;
 import Bendispository.Abschlussprojekt.model.Rating;
+import Bendispository.Abschlussprojekt.model.Request;
 import Bendispository.Abschlussprojekt.model.transactionModels.MarketType;
 import Bendispository.Abschlussprojekt.repos.ItemRepo;
 import Bendispository.Abschlussprojekt.repos.PersonsRepo;
+import Bendispository.Abschlussprojekt.repos.RatingRepo;
+import Bendispository.Abschlussprojekt.repos.RequestRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.ConflictTransactionRepo;
 import Bendispository.Abschlussprojekt.repos.transactionRepos.LeaseTransactionRepo;
+import Bendispository.Abschlussprojekt.repos.transactionRepos.PaymentTransactionRepo;
 import Bendispository.Abschlussprojekt.service.ProPaySubscriber;
+import Bendispository.Abschlussprojekt.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +37,22 @@ public class Initializer implements ServletContextInitializer {
 
 	@Autowired
 	LeaseTransactionRepo leaseTransactionRepo;
+
+	@Autowired
+	RequestRepo requestRepo;
+
+	@Autowired
+	PaymentTransactionRepo paymentTransactionRepo;
+
+	@Autowired
+	ConflictTransactionRepo conflictTransactionRepo;
+
+	@Autowired
+	RatingRepo ratingRepo;
+
+	private ProPaySubscriber proPaySubscriber;
+
+	private Clock clock;
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
@@ -54,6 +78,20 @@ public class Initializer implements ServletContextInitializer {
 		ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
 		proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000.0);
 		proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000.0);
+
+		Person olaf = mkPerson("olaf@gmail.de", "oli", "Olaf", "van Schlopp", "Düsseldorf", "abcdabcd", ratings);
+		proPaySubscriber.chargeAccount("oli", 5000.0);
+		Request request = new Request();
+		request.setId(10L);
+		request.setRequester(olaf);
+		request.setRequestedItem(dummyItem1);
+		request.setStartDate(LocalDate.of(2019, 02, 20));
+		request.setEndDate(LocalDate.of(2019, 02, 28));
+		requestRepo.save(request);
+
+		TransactionService transactionService = new TransactionService(leaseTransactionRepo, requestRepo,
+				proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo, clock);
+		transactionService.lenderApproved(request);
 	}
 
 	private Person mkPerson(String email, String username, String firstName, String lastName, String city, String password, List<Rating> ratings) {
