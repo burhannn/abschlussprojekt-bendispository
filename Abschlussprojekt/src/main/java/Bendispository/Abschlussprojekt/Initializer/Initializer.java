@@ -38,22 +38,6 @@ public class Initializer implements ServletContextInitializer {
 	@Autowired
 	LeaseTransactionRepo leaseTransactionRepo;
 
-	@Autowired
-	RequestRepo requestRepo;
-
-	@Autowired
-	PaymentTransactionRepo paymentTransactionRepo;
-
-	@Autowired
-	ConflictTransactionRepo conflictTransactionRepo;
-
-	@Autowired
-	RatingRepo ratingRepo;
-
-	private ProPaySubscriber proPaySubscriber;
-
-	private Clock clock;
-
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		List<Rating> ratings = new ArrayList<>();
@@ -78,20 +62,6 @@ public class Initializer implements ServletContextInitializer {
 		ProPaySubscriber proPaySubscriber = new ProPaySubscriber(personRepo, leaseTransactionRepo);
 		proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000.0);
 		proPaySubscriber.chargeAccount(dummy_1.getUsername(), 5000.0);
-
-		Person olaf = mkPerson("olaf@gmail.de", "oli", "Olaf", "van Schlopp", "Düsseldorf", "abcdabcd", ratings);
-		proPaySubscriber.chargeAccount("oli", 5000.0);
-		Request request = new Request();
-		request.setId(10L);
-		request.setRequester(olaf);
-		request.setRequestedItem(dummyItem1);
-		request.setStartDate(LocalDate.of(2019, 02, 20));
-		request.setEndDate(LocalDate.of(2019, 02, 28));
-		requestRepo.save(request);
-
-		TransactionService transactionService = new TransactionService(leaseTransactionRepo, requestRepo,
-				proPaySubscriber, paymentTransactionRepo, conflictTransactionRepo, ratingRepo, clock);
-		transactionService.lenderApproved(request);
 	}
 
 	private Person mkPerson(String email, String username, String firstName, String lastName, String city, String password, List<Rating> ratings) {
