@@ -30,7 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -343,10 +344,40 @@ public class RequestControllerTest {
 	}
 
 	@Test
-	public void  requestSuccess() throws Exception {
+	public void checkAddRequestNotAvailable() throws Exception {
 		Mockito.when(requestService.addRequest("27.02.2020", "28.02.2020", 5L)).thenReturn(request);
-		Mockito.when(requestService.saveRequest(request)).thenReturn(true);
+		Mockito.when(requestService.checkRequestedAvailability(request)).thenReturn(false);
 		mvc.perform(post("/item/{id}/requestitem", 5L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("startDate", "27.02.2020")
+				.param("endDate", "28.02.2020"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"))
+				.andExpect(flash().attribute("message", "Item is not available during selected period!"));
+	}
+
+	@Test
+	public void checkAddRequestNotEnoughFunds() throws Exception {
+		Mockito.when(requestService.addRequest("27.02.2020", "28.02.2020", 3L)).thenReturn(request);
+		Mockito.when(requestService.checkRequestedAvailability(request)).thenReturn(true);
+		Mockito.when(requestService.checkRequesterBalance(dummyItem1, dummy2.getUsername())).thenReturn(false);
+		mvc.perform(post("/item/{id}/requestitem", 3L)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("startDate", "27.02.2020")
+				.param("endDate", "28.02.2020"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/item/{id}"))
+				.andExpect(flash().attribute("messageBalance", "You don't have enough funds for this transaction!"));
+	}
+
+	@Test
+	public void checkAddRequestSuccess() throws Exception {
+		Mockito.when(requestService.addRequest("27.02.2020", "28.02.2020", 3L)).thenReturn(request);
+		Mockito.when(requestService.checkRequestedAvailability(request)).thenReturn(true);
+		Mockito.doReturn(true).when(requestService).checkRequesterBalance(any(Item.class), anyString());
+		mvc.perform(post("/item/{id}/requestitem", 3L)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("startDate", "27.02.2020")
 				.param("endDate", "28.02.2020"))
@@ -354,19 +385,6 @@ public class RequestControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/item/{id}"))
 				.andExpect(flash().attribute("success", "Request has been sent!"));
-	}
-
-	@Test
-	public void  requestFailed() throws Exception {
-		Mockito.when(requestService.addRequest("27.02.2020", "28.02.2020", 5L)).thenReturn(request);
-		mvc.perform(post("/item/{id}/requestitem", 5L)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("startDate", "27.02.2020")
-				.param("endDate", "28.02.2020"))
-				.andDo(print())
-				.andExpect(status().is3xxRedirection())
-				.andExpect(view().name("redirect:/item/{id}"))
-				.andExpect(flash().attribute("message", "Item is not available during selected period, or something went wrong with ProPay!"));
 	}
 
 	@Test

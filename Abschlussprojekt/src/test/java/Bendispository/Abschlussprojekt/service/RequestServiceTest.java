@@ -129,6 +129,7 @@ public class RequestServiceTest {
         Mockito.doReturn(Optional.of(item)).when(itemRepo).findById(anyLong());
 
         r1.setRequestedItem(item);
+        r1.setRequester(user);
         r2.setRequestedItem(item2);
         rbuy.setRequestedItem(item);
 
@@ -253,27 +254,37 @@ public class RequestServiceTest {
     }
 
     @Test
-    public void saveRequestItemNotAvailable(){
-        Mockito.doReturn(false).when(transactionService).itemIsAvailableOnTime(any(Request.class));
-        boolean check = requestService.saveRequest(r1);
-        assertEquals(false, check);
-    }
-
-    @Test
-    public void saveRequestIssueWithProPay(){
-        Mockito.doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
-        Mockito.doReturn(false).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
-        boolean check = requestService.saveRequest(r2);
-        assertEquals(false, check);
-    }
-
-    @Test
-    public void saveRequestNoIssues(){
-        Mockito.doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
-        Mockito.doReturn(true).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
-        boolean check = requestService.saveRequest(r2);
-        assertEquals(true, check);
+    public void checkSaveRequest(){
+        requestService.saveRequest(r1);
         Mockito.verify(requestRepo, times(1)).save(isA(Request.class));
+    }
+
+    @Test
+    public void checkRequestedAvailabilityIsAvailable(){
+        Mockito.doReturn(true).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+        boolean check = requestService.checkRequestedAvailability(r1);
+        assertEquals(true, check);
+    }
+
+    @Test
+    public void checkRequestedAvailabilityIsNotAvailable(){
+        Mockito.doReturn(false).when(transactionService).itemIsAvailableOnTime(any(Request.class));
+        boolean check = requestService.checkRequestedAvailability(r1);
+        assertEquals(false, check);
+    }
+
+    @Test
+    public void checkRequesterBalanceIsSufficient(){
+        Mockito.doReturn(true).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
+        boolean check = requestService.checkRequesterBalance(item, r1.getRequester().getUsername());
+        assertEquals(true, check);
+    }
+
+    @Test
+    public void checkRequesterBalanceIsNotSufficient(){
+        Mockito.doReturn(false).when(proPaySubscriber).checkDeposit(anyDouble(), anyString());
+        boolean check = requestService.checkRequesterBalance(item, r1.getRequester().getUsername());
+        assertEquals(false, check);
     }
 
     @Test
