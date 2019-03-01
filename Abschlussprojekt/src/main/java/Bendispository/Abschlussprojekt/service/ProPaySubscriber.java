@@ -24,7 +24,8 @@ public class ProPaySubscriber {
 	final LeaseTransactionRepo leaseTransactionRepo;
 
 	private static final String SCHEME = "http";
-	private static final String HOST = "propay:8888";
+	private static final String HOST = "propay";
+	private static final int PORT = 8888;
 
 
 	@Autowired
@@ -52,6 +53,7 @@ public class ProPaySubscriber {
 					.uri(builder ->
 							builder.scheme(SCHEME)
 									.host(HOST)
+									.port(PORT)
 									.pathSegment("reservation", "reserve", leaserName, lenderName)
 									.queryParam("amount", deposit)
 									.build())
@@ -74,6 +76,7 @@ public class ProPaySubscriber {
 					.uri(builder ->
 							builder.scheme(SCHEME)
 									.host(HOST)
+									.port(PORT)
 									.pathSegment("reservation", "release", username)
 									.queryParam("reservationId", id)
 									.build())
@@ -96,6 +99,7 @@ public class ProPaySubscriber {
 					.uri(builder ->
 							builder.scheme(SCHEME)
 									.host(HOST)
+									.port(PORT)
 									.pathSegment("reservation", "punish", username)
 									.queryParam("reservationId", id)
 									.build())
@@ -125,6 +129,7 @@ public class ProPaySubscriber {
 					.uri(builder ->
 							builder.scheme(SCHEME)
 									.host(HOST)
+									.port(PORT)
 									.pathSegment("account", username)
 									.build())
 					.accept(MediaType.APPLICATION_JSON_UTF8)
@@ -146,6 +151,7 @@ public class ProPaySubscriber {
 					.uri(builder ->
 							builder.scheme(SCHEME)
 									.host(HOST)
+									.port(PORT)
 									.pathSegment("account", username)
 									.queryParam("amount", value)
 									.build())
@@ -169,6 +175,7 @@ public class ProPaySubscriber {
 				.newInstance()
 				.scheme(SCHEME)
 				.host(HOST)
+				.port(PORT)
 				.pathSegment("account", leaserName, "transfer", lenderName)
 				.queryParam("amount", value)
 				.build()
